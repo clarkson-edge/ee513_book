@@ -1,0 +1,56 @@
+# **IMU Anomaly Detection Using Hierarchical Temporal Memory**
+
+::: chapterintro
+Analyzing sensor data to identify rare or suspicious events, items or observation that differ significantly from standard patterns. This process is called anomaly detection, which is highly important in product production. This chapter demonstrates the identification of anomalies in real-time accelerometer data using the Hierarchical Temporal Memory (HTM) algorithms. This project aims to show how edge computing can be used to provide sensitive anomaly detection for diverse applications such as machinery monitoring, motion analysis, and safety-critical systems. The project files are available at [`github.com/Ijnaka22len/imu_anomaly_detection`](https://github.com/Ijnaka22len/imu_anomaly_detection), following the original implementation in [`github.com/SiliconLabs/machine_learning_applications`](https://github.com/SiliconLabs/machine_learning_applications/tree/main/application/imu/imu_anomaly_detection).
+:::
+
+## System Overview
+
+Hierarchical Temporal Memory (HTM) is an algorithm that mimics the brain's neocortical learning mechanisms and constantly learns time-based patterns in unlabeled data. Anomalies (suspicious data) are flagged when data (IMU data) deviate significantly from learned patterns. In addition to the firmware, a Python script (`display_serial.py`) is written to monitor patterns and deviations.
+
+## Data Collection and Preprocessing
+
+Like in Chapter 7, the IMU captures accelerometer data in real-time at a frequency of *25Hz*. The previous and current readings are processed to normalize motion along the x, y, and z axes into a $[-1, 1]$ range as shown below:
+
+```c         
+imu_data_normalized.x = imu_data_current.x - imu_data_prev.x;
+imu_data_normalized.y = imu_data_current.y - imu_data_prev.y;
+imu_data_normalized.z = imu_data_current.z - imu_data_prev.z;
+
+imu_data_normalized.x /= 4000;
+imu_data_normalized.y /= 4000;
+imu_data_normalized.z /= 4000;
+```
+
+## HTM Model Architecture
+
+The IMU data is encoded into Sparse Distributed Representations (SDRs) to facilitate efficient anomaly detection.
+
+![Figure 8.1: Example of IMU Anomaly](img/chapter8-anomaly-example.png){fig-alt="Figure 8.1: Example of IMU Anomaly" fig-align="center"}
+
+```c         
+sl_htm_encoder_simple_number(imu_data_normalized.x, -1.0f, 1.0f, 9, &sdr_x);
+sl_htm_encoder_simple_number(imu_data_normalized.y, -1.0f, 1.0f, 9, &sdr_y);
+sl_htm_encoder_simple_number(imu_data_normalized.z, -1.0f, 1.0f, 9, &sdr_z);
+
+sl_htm_sdr_insert(&input_sdr, &sdr_x, 0, SDR_WIDTH / 3 * 0);
+sl_htm_sdr_insert(&input_sdr, &sdr_y, 0, SDR_WIDTH / 3 * 1);
+sl_htm_sdr_insert(&input_sdr, &sdr_z, 0, SDR_WIDTH / 3 * 2);
+```
+
+## Visualization and Real-Time Monitoring
+
+The Python script `display_serial.py` visualizes anomaly scores in real-time by reading from a serial port connected to the microcontroller at a *baudrate=115200*. The script maintains a rolling buffer of scores and updates a live plot. This script helps visualize identified anomalies, such as irregular vibrations or sudden movements.
+
+```c         
+if line.startswith("anom_score"):
+    line_info = line.split(":")
+    anomaly_score = float(line_info[1])
+    buffer.append(anomaly_score)
+    buffer = buffer[1:]
+    axs.plot(buffer, color="red", linewidth=1)
+    fig.tight_layout()
+    fig.canvas.draw()
+    plt.pause(0.001)
+    axs.clear()
+```

@@ -1,0 +1,33 @@
+%\begin{titlepage}
+%  \begin{center}
+%    \thispagestyle{empty}
+%    \includegraphics[trim=0 -10 0 0, clip, width=\textwidth]{cover-image.png} % Adjust the size and path to your image
+%    {{\Huge\bfseries Embedded Systems Design}\\[1em] \par}
+%    \vspace*{\fill}
+%    {\large Written, edited and curated by \\[.1cm] Masuldul Imtiaz, PhD \\[.2cm] Clarkson University \\[1em] \normalsize {\itshape With special thanks to the community for their contributions and support.} \\[1em] \vfill \scriptsize Last Modified: \today\par \vfill}
+%  \end{center}
+%\end{titlepage}
+
+% Custom command for centered images
+\newcommand{\centeredimage}[2][0.9\textwidth]{%
+  \begin{center}
+    \includegraphics[width=#1]{#2} % The #1 parameter specifies the width (default is 90% of the text width)
+  \end{center}
+}
+
+% Title page
+\begin{titlepage}
+  \begin{center}
+    \thispagestyle{empty}
+    \vspace*{1cm} % Add vertical space at the top if needed
+    \centeredimage[0.75\textwidth]{cover-image.png} % Use the custom command to center the image
+    \vspace*{1.5cm} % Space between the image and the title
+    
+    {{\Huge\bfseries Embedded Systems Design}\\[1em] \par}
+    
+    \vspace*{\fill}
+    {\large Written, edited, and curated by \\[.1cm] Masuldul Imtiaz, PhD \\[.2cm] Clarkson University \\[1em] 
+    \normalsize {\itshape With special thanks to the community for their contributions and support.} \\[1em] \vfill 
+    \scriptsize Last Modified: \today\par \vfill}
+  \end{center}
+\end{titlepage}

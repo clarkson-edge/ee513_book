@@ -1,0 +1,307 @@
+# **Applications of EFR32 I/O**
+
+::: chapterintro
+Now that the basics of EFR32XG24 microcontroller input/output (I/O) are understood, the next step is learning how to add additional functionality to embedded systems using more complex hardware. This chapter will prepare readers to interact with more complex off-chip hardware using the microcontroller's GPIO pins, and is an important step towards building user-friendly and effective embedded systems.
+:::
+
+## 7-Segment Displays
+
+7-segment displays are commonly found in user-facing embedded systems, such as clock radios, household appliances, vehicles, and industrial equipment. While LED status indicators are often used for simple devices, they cannot communicate detailed information such as sensor readings or error codes. Gaining traction in the 1970s with the advent of LED technology, 7-segment displays bridge the gap between basic indicator lights and more complex graphic screens, commonly offering one or multiple digits composed of seven LED digit segments plus a decimal point or colon.
+
+### Segments
+
+7-segment displays are composed of a group of LED segments arranged in an "8" pattern, allowing every digit from 0-9 plus a limited selection of letters to be readable.
+
+These segments are commonly labeled A-G in a clockwise manner, with A being the top segment and G being the middle segment. Depending on the display, the segments may be wired in a common anode (LED positive terminal) or common cathode (LED negative terminal) configuration. Depending on the configuration, a slightly different circuit with inverted code logic may be necessary.
+
+Additionally, as each segment is a simple LED, current-limiting resistors are a necessary inclusion in the circuit. In some cases, it may be acceptable to place a single resistor between in series with the common pin, especially if the resistor is of a high value to significantly limit the segment's brightness. However, in most cases, it is ideal to adhere to the best practice of placing a current-limiting resistor in series with each *segment* so that manufacturing discrepancies between segments do not allow any individual segment to endanger itself with a high current.
+
+### Wiring
+
+A 7-segment display will allocate a significant number of pins on a microcontroller, often using up nearly an entire GPIO port. If the decimal point is not used, one pin may be saved, but in many cases, it is beneficial to use a BCD to 7-segment decoder IC, such as the 74LS147, or even an 8-bit serial-in, parallel-out shift register such as the 74HC595 for greater GPIO pin efficiency. However, for the purposes of this guide, the 7-segment display will be directly connected to the microcontroller, using 8 GPIO pins.
+
+In an ideal design, such as when building a PCB carrier board for the EFR32MG24 chip, a bank of pins such as PC00-PC07 may be used, allowing the GPIO port C MODEL register to be written in its entirety and full bytes written to the pin set and clear ports.
+
+However, the EFR32XG24 Dev Kit board does not break out a single port in its entirety, therefore requiring the display to share pins between Port A and Port C. Segments A-E will use PC01-PC05, while F, G, and the decimal point (DP) will be connected to PA05-PA07, as displayed in Figure [5.1](#fig:7-segment-wiring){reference-type="ref" reference="fig:7-segment-wiring"}. This requires in code an array of GPIO ports and pins to look up the right one for a given segment:
+
+```c         
+// use gpioPortC (2) pins 1-5 for A-E, and gpioPortA (0) pins 5-7 for F, G, and DP
+//                               A  B  C  D  E  F  G  .
+const uint8_t segment_ports[] = {2, 2, 2, 2, 2, 0, 0, 0};
+const uint8_t segment_pins[] =  {1, 2, 3, 4, 5, 5, 6, 7};
+```
+
+![Figure 5.1: Wiring diagram for a single common cathode 7-segment display](img/chapter5-segment-wiring.png){#fig:7-segment-wiring width="0.5\\linewidth" fig-alt="Figure 5.1: Wiring diagram for a single common cathode 7-segment display"}
+
+### Digit display logic
+
+With these arrays created, the pattern of segments to enable for any character can now be defined. As there are eight segments in total, it makes sense to represent these patterns as bits in a byte, allowing for straightforward storage and lookup. To construct this byte, one may represent segment A as bit 0, B as bit 1, and so on until DP is bit 7. This results in Table [5.1](#table:7segmentlookuptable){reference-type="ref" reference="table:7segmentlookuptable"}, displaying the construction of hexadecimal codes for digits 0-9.
+
+::: {#table:7segmentlookuptable}
+|  |  |  |  |  |  |  |  |  |  |
+|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
+| **Digit** | **bit 7** | **bit 6** | **bit 5** | **bit 4** | **bit 3** | **bit 2** | **bit 1** | **bit 0** | **Hexadecimal** |
+|  | **.** | **G** | **F** | **E** | **D** | **C** | **B** | **A** |  |
+| **0** | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | **0x3F** |
+| **1** | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 0 | **0x06** |
+| **2** | 0 | 1 | 0 | 1 | 1 | 0 | 1 | 1 | **0x5B** |
+| **3** | 0 | 1 | 0 | 0 | 1 | 1 | 1 | 1 | **0x4F** |
+| **4** | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | **0x66** |
+| **5** | 0 | 1 | 1 | 0 | 1 | 1 | 0 | 1 | **0x6D** |
+| **6** | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | **0x7D** |
+| **7** | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | **0x07** |
+| **8** | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | **0x7F** |
+| **9** | 0 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | **0x6F** |
+
+: Lookup table for 7-segment display digit codes
+:::
+
+These hexadecimal codes for each digit can then be inserted into another array, with the array index mapping a desired digit to its segment code. In a later exercise, you will be required to expand this array to support hexadecimal digits as well.
+
+### Display driver code
+
+Now that this look-up array for digits is implemented, driving the 7-segment display is trivial. Each GPIO pin in use must be set up as an output. Each pin may then be looped through, and set or cleared depending on if its corresponding bit in the hexadecimal code is set. This can be achieved by shifting the hexadecimal code right by the loop iterator variable, then evaluating based on the bitwise AND of the shifted code and 1.
+
+```c         
+for (int i = 0; i < 8; i++) // loop through all segments
+{ 
+    if ((segments[arbitrary_digit] >> i) & 1) // look up hex code, shift right, AND
+    {
+        GPIO->P_SET[segment_ports[i]].DOUT = 1 << segment_pins[i]; // turn on segment
+    }
+    else
+    {
+        GPIO->P_CLR[segment_ports[i]].DOUT = 1 << segment_pins[i]; // turn off segment
+    }
+}
+```
+
+In this example, we use the `segments` array to loop up the hex code for a given `arbitrary_digit`, which could be an integer literal or a variable. The looked up code is shifted right based on the index of the current digit to be illuminated or turned off. With the bit of interest now moved to bit 0, it is compared with 1 to determine the appropriate state for the segment.
+
+### Multiple digits
+
+In many applications, multiple 7-segment digits are necessary to display a larger number or other more detailed information. Even displaying time in a 12- or 24-hour format requires four digits. Therefore, it is often beneficial to combine multiple 7-segment displays into a single module, and these are commonly available in 2, 4, 6, or 8 digit configurations. However, using 8 GPIO pins per segment can quickly waste all available microcontroller pins. Instead, all digits in a module *multiplex*, or share, segment pins, which means that all segments, if illuminated at the same time, would show the same character. To facilitate this multiplexing, each digit has its own separate common cathode or common anode pin, which can be connected or disconnected to power. Each digit may then be lit one after another, with only one on at a given time, and this process is constantly repeated to create the effect that all digits are constantly on.
+
+This does necessitate the use of an NPN transistor for each digit to switch the common pin load of the digit on and off, as the microcontroller cannot sink this significant current into a single GPIO. An example circuit is included in Figure [5.2](#fig:multi-digit-7-segment-schematic){reference-type="ref" reference="fig:multi-digit-7-segment-schematic"}, demonstrating the connections of a two-digit module with a common cathode configuration to an MCU.
+
+### Multiple digits logic
+
+The same code may be used for driving multiple digits as a single digit; after all, the only difference is that the lit digit must be changed repeatedly. It is therefore ideal to move the single digit driver code to its own function so that it may be reused. The infinite loop must be adjusted to drive each digit's transistor base pin high, then display a given digit, and finally switch the transistor back off before repeating the process for the next digit. This must be done quickly to avoid flicker at a frequency that is visible to the human eye, but not so quickly that the LEDs in each segment do not have time to reach their full brightness. Therefore, a few milliseconds of delay may be necessary while each digit is on before quickly switching to the next digit.
+
+![Figure 5.2: Two common-cathode 7-segment display digits switches by transistors](img/chapter5-segment-multi-schematic.png){#fig:multi-digit-7-segment-schematic width="0.75\\linewidth"}
+
+### Exercise: Displaying hexadecimal numbers
+
+Complete Table [5.1](#table:7segmentlookuptable){reference-type="ref" reference="table:7segmentlookuptable"} with the additional hexadecimal digits A-F, and expand the array. Then, try displaying 8-bit numbers in hexadecimal format with a two-digit 7-segment display module.
+
+## Parallel LCD displays
+
+When more letters or symbols must be displayed to a user than is practical with a simple 7-segment display, or a graphical user interface is it is common to use a screen. Early computers generated signals to drive CRT screens, with a limited number of display lines and colors. Now, while full-color, high resolution monitors and other displays are widespread, it is still common to find smaller, often monochrome screens used in embedded systems due to their simplicity and minimal power consumption. In this section, we will learn about interfacing with a liquid crystal display (LCD) screen that can display two lines of 5x8 pixel characters. These low-cost displays are commonly found on budget 3D printers, control units for machinery, or in vehicle entertainment systems.
+
+### 16x2 Character LCD
+
+An inexpensive character-based LCD module often contains 2-4 rows of 8-20 characters. In this case, the common LCD1602 module with 2 rows of 16 characters will be used. At the top of the display is a row of pins for powering and controlling the display. Table [5.2](#table:16x2lcdpins){reference-type="ref" reference="table:16x2lcdpins"} displays details for each pin, but most commonly found on these displays are power and ground for the display, a separate anode and cathode for the backlight LED, a contrast adjustment, and a number of data and control signals. To understand how to interface with the LCD, we must examine the display's built in controller.
+
+### LCD Controller
+
+The LCD module has an on-board Hitachi HD44780U controller that generates signals for the individual pixels of the display. The HD44780U is based on an original 1980s design, retaining command and feature parity while supporting modern microcontroller interfaces. It has two host-facing I/O registers as well as internal memory, meaning that data written to the display remains until it is next updated, reducing host MCU processor load. A 4- and 8-bit interface allows writing to, or reading from, both the instruction register or data register, which are used for configuration and character output, respectively. Therefore, these displays are known as using a parallel interface, as multiple bits of data are transferred at the same instant. More advanced displays may also offer additional interfaces that we will learn about later, such as I^2^C or SPI. It is important to read and understand the datasheet for the LCD controller to learn how to interface with it. The datasheet is linked here, but excerpts will be taken from it in this section: <https://www.sparkfun.com/datasheets/LCD/HD44780.pdf>
+
+![Figure 5.3: Pinout for commonly available 16x2 LCD modules](img/chapter5-lcd-pins.png){fig-alt="Figure 5.3: Pinout for commonly available 16x2 LCD modules" fig-align="center"}
+
+::: {#table:16x2lcdpins}
+| **Pin** | **Symbol** | **Description**                                  |
+|:--------|:-----------|:-------------------------------------------------|
+| **1**   | **GND**    | Display ground.                                  |
+| **2**   | **VCC**    | Display power. Connect to 5V.                    |
+| **3**   | **V0**     | Display contrast adjustment. 0-5V range.         |
+| **4**   | **RS**     | Register select. 0 for instructions, 1 for data. |
+| **5**   | **R/W**    | Read/write. 0 for write, 1 for read.             |
+| **6**   | **E**      | Enable. Starts data read/write operation.        |
+| **7**   | **D0**     | Data bit 0, used in 8-bit mode.                  |
+| **8**   | **D1**     | Data bit 1, used in 8-bit mode.                  |
+| **9**   | **D2**     | Data bit 2, used in 8-bit mode.                  |
+| **10**  | **D3**     | Data bit 3, used in 8-bit mode.                  |
+| **11**  | **D4**     | Data bit 4, used in 4-bit and 8-bit mode.        |
+| **12**  | **D5**     | Data bit 4, used in 4-bit and 8-bit mode.        |
+| **13**  | **D6**     | Data bit 4, used in 4-bit and 8-bit mode.        |
+| **14**  | **D7**     | Data bit 4, used in 4-bit and 8-bit mode.        |
+| **15**  | **A**      | Backlight LED anode. Connect to 5V.              |
+| **16**  | **K**      | Backlight LED cathode. Connect to GND.           |
+
+: Table 5.2: Pin designations and descriptions for the 16x2 LCD display
+:::
+
+### LCD Wiring
+
+As referenced above, these displays support both a 4-bit and an 8-bit data transfer mode, with the 8-bit data length allowing for faster and simpler transmissions while the 4-bit data length increases software complexity but requires fewer GPIO pins to be allocated.
+
+In both cases, the display also requires three additional control signals, `RS`, `RW`, and `E`. The `RS` line selects between the instruction register (if set to 0), and the data register (if set to 1) of the HD44780 controller, allowing data sent to be interpreted as a command or a character to display. The `RW` line configures the data pins for read or write mode, from the perspective of the host MCU. Because the display will receive commands and data from the MCU most of the time, the `RW` line will often be 0, however, in some cases such as reading the address of the display cursor or the display's busy signal, this line should be brought high. Finally, the `E`---or enable---signal causes a data transfer to occur. When writing to the display, the data and control lines should first be set up, and then the enable line quickly toggled on then back off, causing the HD44780U to accept the command or data.
+
+In total, the 4-bit data mode will use a minimum of 7 GPIOs, and the 8-bit mode a minimum of 11 GPIOs. While they are not prohibitive, these are significant pin allocations for a single peripheral, and care must be taken when designing an embedded system to make good use of available pins.
+
+Therefore, this section will take into account the additional complexity of the 4-bit data mode, making the 8-bit mode comparatively trivial to implement. To begin, the LCD should be connected to the EFR32XG24 Dev Kit as shown in the schematic in Figure [5.4](#fig:lcdschematic){reference-type="ref" reference="fig:lcdschematic"} and the wiring diagram in Figure [5.5](#fig:lcdwiring){reference-type="ref" reference="fig:lcdwiring"}.
+
+![Figure 5.4: Schematic diagram of LCD connections to EFR32XG24 Dev Kit](img/chapter5-lcd-schematic.png){fig-alt="Figure 5.4: Schematic diagram of LCD connections to EFR32XG24 Dev Kit" fig-align="center"}
+
+![Figure 5.5: Wiring diagram for LCD connections to EFR32XG24 Dev Kit](img/chapter5-lcd-wiring.png){fig-alt="Figure 5.5: Wiring diagram for LCD connections to EFR32XG24 Dev Kit" fig-align="center"}
+
+### LCD Data Transfer
+
+The LCD accepts command and data bytes on the four or eight connected data lines, on the falling edge of a single pulse of the enable line. The three control lines and all of the data lines must first be written to, so that the data on them is valid at the time of the enable line pulse. In 8-bit mode, each pulse of the enable line corresponds with a single instruction or data. However, in 4-bit mode, two consecutive writes or reads are necessary to transmit a full command. The command's byte must be split into two nibbles---groups of four bits--- and then transmitted with the most significant bits (MSBs) `7:4` first, followed by the least significant bits (LSBs) `3:0`. At the completion of the second data transfer, the LCD will execute the command and, after a brief period, be ready to accept more. The following code implements the protocol described above to send instructions or data to the LCD. Note that this code assumes that the control and data pins have already been configured as outputs.
+
+```c         
+void lcd_nibble_write(uint8_t data, uint8_t register_select)
+{
+    lcd_wait(); // wait until busy flag is not set (covered later in chapter)
+
+    GPIO->P_CLR[DATA_port] = DATA_mask;               // clear data bits PC04-PC01
+    GPIO->P_SET[DATA_port] = (data << 1) & DATA_mask; // set data bits shifted onto the correct pins
+
+    if (register_select) // data
+        GPIO->P_SET[CTRL_port] = 1 << RS_pin;
+    else // command
+        GPIO->P_CLR[CTRL_port] = 1 << RS_pin;
+
+    GPIO->P_SET[CTRL_port] = 1 << EN_pin; // set enable
+    sl_sleeptimer_delay_millisecond(1);
+    GPIO->P_CLR[CTRL_port] = 1 << EN_pin; // unset enable
+}
+```
+
+The `lcd_nibble_write` function takes two arguments, the first being the data (whether it be an instruction or character) to transmit, and the second being a boolean for the register select line. First, the function checks the LCD busy flag to determine if the LCD controller is ready to accept new data. This function will be discussed later, and may be implemented or replaced with a delay. The data lines are then cleared so that any previously sent data does not interfere with the new data to be written. As the data is expected in the lower four bits of the data byte, it is shifted into the correct position on the port based on the wiring diagram. Depending on the wrapper code for this function, an additional masking of the data may be wise to avoid tampering with other GPIO pins. The register select pin is also written to match the `register_select` argument, and finally the enable line toggled to complete the transmission.
+
+### LCD Instructions
+
+Sending a full command or character to the LCD just requires two calls to the already-implemented `lcd_nibble_write` function, one for each nibble that must be transmitted. It may be beneficial to write a wrapper function that does this automatically, requiring only the full byte of data, and potentially a register select argument to complete the entire process. This would involve shifting the data argument right four bits, calling `lcd_nibble_write` to transmit these MSBs, then masking out the upper four bits of the data argument and again calling `lcd_nibble_write`.
+
+With the understanding of sending full commands to the LCD, it can now be properly initialized. To do so, it is necessary to consult the HD44780U datasheet to properly form the LCD commands. An excerpt from the datasheet is included in Figure [5.6](#fig:lcdinstructions){reference-type="ref" reference="fig:lcdinstructions"}.
+
+![Figure 5.6: Instruction table for HD44780 (HD44780U Datasheet page 25)](img/chapter5-lcd-instructions.png){fig-alt="Figure 5.6: Instruction table for HD44780 (HD44780U Datasheet page 25)" fig-align="center"}
+
+Going through these instructions, it is clear that the command itself is determined by the place of the leftmost set bit.
+
+The first couple of instructions at the top, Clear display and Return home, do not require arguments, and therefore require no bits lower than the leftmost set bit to change their behavior.
+
+The next command, eEtry mode set, determines if the LCD's internal DDRAM address counter is increased or decreased after a character is sent. The DDRAM address corresponds with the cursor position, so it is most common for bit 1 to be set for this command. Bit 0 in the entry mode set command controls if the display should be shifted, as in, the cursor remains in the same position on the display and all other letters scroll around it when a character is sent. This mode is sometimes useful for displaying a wide line of scrolling text.
+
+The Display on/off control command allows the display itself, the cursor, and the cursor blinking to be turned on or off. Setting any of the argument bits for this command turns them on. For text entry, it is common for all three bits (`2:0`) to be set, giving a blinking cursor for the next character. For status or sensor reading displays, only bit 2 (entire display) should be set, as the cursor would be visually distracting in this case.
+
+The Cursor or display shift command manually increments or decrements the cursor position, or shifts the entire display right or left. This may be used for a backspace action or for scrolling text.
+
+The Function set command is important for initialization of the display. The data length bit (4) selects between 4- and 8-bit modes, with 0 representing 4 bits and 1 representing 8 bits. The value for this bit will depend on the wiring for the LCD chosen previously. The number of lines bit (3) configures the display controller for 1 or 2 lines of text, with 0 representing 1 line, and 1 representing 2 lines. The value for this bit should be chosen based on the LCD hardware in use. Finally, the character font bit (2) chooses between a 5x8 or 5x10 character font, and should also be chosen depending on the LCD's capabilities.
+
+The Set CGRAM address and Set DDRAM address are nearly identical, differing only in the number of bits available for the address and the RAM to write to. The CGRAM may be reconfigured while in operation with custom characters, and using the Set CGRAM address command is useful to select the custom character to overwrite. The DDRAM, which stores characters themselves that have been sent to the display, is more commonly used. Because the LCD DDRAM stores 80 character bytes, and the display is split into two lines, the second line begins at byte 40 of the DDRAM. This means that writing more than 16 characters on the first line will not automatically wrap to the second for many more characters; instead, the DDRAM address must be set to decimal 40 to begin the second line. For both commands, the address is specified in the bits lower than the leftmost set bit, and should be a valid address within the memory limits of the display controller.
+
+The last command in the Figure [5.6](#fig:lcdinstructions){reference-type="ref" reference="fig:lcdinstructions"} instruction table requires the `R/W` bit to be set and the data lines used as inputs to the host MCU. This command allows the LCD busy flag to be read using bit 6 of the LCD controller's response. It also allows for the host MCU to read the LCD controller's address counter in the lower bits `5:0`.
+
+When using the 4-bit data length, each of these commands must be constructed by the MCU, then split into the high-order and low-order nibbles to send sequentially to the LCD.
+
+### LCD Initialization
+
+With all LCD commands accounted for, the LCD may now be initialized before use. Included in Figure [5.7](#fig:lcdinitialization){reference-type="ref" reference="fig:lcdinitialization"} is the steps necessary to initialize the LCD in 4-bit mode.
+
+At power-up, every LCD character will be fully filled in, initialized, and cleared before characters can be written to it. Based on Figure [5.7](#fig:lcdinitialization){reference-type="ref" reference="fig:lcdinitialization"}, despite the LCD being automatically reset at power on, a manual reset sequence is necessary to synchronize the nibble transmissions. This reset sequence uses only `lcd_nibble_write`, as it is not yet ready to receive full commands. After this reset sequence is completed, the 4-bit mode, number of lines, and character size are then set in a single function set command, and further configuration commands may be used to clear the display, move the cursor, or adjust scrolling before characters are written to the LCD for the first time.
+
+### LCD Usage
+
+Now that the LCD is initialized, characters may be written to the LCD by sending their ASCII codes, split up into 4-bit nibbles, to the LCD with the `RS` control line now set high. This will cause the LCD to write these characters into the DDRAM, where they are directly displayed.
+
+Many effects may be created by combining the Set DDRAM address and cursor/display shift commands, including left, center, and right-aligned text, scrolling text, or even a small table of sensor readings.
+
+![Figure 5.7: Block diagram of initialization sequence for HD44780U in 4-bit mode (HD44780U Datasheet page 46)](img/chapter5-lcd-init.png){fig-alt="Figure 5.7: Block diagram of initialization sequence for HD44780U in 4-bit mode (HD44780U Datasheet page 46)"}
+
+### LCD Wait
+
+The LCD's busy flag can be read while it processes commands internally. To handle this, you can implement the `lcd_wait` function, which repeatedly reads the busy flag by setting R/W to 0 and configuring the data lines as input. When the function should wait in a while loop reading the busy flag until the LCD is again ready to accept commands. Calling `lcd_wait` should be done before sending any instructions or data to the LCD, to ensure that it is ready to receive data. Alternatively, you can use the `sl_sleeptimer_delay_ms` function to wait for a duration longer than any command processing requires. While this latter approach is simpler, it is less effective for high-frequency display updates due to the inherent required delay. For this technique, waiting for 2 milliseconds following any command is practical and easy to implement.
+
+### Exercise: Displaying a centered string
+
+For this exercise, write a function that writes a c-string argument centered on the first line of the display. Check that the string passed to the function is no longer than 16 characters. With this condition met, calculate based on the length of the string the DDRAM address offset necessary to center the string.
+
+For example, the string `EE260` is $5$ characters long. The number of characters that should be blank on the line is $16-5=11$. To left align the text, the necessary offset is obviously $0$. To right align the text, the offset should be $11$, so that the $5$ additional characters are placed directly touching the right side of the display. To center align the text, the remaining blank characters must be divided by 2. An integer division of $11/2=5$ as the decimal is truncated, meaning that the necessary DDRAM offset is $5$, which will leave $6$ characters to the right of the text.
+
+The necessary DDRAM offset may then be set using the appropriate LCD command, then the characters of the string transferred to the display.
+
+As an extension to this exercise, you may write a function that takes an additional argument to select the type of alignment and display line to place an arbitrary string of text on.
+
+## Keypad
+
+Many embedded systems with user interfaces are controlled by simple inputs, such as a joystick, multifunctional knobs, or often, a group of buttons. In cases where many buttons are required, such as for numerical or even text input, connecting a single button to its own GPIO pin is inefficient. With a 4x4 grid of buttons requiring 16 pins, an I/O expander or separate microcontroller dedicated to I/O would likely be necessary. However, a clever arrangement of switches in a grid such as this allows for pins to be multiplexed, requiring a minimum of $\sqrt{\text{\# of buttons}}$ pins to read each button. This works by connecting one side of each switch to a common row, and the other side of the switch to a common column. For a 4x4 grid, only 8 pins are necessary to read the entire matrix layout.
+
+### Keypad Matrix Wiring
+
+Commonly available matrix keypads simply implement the row and column switch connections to pushbuttons integrated in the module. Their pinout is often just a connection for each row and column, allowing them to easily be connected to GPIO pins on an MCU, as shown in Figure [5.8](#fig:keypadwiring){reference-type="ref" reference="fig:keypadwiring"}.
+
+The internal connections of the keypad may be displayed differently depending on preferences for the schematic. However, it is common to see the switches aligned on a 45angle, bridging between their respective row and column common lines, as illustrated in Figure [5.9](#fig:keypadschematic){reference-type="ref" reference="fig:keypadschematic"}.
+
+![Figure 5.8: Pinout for an off-the-shelf keypad](img/chapter5-keypad-wiring.png){fig-alt="Figure 5.8: Pinout for an off-the-shelf keypad" fig-align="center"}
+
+![Figure 5.9: Schematic diagram of a 4x4 pushbutton switch matrix](img/chapter5-keypad-schematic.png){fig-alt="Figure 5.9: Schematic diagram of a 4x4 pushbutton switch matrix" fig-align="center"}
+
+### Reading Keypad Matrix
+
+To read a matrix of switches, one axis should be connected to GPIO outputs. For example, we will connect the rows to output pins, writing all pins high to begin with. The other axis should be connected to internally pulled-down inputs, meaning that when any key is pressed, one of the high rows will be connected to the input, bringing it high. When this is detected, either with polling or an interrupt-based system, the microcontroller may now identify which key has been pressed.
+
+### Identifying Pressed Key
+
+Once the MCU has been alerted that any key has been pressed, it may now scan the switch matrix to determine the specific key. To do this, all rows should be written low, except for the first row. This may be achieved in practice by writing all rows low first, then immediately writing the first row high. The MCU may then check if any key in the first row has been pressed by again reading all of the column inputs. If any of the column inputs are high, the currently checked row and column that is high correspond with the pressed key. Otherwise, the MCU must repeat the process, writing the next row low. In this way, the pressed key can quickly be determined, and other actions can be taken based on it. This process is outlined in Figure [5.10](#fig:keypaddetectionflowchart){reference-type="ref" reference="fig:keypaddetectionflowchart"}, a flowchart showing the logic necessary for efficient detection of keypresses.
+
+![Figure 5.10: Flowchart for detecting any keypress, then identifying the speci ic key](img/chapter5-keypad-flowchart.png){fig-alt="Figure 5.10: Flowchart for detecting any keypress, then identifying the speci ic key" fig-align="center"}
+
+A simplified sample implementation of this process is included below. The code implements nested-loop logic to scan a 4x4 matrix keypad using EFR32XG24 Dev Kit GPIO pins. First, the GPIO pins are initialized, with the column input pins (PC04--PC01) are configured as inputs, and the row output pins (PC05, PA07--PA05) are set to push-pull (output) mode. In the main loop, all the row pins are activated by setting them high. Then, if any of the column pins detects a high signal, representing a key press, the program iterates through each row to isolate the pressed key. During this process, all rows are brought low save for the current row of interest, and the program checks each column pin to identify the specific key pressed.
+
+```c         
+// column inputs are on PC04-PC01
+const uint8_t row_ports[] = {2, 0, 0, 0}; // PC05, PA07-PA05 are row outputs
+const uint8_t row_pins[] = {5, 7, 6, 5};  // PC05, PA07-PA05 are row outputs
+
+int main(void)
+{
+    GPIO->P[gpioPortC].MODEL |= 0x1111 << (1 * 4); // input mode
+
+    for (int i = 0; i < 4; i++)
+        GPIO->P[row_ports[i]].MODEL |= 0x4 << (row_pins[i] * 4); // output mode
+
+    while (1)
+    {
+        for (int i = 0; i < 4; i++)
+            GPIO->P_SET[row_ports[i]] = 1 << row_pins[i]; // set row pins
+
+        if (GPIO->P[gpioPortC].DIN & 0xF << 1) // check if any key is pressed
+        {
+            for (int i = 0; i < 4; i++) // loop through all columns
+            {
+                for (int j = 0; j < 4; j++)
+                    GPIO->P_CLR[row_ports[j]] = 1 << row_pins[j]; // clear all row pins
+                GPIO->P_SET[row_ports[i]] = 1 << row_pins[i];     // set current row pin
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (GPIO->P[gpioPortC].DIN << 1 & 1 << i) // check if column pin is high
+                    {
+                        // this is the key pressed
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### Power Efficiency
+
+A key benefit of reading a switch matrix using this technique, especially with the EFR32MG24, which supports GPIO interrupts from all Energy Management levels. This means that the processor may go into its deepest sleep state while still waiting for keypresses from the matrix. This requires interrupt logic, which will be discussed later, but the general implementation is as follows:
+
+The GPIO pins for the rows may be set high, and configured to retain their values while in sleep mode. An interrupt to wake the processor from sleep may be enabled on all input pins, meaning that any keypresses will now trigger the interrupt, waking the MCU from sleep. It can now progress directly into the key identification phase, finding the pressed key and performing an action before returning to low-power sleep.
+
+### Limitations of Switch Matrix
+
+There exist a few limitations with this naive technique of reducing GPIO pin usage for a switch matrix, the most significant being the lack of *key rollover*. This means that the MCU cannot identify multiple keys being pressed, at least not with certainty.
+
+Finally, if the keypress time is very short, a key pressed and caught by the detection routine may already be released and missed by the identification routine. This can be compounded by switch bouncing because many keyboard matrices lack hardware debouncing, while software debouncing requires keys to be pressed for a longer period of time before the press is registered.
+
+### Exercise: Propose a solution to the key rollover problem
+
+Modern computer keyboards can detect any of their keys being pressed, as well as any combination of keys being pressed. To do this, they do not even require multiple I/O expanders or additional microcontrollers. Instead, there is electronic hardware integrated into the matrix circuit in series with every switch that ensures the proper key is detected.
+
+What could this hardware be? Explain how it may be used to support multiple simultaneous keypresses.

@@ -1,0 +1,141 @@
+# **EFR32 I/O Programming**
+
+::: chapterintro
+Embedded systems rely heavily on input/output (I/O) operations to interact with external devices such as sensors, actuators, and communication modules. The EFR32XG24 microcontroller provides versatile I/O functionalities through its General Purpose Input/Output (GPIO) pins, enabling efficient communication with hardware peripherals. Understanding GPIO configuration and control is crucial for efficient interaction with hardware peripherals. This chapter equips readers with the knowledge to configure, control, and monitor GPIO pins effectively using both register-level programming and emlib functions.
+:::
+
+## EFR32XG24 GPIO Overview
+
+As displayed in Figure [4.1](#fig:efr32mg24pinout){reference-type="ref" reference="fig:efr32mg24pinout"}, the EFR32XG24 microcontroller series includes multiple GPIO ports (A, B, C, and D), with each port supporting up to 16 pins. The key GPIO ports and pins that are available on the specific chip used in the EFR32XG24 Dev Kit are:
+
+-   PA00-PA09
+
+-   PB00-PB05
+
+-   PC00-PC09
+
+-   PD00-PD05
+
+Each GPIO pin can be individually configured for various modes, including input, output, and alternate functions.
+
+Note that on the EFR32XG24 Dev Kit, only some pins are *broken out*, that is, available for use via the expansion headers on the left and right sides of the board. These pins on the expansion header, which may be found in the EFR32XG24 Dev Kit User Guide on page 19 are displayed in Figure [4.2](#fig:efr32xg24devkitpinout){reference-type="ref" reference="fig:efr32xg24devkitpinout"}.
+
+### Clock Management Unit (CMU)
+
+The Clock Management Unit (CMU) controls the clock signals for various peripherals, including GPIO. Before using GPIO, its corresponding clock must be enabled by setting the appropriate bit in the `CMU_CLKEN0` register:
+
+```c         
+CMU->CLKEN0 |= 1 << 26;
+```
+
+This ensures that the GPIO module is both powered up and ready for use with a clock connected.
+
+The `CMU_CLKEN0` register also allows activating the clock to other peripherals through the use of the same code as above. The only required change is the bit to modify, by changing the number of bits to shift the `1` left to one of the options shown in Figure [4.3](#fig:cmu_clken0){reference-type="ref" reference="fig:cmu_clken0"}.
+
+![Figure 4.1: Pinout of QFN-48 packaged EFR32MG24 microcontroller (EFR32MG24 Datasheet page 107)](img/chapter4-efr32-pinout.png){fig-alt="Figure 4.1: Pinout of QFN-48 packaged EFR32MG24 microcontroller (EFR32MG24 Datasheet page 107)"}
+
+![Figure 4.2: EFR32XG24 Dev Kit Expansion Header Pinout (UG524 page 19)](img/chapter4-devkit-pinout.png){fig-alt="Figure 4.2: EFR32XG24 Dev Kit Expansion Header Pinout (UG524 page 19)"}
+
+![Figure 4.3: Peripherals available to enable in the CMU_CLKEN0 register (Reference manual page 173)](img/chapter4-cmu-clken0.png){fig-alt="Figure 4.3: Peripherals available to enable in the CMU_CLKEN0 register (Reference manual page 173)"}
+
+![Figure 4.4: The MODEL and MODEH registers for EFR32MG24 GPIO Port A (Reference manual page 851)](img/chapter4-model-modeh.png){fig-alt="Figure 4.4: The MODEL and MODEH registers for EFR32MG24 GPIO Port A (Reference manual page 851)"}
+
+### GPIO Configuration
+
+Each GPIO pin can serve multiple functions controlled by the MODEL and MODEH registers:
+
+-   **MODEL:** Configures pins 0-7 of the port.
+
+-   **MODEH:** Configures pins 8-15 of the port.
+
+Each pin mode is represented by 4 bits, supporting modes such as:
+
+-   0: Disabled
+
+-   1: Input
+
+-   2: Input pull-up/down
+
+-   4: Push-pull (Output)
+
+In pull-up/pull-down mode, the value of the `DOUT` register (covered later) determines the pull direction, with a `1` being pull-up and `0` being pull-down.
+
+To set a pin mode programmatically:
+
+```c         
+GPIO->P[gpioPortX].MODEL |= mode << (4 * n);
+```
+
+For pin numbers 8-15:
+
+```c         
+GPIO->P[gpioPortX].MODEH |= mode << (4 * (n - 8));
+```
+
+A total of 16 pin modes are available for each GPIO pin. While many of these modes are not used in basic applications, Figure [4.5](#fig:moden){reference-type="ref" reference="fig:moden"} displays all of the available options.
+
+![Figure 4.5: Mode register value options for each GPIO pin (Reference manual page 851)](img/chapter4-mode-n.png){#fig:moden width="0.6\\linewidth"}
+
+### GPIO Output Control
+
+GPIO output can be managed using the following registers:
+
+-   **DOUT:** Directly outputs data to pins.
+
+-   **SET:** Atomically sets specified bits.
+
+-   **CLR:** Atomically clears specified bits.
+
+-   **TGL:** Atomically toggles specified bits.
+
+Example of setting and clearing pins:
+
+```c         
+GPIO->P[gpioPortD].DOUT |= 1 << 2; // Set pin 2 of Port D
+GPIO->P[gpioPortD].DOUT &= ~(1 << 2); // Clear pin 2 of Port D
+```
+
+### GPIO Input Control
+
+GPIO pins configured as inputs can be read using the DIN register:
+
+```c         
+uint8_t pinState = (GPIO->P[gpioPortX].DIN >> n) & 1;
+```
+
+This reads the state of pin `n` and returns either 0 or 1.
+
+### Using emlib for GPIO
+
+EFR32 provides the **emlib** hardware abstraction layer (HAL) for GPIO configuration:
+
+-   GPIO_PinModeSet(port, pin, mode)
+
+-   GPIO_PinOutSet(port, pin)
+
+-   GPIO_PinOutClear(port, pin)
+
+-   GPIO_PinOutToggle(port, pin)
+
+-   GPIO_PinInGet(port, pin)
+
+Example of setting a pin as output using emlib:
+
+```c         
+GPIO_PinModeSet(gpioPortD, 2, gpioModePushPull); // Set the Push Pull Mode of Pin 2 of Port D
+GPIO_PinOutSet(gpioPortD, 2); // Set pin 2 of Port D
+```
+
+### Practical Example: Blinking an LED
+
+A simple example of GPIO programming is blinking an LED connected to a GPIO pin:
+
+```c         
+GPIO_PinModeSet(gpioPortD, 2, gpioModePushPull);
+while (1) {
+    GPIO_PinOutToggle(gpioPortD, 2);
+    delay(1000);
+}
+```
+
+This toggles the LED state every second.

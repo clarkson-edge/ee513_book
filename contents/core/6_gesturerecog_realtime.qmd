@@ -1,0 +1,288 @@
+# Real-Time Gesture Recognition
+
+::: chapterintro
+Edge AI combines the power of artificial intelligence and edge computing to enable real-time decision-making directly on embedded devices. This chapter explores the implementation of Edge AI for gesture recognition using the EFR32XG24 microcontroller. By leveraging AI models optimized for resource-constrained environments, embedded systems can interpret gesture inputs with low latency and high accuracy, enhancing applications in fields such as human-computer interaction, rehabilitation, and IoT-based control systems.
+:::
+
+## Introduction to Edge AI in Embedded Systems
+
+Edge AI refers to deploying AI models on edge devices, such as microcontrollers, where data is processed locally instead of being sent to a centralized cloud server. This paradigm reduces latency, enhances data privacy, and ensures uninterrupted operation even in environments with limited connectivity.
+
+As embedded systems become more advanced, the need for efficient on-device data processing grows. Traditional systems rely heavily on cloud infrastructure, which can introduce latency, data privacy concerns, and increased operational costs. Edge AI addresses these issues by allowing computations to occur on the microcontroller itself, ensuring responsiveness and independence from network stability. With microcontrollers like the EFR32XG24, AI algorithms are executed efficiently despite hardware and memory constraints.
+
+```c         
+// Example: Initialize Edge AI on EFR32XG24
+void initEdgeAI() {
+    configureClock();
+    enableAIAccelerator();
+    loadAIModel();
+    initializeSensors();
+}
+
+initEdgeAI();
+```
+
+### Advantages of Edge AI
+
+Edge AI offers several critical advantages that make it an essential technology for embedded systems:
+
+-   **Low Latency:** Immediate processing without reliance on cloud servers.
+
+-   **Improved Privacy:** Sensitive data remains on the device.
+
+-   **Reduced Bandwidth Usage:** No need for constant data transmission.
+
+-   **Energy Efficiency:** Optimized AI models reduce power consumption.
+
+-   **Scalability:** Multiple devices can operate independently.
+
+-   **Offline Operation:** Systems continue functioning without an active internet connection.
+
+These benefits are especially important in applications like gesture recognition, where real-time response is crucial for effective interaction. Devices deployed in remote or resource-limited environments can operate reliably without relying on continuous cloud access.
+
+```c         
+// Example: Optimizing AI Model
+void optimizeAIModel() {
+    reducePrecision();
+    quantizeWeights();
+    minimizeMemoryFootprint();
+}
+
+optimizeAIModel();
+```
+
+### Why EFR32XG24 for Edge AI?
+
+The EFR32XG24 microcontroller, equipped with an ARM Cortex-M33 core and integrated BLE capabilities, provides an ideal platform for Edge AI applications. Its features include:
+
+-   Support for TinyML frameworks.
+
+-   Dedicated hardware accelerators for AI computations.
+
+-   Energy-efficient architecture for battery-operated devices.
+
+-   Advanced security features for data integrity.
+
+-   High-speed BLE communication for real-time data transfer.
+
+-   Integrated peripherals for sensor interfacing.
+
+<!-- -->
+
+```c         
+// Example: BLE Initialization for Edge AI
+void initBLE() {
+    BLE_init();
+    BLE_enable();
+    BLE_setMode(BLE_LOW_POWER);
+}
+
+initBLE();
+```
+
+Furthermore, the microcontroller's native support for TensorFlow Lite for Microcontrollers (TFLM) allows seamless deployment of lightweight AI models. Its power efficiency ensures prolonged operational life.
+
+## Gesture Recognition System Overview
+
+Gesture recognition systems are a subset of human-computer interaction technologies that allow users to control and interact with devices using physical gestures. In an embedded context, gesture recognition systems aim to interpret motion patterns captured by sensors like IMUs (Inertial Measurement Units). The EFR32XG24 microcontroller enables real-time gesture recognition while maintaining energy efficiency and responsiveness.
+
+### System Components
+
+A gesture recognition system using the EFR32XG24 microcontroller involves several key components:
+
+-   **Sensors:** Inertial Measurement Unit (IMU) for capturing motion data.
+
+-   **AI Model:** A lightweight Convolutional Neural Network (CNN) optimized for TinyML.
+
+-   **Data Preprocessing:** Noise filtering and segmentation.
+
+-   **BLE Communication:** Real-time data transfer to mobile devices.
+
+-   **Power Management System:** Ensures long battery life.
+
+<!-- -->
+
+```c         
+// Example: Read IMU Sensor Data
+float readIMU() {
+    float x = IMU_getX();
+    float y = IMU_getY();
+    float z = IMU_getZ();
+    return (x + y + z) / 3;
+}
+```
+
+### System Workflow
+
+The overall workflow of a gesture recognition system includes the following stages:
+
+1.  Raw sensor data is captured using IMU sensors.
+
+2.  Data is preprocessed locally to remove noise.
+
+3.  Preprocessed data is fed into the AI model.
+
+4.  The AI model classifies the gesture.
+
+5.  Results are sent via BLE to a connected device.
+
+6.  Feedback is displayed in real-time on a mobile or desktop application.
+
+## AI Model Design for Gesture Recognition
+
+The AI model for gesture recognition is implemented using a TinyML-compatible CNN architecture.
+
+### Model Architecture
+
+The CNN architecture is carefully designed to balance accuracy, memory consumption, and computational efficiency:
+
+-   **Input Layer:** Processes time-series IMU data.
+
+-   **Convolutional Layers:** Extract spatial and temporal patterns.
+
+-   **Dropout Layers:** Prevent overfitting.
+
+-   **Fully Connected Layer:** Classifies gestures.
+
+-   **Softmax Layer:** Provides final classification probabilities.
+
+<!-- -->
+
+```c         
+// Example: Preprocessing IMU Data
+void preprocessIMUData(float* data, int size) {
+    for (int i = 0; i < size; i++) {
+        data[i] = normalize(data[i]);
+    }
+}
+```
+
+| **Layer**    | **Type**           | **Output Shape** |
+|:-------------|:-------------------|:-----------------|
+| Input        | Time-Series Data   | (128, 3, 1)      |
+| Conv2D       | Feature Extraction | (64, 128, 3, 8)  |
+| MaxPooling2D | Downsampling       | (32, 64, 8)      |
+| Dropout      | Regularization     | \-               |
+| Flatten      | Vectorization      | \(512\)          |
+| Dense        | Classification     | \(16\)           |
+| Output       | Softmax            | \(4\)            |
+
+: Table 6.1: AI Model Layers and Parameters
+
+## Methodology {#sec:methodology}
+
+This section outlines the methodology used to design and implement an Edge AI-based gesture recognition system on the EFR32XG24 BLE microcontroller. The methodology consists of four main stages: Data Acquisition, Data Preprocessing, AI Model Development, and System Integration. Each stage is elaborated below.
+
+### Data Acquisition
+
+The gesture recognition system utilizes an Inertial Measurement Unit (IMU) sensor to capture motion data. The IMU consists of accelerometers, gyroscopes, and magnetometers to measure linear acceleration, angular velocity, and orientation, respectively.
+
+**Sensor Configuration:**
+
+-   **Sensor Type:** 6-axis IMU sensor.
+
+-   **Sampling Rate:** 50 Hz.
+
+-   **Data Format:** Time-series data with X, Y, and Z-axis readings.
+
+The IMU sensor outputs raw motion data, which is collected in real-time and fed into the microcontroller for preprocessing.
+
+### Data Preprocessing
+
+Raw data from the IMU sensor is noisy and requires preprocessing before being fed into the AI model. The preprocessing pipeline includes the following steps:
+
+1.  **Noise Filtering:** A low-pass filter is applied to remove high-frequency noise.
+
+2.  **Normalization:** Sensor readings are normalized to a common scale between 0 and 1.
+
+3.  **Segmentation:** The data is divided into fixed-size time windows for analysis.
+
+The preprocessed data ensures consistency and reduces variability, enabling robust AI model performance.
+
+### AI Model Development
+
+The AI model is implemented using a TinyML-compatible Convolutional Neural Network (CNN). The architecture is optimized for low memory and computational constraints typical of embedded devices.
+
+**Model Architecture:**
+
+-   **Input Layer:** Accepts preprocessed IMU time-series data.
+
+-   **Convolutional Layers:** Extract spatial and temporal patterns.
+
+-   **Pooling Layers:** Reduce dimensionality while retaining critical features.
+
+-   **Dropout Layers:** Prevent overfitting during training.
+
+-   **Fully Connected Layers:** Map learned features to output classes.
+
+-   **Output Layer:** Softmax layer providing probabilities for each gesture class.
+
+**Training and Optimization:**
+
+-   **Framework:** TensorFlow Lite for Microcontrollers (TFLM).
+
+-   **Training Dataset:** Recorded gesture datasets.
+
+-   **Optimization Techniques:** Weight quantization, reduced precision arithmetic, and model pruning.
+
+The model was trained offline on a high-performance server and deployed onto the EFR32XG24 microcontroller after optimization.
+
+### System Integration
+
+The final deployment involves integrating the AI model with the EFR32XG24 microcontroller and establishing BLE communication for data transfer and feedback display.
+
+**System Workflow:**
+
+1.  IMU sensors capture real-time motion data.
+
+2.  Data preprocessing is performed locally on the microcontroller.
+
+3.  The preprocessed data is passed to the AI model for gesture classification.
+
+4.  Results are transmitted via BLE to connected mobile or desktop applications.
+
+5.  Feedback is displayed in real-time.
+
+**Power Management:**
+
+-   Adaptive power management is implemented to minimize battery consumption.
+
+-   Low-power BLE mode is enabled for data transmission.
+
+### Evaluation Metrics
+
+The system's performance was evaluated using the following metrics:
+
+-   **Accuracy:** Percentage of correct gesture classifications.
+
+-   **Latency:** Time taken for end-to-end gesture recognition.
+
+-   **Power Consumption:** Average energy used per gesture recognition cycle.
+
+### Hardware and Software Tools
+
+-   **Hardware:** EFR32XG24 BLE microcontroller, IMU sensor module.
+
+-   **Software:** TensorFlow Lite for Microcontrollers, Embedded C, BLE SDK.
+
+The methodology ensures an efficient, real-time, and scalable gesture recognition system optimized for embedded hardware constraints.
+
+## Challenges and Limitations {#sec:challenges}
+
+While implementing the Edge AI-based gesture recognition system on the EFR32XG24 microcontroller, several challenges and limitations were encountered. These are discussed below:
+
+1.  **Hardware Constraints:** The limited computational power and memory resources of the microcontroller posed restrictions on the complexity and size of the AI model. Optimizing the AI model for memory efficiency while maintaining accuracy was a significant challenge.
+
+2.  **Power Consumption:** Real-time gesture recognition is computationally intensive, and ensuring prolonged battery life for portable devices required careful power management strategies.
+
+3.  **Sensor Noise:** IMU sensors are susceptible to noise and environmental disturbances, which can introduce inaccuracies in gesture data. Filtering and preprocessing techniques had to be carefully designed to address this issue.
+
+4.  **Latency Constraints:** Edge AI systems require minimal latency for real-time performance. Achieving low latency while balancing model accuracy and computational load was challenging.
+
+5.  **BLE Communication Bottlenecks:** Real-time data transfer via BLE can be affected by interference, limited bandwidth, and power constraints, impacting system responsiveness.
+
+6.  **Scalability:\*\*** Scaling the system for multi-gesture recognition or increasing the number of edge devices posed integration challenges due to resource limitations.
+
+7.  **Environmental Variability:** Gesture recognition accuracy can degrade under varying environmental conditions, such as lighting changes, device orientation, or sudden movements.
+
+Addressing these challenges required a combination of hardware optimization, software fine-tuning, and iterative testing to ensure a balance between performance, accuracy, and efficiency.

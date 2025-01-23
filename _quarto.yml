@@ -1,0 +1,303 @@
+project:
+  type: book
+  output-dir: _book
+  preview:
+    browser: true
+    navigate: true
+    
+#website:
+#  announcement: 
+#    icon: book
+#    dismissable: true
+#    position: below-navbar
+#    content: |
+#        🔔 <b>What's New?</b>  
+
+book:
+#  google-analytics:
+#    tracking-id: ""
+#    anonymize-ip: true
+#    version: 1
+    
+#  comments: 
+#    hypothesis:
+#      theme: clean
+#      openSidebar: true
+
+  search:
+    keyboard-shortcut: ["~", "/"]
+    location: sidebar
+
+  navbar:
+    banner:
+      text: "Welcome to My Website!"
+      href: "https://example.com" # Optional link for the banner text
+      background-color: "#FF5733" # Optional background color
+      text-color: "#FFFFFF" # Optional text color
+      pinned: false
+      collapse: true
+      back-to-top-navigation: true
+      favicon: favicon.png
+      cover-image: cover-image-transparent.png
+      cover-image-alt: "Cover image."
+
+  bread-crumbs: true
+
+  sidebar:
+    collapse-level: 2
+    border: true
+    pinned: false
+    search: true
+
+  page-navigation: true
+  title: "Embedded Systems Design"
+  subtitle: "Utilizing the Silicon Labs EFR32XG24 BLE Microcontroller"
+
+  date: today
+  date-format: long
+
+  repo-url: https://github.com/clarkson-edge/ee513_book
+  repo-branch: dev
+  repo-actions: [edit, issue, source]
+  downloads: [pdf]
+  sharing: [twitter, facebook]
+  reader-mode: true
+  page-footer:
+    left: |
+      Written by Masuldul Imtiaz, PhD (Clarkson University)
+    right: |
+      This book was built with <a href="https://quarto.org/">Quarto</a>.
+
+      
+  chapters:
+    # Optional frontmatter (uncomment if needed)
+    # - contents/frontmatter/foreward.qmd
+    # - contents/frontmatter/about/about.qmd
+    # - contents/frontmatter/acknowledgements.qmd
+  - index.qmd
+      # Part 1: Embedded Systems Design
+  - part: "Embedded Systems Design"
+    chapters:
+    - contents/core/1_introduction.qmd
+    - contents/core/2_programmingwithc.qmd
+    - contents/core/3_devkitoverview.qmd
+    - contents/core/4_efr32programming.qmd
+    - contents/core/5_efr32applications.qmd
+    
+
+    # Part 2: Embedded Machine Learning
+  - part: "Embedded Machine Learning"
+    chapters:
+    - contents/core/6_gesturerecog_realtime.qmd
+    - contents/core/7_gesturerecog_magicwand.qmd
+    - contents/core/8_anomalydetection_htm.qmd
+    - contents/core/9_audioml.qmd
+
+    # Appendix
+    appendices:
+      #-tools.qmd
+    - contents/core/references.qmd
+
+bibliography:
+  - contents/core/references.bib
+
+#comments:
+#  giscus:
+#    repo: clarkson-edge/ee513_book
+
+crossref:
+  appendix-title: "Appendix"
+  appendix-delim: ":"
+
+  custom:
+    - kind: float
+      reference-prefix: Lab
+      key: labq
+      latex-env: lab
+
+    - kind: float
+      reference-prefix: Exercise
+      key: exr
+      latex-env: exr
+
+    - kind: float
+      reference-prefix: Video
+      key: vid
+      latex-env: vid
+
+citation: true
+
+license: CC-BY-NC-SA
+
+filters:
+  - custom_callout.lua
+
+editor:
+  render-on-save: true
+
+format:
+  html:
+    lightbox: true
+    mermaid: 
+      theme: default
+    theme: 
+      light:
+        - default
+        - style.scss
+        - style-light.scss
+      dark:
+        - darkly
+        - style.scss
+        - style-dark.scss
+
+    code-block-bg: true
+    #code-block-border-left: "#A51C30"
+
+    table:
+      classes: [table-striped, table-hover]
+
+    language: 
+      title-block-author-single: "Author, Editor & Curator"
+      title-block-published: "Last Updated"
+
+    reference-location: margin
+    citation-location: margin
+    sidenote: true  #Enable sidenotes for Tufte style
+    linkcolor: "#A51C30"
+    urlcolor: "#A51C30"
+    highlight-style: github
+    code-link: true
+    link-external-icon: false
+    link-external-newwindow: true
+    anchor-sections: true
+    smooth-scroll: false
+    citations-hover: false
+    footnotes-hover: false
+    fig-width: 8
+    fig-height: 6
+    number-depth: 3
+    toc: true
+    toc-depth: 4
+    #include-in-header:
+      #text: | 
+        #<script async src="fill in"></script>
+        #<script type="module"  src="/scripts/ai_menu/dist/bundle.js" defer></script>
+
+    citeproc: true
+
+  titlepage-pdf:
+    documentclass: scrbook
+    classoption: [abstract,titlepage]
+
+    coverpage: true
+    coverpage-title: "Embedded Systems Design"
+    coverpage-subtitle: "Utilizing the Silicon Labs EFR32XG24 BLE Microcontroller"
+    coverpage-bg-image: "cover-image-transparent.png"
+    coverpage-author: ["Masuldul", "Imtiaz"]
+    coverpage-theme:
+        page-text-align: "center"
+        
+        # Center the background image
+        bg-image-center: 0 
+        bg-image-bottom: 7
+        bg-image-opacity: 1.0
+        bg-image-rotate: 0        
+        
+        title-fontsize: 38
+        title-left: "0.075\\paperwidth"
+        title-bottom: "0.375\\paperwidth"
+        title-width: "0.9\\paperwidth"
+        
+        subtitle-fontsize: 30
+        subtitle-left: "0.075\\paperwidth"
+        subtitle-bottom: "0.45\\paperwidth"
+        subtitle-width: "0.9\\paperwidth"
+        subtitle-style: "italic"
+
+        author-style: "plain"
+        author-sep: "newline"
+        author-fontsize: 20
+        author-align: "right"
+        author-bottom: "0.15\\paperwidth"
+        author-left: 7in
+        author-width: 6in
+        
+        footer-style: "none"
+        header-style: "none"
+        date-style: "none"
+
+        
+    titlepage: true
+    titlepage-theme:
+      elements: [ "\\titleblock", 
+                  "Masuldul Imtiaz, PhD",
+                  "Sigmond Kukla",
+                  "Aaron Storey, MSAI",
+                  "& TA's of EE260",
+                  "\\vspace{0.75cm}",
+                  "Coulson School of Engineering and Applied Sciences", 
+                  "Clarkson University",  
+                  "\\vfill"]
+
+      page-align: "left"
+      title-style: "plain"
+      title-fontstyle: ["huge", "bfseries"]
+      title-space-after: "4\\baselineskip"
+      title-subtitle-space-between: "0.05\\textheight"
+
+      subtitle-fontstyle: ["large", "textit"]
+      
+      author-style: "superscript-with-and"
+      author-fontstyle: "large"
+      
+      affiliation-style: "numbered-list-with-correspondence"
+      affiliation-fontstyle: "large"
+      affiliation-space-after: "0pt"
+      
+      footer-style: "plain"
+      footer-fontstyle: "large"
+      
+      logo-size: "0.15\\textheight"
+      logo-space-after: "1\\baselineskip"
+      
+      vrule-width: "2pt"
+      vrule-align: "left"
+      vrule-color: "black"
+
+    toc: true
+    lof: false
+    lot: false
+    top-level-division: chapter
+    latex-engine: xelatex
+    number-sections: true
+    toc-depth: 3
+    keep-tex: true
+    citation-package: natbib
+    link-citations: true
+    biblio-title: "References"
+    cite-method: citeproc
+    title-block-style: none
+    indent: 0px
+    fontsize: 9pt
+    colorlinks: true
+    
+    reference-location: margin
+    citation-location: block
+    
+    fig-caption: true
+    cap-location: bottom
+    fig-cap-location: bottom
+    tbl-cap-location: bottom
+    tbl-colwidths: auto
+
+    hyperrefoptions:
+      - linktoc=all
+      - pdfwindowui
+      - pdfpagemode=FullScreen
+      - pdfpagelayout=TwoPageRight
+    
+    include-in-header: 
+      - file: "tex/header-includes.tex"
+
+resources:
+  - CNAME

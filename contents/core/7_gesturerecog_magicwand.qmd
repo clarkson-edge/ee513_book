@@ -1,0 +1,270 @@
+# **Magic Wand via Gesture Recognition**
+
+::: chapterintro
+The EFR32xG24 board has high capabilities for edge computing necessary for capturing, processing, and analyzing data in real time with improved security and reduced latency. The Magic Wand with BLE Gesture Recognition (BLE-MW) is an ideal project to exemplify this concept through the implementation of a TinyML classifier for gesture recognition. It incorporates a quantized TinyML, accelerometer data processing of the onboard IMU, and a BLE communication protocol. The project files are available at [`github.com/Ijnaka22len/ble_magic_wand`](https://github.com/Ijnaka22len/ble_magic_wand), following the original implementation in [`github.com/SiliconLabs/machine_learning_applications`](https://github.com/SiliconLabs/machine_learning_applications/tree/main/application/imu/ble_magic_wand).
+:::
+
+## System Overview
+
+A convolutional neural network (CNN) model was trained in this TinyML project to recognize gestures such as Swipe Up, Swipe Down, and Circle based on the onboard accelerometer data. The detected gestures (Arrow Up, Arrow Down, and Play/Pause) are mapped to media control actions and transmitted over BLE as media key presses and over the UART interface. Figure [7.1](#fig:output_instance){reference-type="ref" reference="fig:output_instance"} shows an instance of the output.
+
+![Figure 7.1: Sample Data Output via UART Terminal](img/chapter7-uart-output.png){fig-alt="Figure 7.1: Sample Data Output via UART Terminal" fig-align="center"}
+
+## Data Collection and Processing
+
+The IMU data for this TinyML model was collected at 25Hz with a sequence length of 50 samples to form the input buffer for the CNN. The fastest way to do this is by following the `github.com/Ijnaka22len/FastDataCollection4MagicWangProjects` repository, which provides a detailed description of IMU data capture for TinyML projects. The captured data is preprocessed and fed into the model as an input image for pattern recognition.
+
+```c         
+if __name__ == "__main__":
+    delFile(file_path="data/complete_data")
+    delFile(file_path="data/test")
+    delFile(file_path="data/train")
+    delFile(file_path="data/valid")
+    delFile(file_path="netmodels/CNN/weights.h5")
+
+    folders = os.listdir("data")
+    names = [file.split('_')[1].lower() for file in os.listdir(f"data/{folders[0]}")]
+    data = []  # pylint: disable=redefined-outer-name
+
+    for idx1, folder in enumerate(folders):
+        files = os.listdir(f"data/{folder}")
+        for file in files:
+            name = file.split('_')[1].lower()
+            prepare_original_data(folder, name, data, f"data/{folder}/{file}")
+
+    for idx in range(5):
+        prepare_original_data("negative", "negative%d" % (idx + 1), data, "data/negative/negative_%d.txt" % (idx + 1))
+    
+    generate_negative_data(data)
+    print("data_length: " + str(len(data)))
+
+    if not os.path.exists("./data"):
+        os.makedirs("./data")
+    
+    write_data(data, "./data/complete_data")
+```
+
+## Model Architecture and Deployment
+
+TensorFlow Lite is used to create the CNN model, which takes the processed IMU data as an input image for multiclass classification of the various classes. The AIDrawPen chapter can be reviewed to show how to train a TinyML model for this microcontroller.
+
+```c         
+"""Trains the model."""
+calculate_model_size(model)
+epochs = 50
+batch_size = 64
+model.compile(optimizer="adam",
+              loss="sparse_categorical_crossentropy",
+              metrics=["accuracy"])
+if kind == "CNN":
+    train_data = train_data.map(reshape_function)
+    test_data = test_data.map(reshape_function)
+    valid_data = valid_data.map(reshape_function)
+
+test_labels = np.zeros(test_len)
+idx = 0
+for data, label in test_data:  # pylint: disable=unused-variable
+    test_labels[idx] = label.numpy()
+    idx += 1
+
+train_data = train_data.batch(batch_size).repeat()
+valid_data = valid_data.batch(batch_size)
+test_data = test_data.batch(batch_size)
+
+history = model.fit(train_data,
+              epochs=epochs,
+              validation_data=valid_data,
+              steps_per_epoch=1000,
+              validation_steps=int((valid_len - 1) / batch_size + 1),
+              callbacks=[tensorboard_callback, early_stop, checkpoint])
+
+loss, acc = model.evaluate(test_data)
+pred = np.argmax(model.predict(test_data), axis=1)
+confusion = tf.math.confusion_matrix(labels=tf.constant(test_labels),
+                                     predictions=tf.constant(pred),
+                                     num_classes=4)
+```
+
+## Firmware and Model Inference
+
+The microcontroller firmware contains a code segment to capture the accelerometer data at the predetermined frequency and sampling rate. This data is stored in a buffer and updated every 100ms during gesture detection.
+
+```c         
+#include "accelerometer.h"
+#include "config.h"
+
+#if defined(SL_COMPONENT_CATALOG_PRESENT)
+#include "sl_component_catalog.h"
+#endif
+
+#if defined (SL_CATALOG_ICM20689_DRIVER_PRESENT)
+#include "sl_icm20689_config.h"
+#define  SL_IMU_INT_PORT SL_ICM20689_INT_PORT
+#define  SL_IMU_INT_PIN  SL_ICM20689_INT_PIN
+#elif defined (SL_CATALOG_ICM20648_DRIVER_PRESENT)
+#include "sl_icm20648_config.h"
+#define  SL_IMU_INT_PORT SL_ICM20648_INT_PORT
+#define  SL_IMU_INT_PIN  SL_ICM20648_INT_PIN
+#else
+#error "No IMU driver defined"
+#endif
+
+// Accelerometer data from sensor
+typedef struct imu_data {
+  int16_t x;
+  int16_t y;
+  int16_t z;
+} imu_data_t;
+
+sl_status_t accelerometer_setup(GPIOINT_IrqCallbackPtrExt_t callbackPtr)
+{
+  sl_status_t status = SL_STATUS_OK;
+  int int_id;
+
+  // Initialize accelerometer sensor
+  status = sl_imu_init();
+  if (status != SL_STATUS_OK) {
+    return status;
+  }
+  sl_imu_configure(ACCELEROMETER_FREQ);
+  // Setup interrupt from accelerometer on falling edge
+  GPIO_PinModeSet(SL_IMU_INT_PORT, SL_IMU_INT_PIN, gpioModeInput, 0);
+  int_id = GPIOINT_CallbackRegisterExt(SL_IMU_INT_PIN, callbackPtr, 0);
+  if (int_id != INTERRUPT_UNAVAILABLE) {
+    GPIO_ExtIntConfig(SL_IMU_INT_PORT, SL_IMU_INT_PIN, int_id, false, true, true);
+  } else {
+    status = SL_STATUS_FAIL;
+  }
+  return status;
+}
+
+sl_status_t accelerometer_read(acc_data_t* dst)
+{
+  if (!sl_imu_is_data_ready()) {
+    return SL_STATUS_FAIL;
+  }
+  sl_imu_update();
+  int16_t m[3];
+  sl_imu_get_acceleration(m);
+  CORE_DECLARE_IRQ_STATE;
+  CORE_ENTER_CRITICAL();
+  if (dst != NULL) {
+    dst->x = m[0];
+    dst->y = m[1];
+    dst->z = m[2];
+  }
+  CORE_EXIT_CRITICAL();
+  return SL_STATUS_OK;
+}
+```
+
+The quantized CNN model interprets the processed accelerometer data to classify gestures through periodic inference. Results are evaluated against the accepted threshold (#define DETECTION_THRESHOLD 0.9f).
+
+```c         
+#include "sl_tflite_micro_model.h"
+#include "sl_tflite_micro_init.h"
+#include "sl_sleeptimer.h"
+#include "magic_wand.h"
+#include "accelerometer.h"
+#include "sl_simple_button_instances.h"
+#include "math.h"
+#include "config.h"
+// BLE header
+#include "sl_bluetooth.h"
+#include "app_assert.h"
+#include "gatt_db.h"
+#include "em_common.h"
+//
+static int input_length;
+static TfLiteTensor* model_input;
+static tflite::MicroInterpreter* interpreter;
+static acc_data_t buf[SEQUENCE_LENGTH] = { 0.5f, 0.5f, 0.5f };
+static bool infer = false;
+static bool read_accel = false;
+static int head_ptr = 0;
+static int inference_trigger_samples_num = round(INFERENCE_PERIOD_MS / ACCELEROMETER_FREQ);
+static acc_data_t prev_data = { 0.5f, 0.5f, 0.5f };
+
+static void listen_for_gestures(bool enable)
+{
+  if (enable) {
+    for (uint8_t i = 0; i < SEQUENCE_LENGTH; i++) {
+      acc_data_t _d = { 0.5f, 0.5f, 0.5f };
+      buf[i] = _d;
+    }
+    read_accel = true;
+  } else {
+    read_accel = false;
+    head_ptr = 0;
+  }
+}
+
+void sl_button_on_change(const sl_button_t *handle)
+{
+  if (sl_button_get_state(handle) == SL_SIMPLE_BUTTON_PRESSED) {
+    if (&sl_button_btn0 == handle) {
+      listen_for_gestures(true);
+    }
+  } else if (sl_button_get_state(handle) == SL_SIMPLE_BUTTON_RELEASED) {
+    if (&sl_button_btn0 == handle) {
+      listen_for_gestures(false);
+    }
+  }
+}
+
+// Called when the IMU has data available using gpio interrupt.
+static void on_data_available(uint8_t int_id, void *ctx)
+{
+  (void) int_id;
+  (void) ctx;
+  acc_data_t data = { 0, 0, 0 };
+  sl_status_t status = accelerometer_read(&data);
+  if (status == SL_STATUS_FAIL || !read_accel) {
+    return;
+  }
+
+  data.x /= 2000;
+  data.y /= 2000;
+  data.z /= 2000;
+
+  acc_data_t delta_data = { 0 };
+  delta_data.x = data.x - prev_data.x;
+  delta_data.y = data.y - prev_data.y;
+  delta_data.z = data.z - prev_data.z;
+
+  delta_data.x = (delta_data.x / 2 + 1) / 2;
+  delta_data.y = (delta_data.y / 2 + 1) / 2;
+  delta_data.z = (delta_data.z / 2 + 1) / 2;
+
+  buf[head_ptr].x = delta_data.x;
+  buf[head_ptr].y = delta_data.y;
+  buf[head_ptr].z = delta_data.z;
+
+  head_ptr++;
+  prev_data.x = data.x;
+  prev_data.y = data.y;
+  prev_data.z = data.z;
+  if (head_ptr >= SEQUENCE_LENGTH) {
+    head_ptr = 0;
+  }
+  if (head_ptr % inference_trigger_samples_num == 0) {
+    infer = true;
+  }
+}
+```
+
+## Data Transfer and BLE Communication
+
+Predicted data is transferred through BLE using the GATT server as well as logged to the Putty terminal.
+
+```c         
+void send_gesture_via_ble(uint8_t gesture)
+{
+    printf(" BLE sent byte: %u\r\n", (unsigned int)gesture);
+    sl_status_t sc;
+    sc = sl_bt_gatt_server_notify_all(gattdb_gesture_data,
+                                        sizeof(gesture),
+                                        &gesture);
+    app_assert_status(sc);
+}
+```

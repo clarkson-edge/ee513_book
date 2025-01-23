@@ -1,0 +1,145 @@
+/* General Typography */
+body {
+    font-family: "Cambria", serif;
+    line-height: 1.6;
+    color: #333;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Cambria", serif;
+    font-weight: bold;
+    color: #1a1a1a;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  
+  p {
+    margin-bottom: 1.2em;
+  }
+  
+  /* Small Caps */
+  .sc {
+    font-variant: small-caps;
+    font-size: 1.15em;
+  }
+  
+  /* Headers and Footers */
+  header {
+    font-size: 0.9em;
+    font-family: "Arial", sans-serif;
+    color: gray;
+    text-align: left;
+    margin-bottom: 1em;
+  }
+  
+  footer {
+    font-size: 0.9em;
+    font-family: "Arial", sans-serif;
+    color: gray;
+    text-align: right;
+    margin-top: 1em;
+  }
+  
+  /* Links */
+  a {
+    color: #1a73e8;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Code Blocks */
+  code {
+    font-family: "Courier New", monospace;
+    background-color: #f5f5f5;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+  }
+  
+  pre {
+    font-family: "Courier New", monospace;
+    background-color: #f5f5f5;
+    padding: 1em;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5em;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 0.75em;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Figures and Images */
+  figure {
+    text-align: center;
+    margin: 1.5em 0;
+  }
+  
+  figcaption {
+    font-size: 0.9em;
+    color: gray;
+  }
+  
+  /* Lists */
+  ul, ol {
+    margin-bottom: 1.5em;
+    padding-left: 1.5em;
+  }
+  
+  ul li, ol li {
+    margin-bottom: 0.5em;
+  }
+  
+  /* Blockquotes */
+  blockquote {
+    font-style: italic;
+    color: #666;
+    margin: 1.5em 0;
+    padding-left: 1em;
+    border-left: 4px solid #ddd;
+  }
+  
+  /* Highlighting */
+  .highlight {
+    background-color: #fffbcc;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+  }
+  
+  /* Margins */
+  body {
+    margin: 2em auto;
+    max-width: 800px;
+    padding: 0 1.5em;
+  }
+  
+  /* Custom Classes */
+  .chapter-intro {
+    font-style: italic;
+    font-size: 1.1em;
+    margin: 1.5em 0;
+  }
+  
+  .gray-text {
+    color: gray;
+  }
+  

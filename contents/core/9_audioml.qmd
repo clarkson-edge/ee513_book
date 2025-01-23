@@ -1,0 +1,292 @@
+# **Audio ML for EFR32**
+
+::: chapterintro
+Implementing audio machine learning (ML) on microcontrollers has become increasingly common in recent years. Optimizing the model is crucial to achieve accurate results while maintaining energy efficiency, ensuring suitability for high-performance embedded systems. This chapter details the implementation of a basic *Yes/No* audio detection system using ML. Initially, a neural network is trained to classify two audio classes: *Yes* and *No*. The trained model is then deployed on the EFR32 Dev kit.
+:::
+
+## Overview
+
+In the implementation below, the system processes raw audio input and categorizes it as either *Yes* or *No* using the trained ML model. The workflow includes three key stages:
+
+-   Training the ML model using TensorFlow.
+
+-   Converting the model to a TensorFlow Lite format.
+
+-   Deploying the model on the EFR32 MCU for real-time inference.
+
+The explanations and code examples are presented below for clarity. The required concepts are as follows:
+
+-   **TensorFlow:** An open-source framework widely used for developing and deploying machine learning models across platforms, including mobile and embedded systems. TensorFlow provides tools for building, training, and optimizing neural networks, along with TensorFlow Lite for Microcontrollers, which allows ML models to run efficiently on resource-constrained devices.
+
+-   **Audio Features:** Raw audio data, typically represented as waveforms, is transformed into meaningful numerical representations suitable for ML models. Commonly used features include Mel Frequency Cepstral Coefficients (MFCCs), which capture the spectral properties of audio signals, and Spectrograms, which represent the frequency content over time. These features enable neural networks to identify patterns and classify audio inputs accurately.
+
+-   **Edge ML:** Optimization of ML models for performance and memory efficiency on embedded devices.
+
+## Training the Model in TensorFlow
+
+### Preparing the Data
+
+Labeled audio clips containing the words *Yes* and *No* are required for training a model. A pre-recorded audio dataset, available in WAV format, will be used in this example. These audio files are first loaded, processed to extract MFCC features, and splitted into training and test sets.
+
+```         
+import tensorflow as tf
+import librosa
+import numpy as np
+import os
+
+# Extract MFCC features from an audio file
+def extract_mfcc(file_path):
+    y, sr = librosa.load(file_path, sr=None)  # Load the audio file
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)  # Extract MFCCs
+    return np.mean(mfcc, axis=1)  # Return the average of the MFCCs
+
+
+# Dataset preparation
+def prepare_dataset(audio_dir):
+    features = []
+    labels = []
+    for label in ['yes', 'no']:
+        for file in os.listdir(os.path.join(audio_dir, label)):
+            if file.endswith('.wav'):
+                file_path = os.path.join(audio_dir, label, file)
+                mfcc_features = extract_mfcc(file_path)
+                features.append(mfcc_features)
+                labels.append(0 if label == 'no' else 1)  # 0 for "No", 1 for "Yes"
+    return np.array(features), np.array(labels)
+
+X, y = prepare_dataset('data/audio')
+
+# Splitting dataset into training and testing sets
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+```
+
+### Training the Neural Network Model
+
+A neural network is defined for binary classification of audio features.
+
+```         
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='relu', input_shape=(13,)),  # 13 MFCC features
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')  # Sigmoid for binary classification
+
+])
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
+
+# Save the trained model
+model.save('yes_no_model.h5')
+```
+
+## Converting the Model for MCU Deployment
+
+The trained TensorFlow model is converted into TensorFlow Lite (TFLite) format for efficient deployment on resource-constrained devices.
+
+```         
+model = tf.keras.models.load_model('yes_no_model.h5')
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+
+# Save the TensorFlow Lite model
+with open('yes_no_model.tflite', 'wb') as f:
+    f.write(tflite_model)
+```
+
+The conversion produces a '.tflite' file suitable for embedded deployment.
+
+## Implementing the Model on the EFR32xG24
+
+The TensorFlow Lite model is integrated into the EFR32xG24 environment using the appropriate software development kit (SDK) and TensorFlow Lite for Microcontrollers library.
+
+### Setting Up the Development Environment
+
+The following components are required for setting up the development environment:
+
+-   **EFR32xG24 SDK:** The latest version of the Silicon Labs Gecko SDK must be installed.
+
+-   **TensorFlow Lite for Microcontrollers:** This library should be set up within the development environment.
+
+### Loading the Model and Running Inference
+
+The TensorFlow Lite model is loaded onto the MCU, input data is prepared, and inference is performed.
+
+```         
+#include "tensorflow/lite/c/common.h"
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "tensorflow/lite/model.h"
+#include "tensorflow/lite/schema/schema_generated.h"
+#include "tensorflow/lite/kernels/register.h"
+
+#define INPUT_SIZE 13
+
+// Declare tensors and interpreter
+tflite::MicroInterpreter* interpreter;
+tflite::Model* model;
+tflite::MicroAllocator* allocator;
+
+float input_data[INPUT_SIZE];  // Input data (MFCCs)
+float output_data[1];  // Output data (prediction)
+
+
+// Load the TensorFlow Lite model
+void LoadModel(const uint8_t* model_data) {
+    model = tflite::GetModel(model_data);
+    tflite::ops::micro::RegisterAllOps();
+    tflite::MicroInterpreter interpreter(model, tensor_arena, kTensorArenaSize, &resolver, &allocator);
+    interpreter.AllocateTensors();
+}
+
+// Perform audio classification
+int ClassifyAudio(float* mfcc_input) {
+    // Copy MFCC data into the input tensor
+    memcpy(interpreter.input(0)->data.f, mfcc_input, sizeof(float) * INPUT_SIZE);
+    
+    // Perform inference
+    interpreter.Invoke();
+
+    // Get the output prediction
+    float prediction = interpreter.output(0)->data.f[0];
+
+    // Return classification result: 1 for "Yes", 0 for "No"
+    return prediction > 0.5 ? 1 : 0;
+
+}
+```
+
+The inference results are interpreted as:
+
+-   1: Detected *Yes*
+
+-   0: Detected *No*
+
+### Integrating Audio Capture
+
+An onboard microphone or an external microphone is often used to interface with the MCU to process real-time audio input. The EFR32xG24 does not include a dedicated audio processing block, requiring integration with a microphone module that outputs either analog signals (such as those from an electret microphone) or digital signals (like those from an I2S microphone). For simplicity, an analog microphone with an ADC on the MCU is employed here, with audio signals sampled, preprocessed, and then classified using the following steps:
+
+1.  Configure the ADC to sample audio signals.
+
+2.  Capture the raw samples from the ADC at a suitable rate (e.g., 16 kHz or 8 kHz, depending on requirements).
+
+3.  Preprocess the audio to extract features such as MFCC (Mel-frequency cepstral coefficients), which are suitable for ML models.
+
+4.  Feed these features into the model for classification.
+
+Here is an example of how to collect and process audio data using an ADC for feature extraction using the EFR32 SDK.
+
+```         
+#include "em_device.h"
+#include "em_chip.h"
+#include "em_adc.h"
+#include "em_cmu.h"
+#include "em_gpio.h"
+#include "em_interrupt.h"
+
+// ADC buffer for storing captured samples
+#define BUFFER_SIZE 1024
+static uint16_t adc_buffer[BUFFER_SIZE];
+static volatile uint32_t adc_index = 0;  // Index for storing samples in the buffer
+
+// ADC interrupt handler to collect samples
+void ADC0_IRQHandler(void) {
+    // Read the ADC data from the ADC data register
+    adc_buffer[adc_index++] = ADC_DataSingleGet(ADC0);
+
+    // If the buffer is full, stop the ADC conversion
+    if (adc_index >= BUFFER_SIZE) {
+        ADC0->CMD = ADC_CMD_STOP;
+        adc_index = 0;
+    }
+}
+
+// Initialize the ADC for audio sampling
+void ADC_InitAudio(void) {
+    // Enable the clock for ADC and GPIO
+    CMU_ClockEnable(cmuClock_ADC0, true);
+    CMU_ClockEnable(cmuClock_GPIO, true);
+
+    // Configure the GPIO pin for the microphone (assuming it is connected to a pin, e.g., PA0)
+    GPIO_PinModeSet(gpioPortA, 0, gpioModeInput, 0);
+
+    // Configure the ADC to sample at a reasonable rate for audio (e.g., 16 kHz)
+    ADC_Init_TypeDef adcInit = ADC_INIT_DEFAULT;
+    adcInit.prescale = ADC_PrescaleCalc(16000, 0);  // Calculate prescaler for 16kHz sampling rate
+    ADC_Init(ADC0, &adcInit);
+
+    // Configure the ADC single conversion mode
+    ADC_InitSingle_TypeDef adcSingleInit = ADC_INITSINGLE_DEFAULT;
+    adcSingleInit.input = adcSingleInputPin0;  // Set the input channel (e.g., PA0)
+    adcSingleInit.acqTime = adcAcqTime4;       // Set acquisition time
+    ADC_InitSingle(ADC0, &adcSingleInit);
+
+    // Enable the ADC interrupt and start ADC conversions
+    NVIC_EnableIRQ(ADC0_IRQn);
+    ADC0->CMD = ADC_CMD_START;
+}
+```
+
+### Audio Preprocessing and Classification
+
+The audio data is stored in an array adc_buffer where the ADC samples are placed at regular intervals following these steps:
+
+-   ADC samples the microphone data at a fixed rate.
+
+-   The interrupt service routine (ISR) will be triggered each time the ADC completes a conversion.
+
+-   The ISR stores the data into the adc_buffer.
+
+Once the raw ADC samples are in the buffer, preprocessing is needed for the ML model. An example is as follows:
+
+-   Convert the ADC samples to a window of audio (e.g., 25 ms).
+
+-   Apply a Fourier transform to convert the time-domain signal to the frequency domain.
+
+-   Extract MFCC features from the frequency-domain signal.
+
+An example is provided on how to use the buffer data to classify using a Tensorflow Lite model.
+
+```         
+void ProcessAudioAndClassify() {
+    // Preprocess the raw ADC samples (simplified; actual MFCC extraction would be more complex)
+    float mfcc_input[INPUT_SIZE];  // Assumed 13 MFCC features
+    
+    // For simplicity, the ADC data is copied directly into the input array
+    // In a real case, processing is required (e.g., via FFT and MFCC extraction)
+
+    float mfcc_input[INPUT_SIZE];
+    for (int i = 0; i < INPUT_SIZE; i++) {
+        mfcc_input[i] = (float)adc_buffer[i];
+    }
+
+    // Run the model to classify the audio
+    int prediction = ClassifyAudio(mfcc_input);
+    if (prediction == 1) {
+        printf("Detected: Yes\n");
+    } else {
+        printf("Detected: No\n");
+    }
+}
+```
+
+The main loop manages continuous audio capture and classification.
+
+```         
+int main(void) {
+    CHIP_Init();
+    ADC_InitAudio();
+
+    while (1) {
+        ProcessAudioAndClassify();
+        EMU_EnterEM1();
+    }
+}
+```
+
+### Considerations for Optimization
+
+-   **ADC Resolution:** The ADC resolution and sampling rate must align with audio requirements.
+
+-   **MFCC Extraction:** Complex preprocessing, such as Fourier Transform and MFCC extraction, may require optimizations.
+
+-   **Performance:** Model complexity and sampling rates should be adjusted for available memory and processing capabilities.

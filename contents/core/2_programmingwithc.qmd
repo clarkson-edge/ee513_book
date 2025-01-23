@@ -1,0 +1,695 @@
+# **Programming Embedded Systems with C**
+
+::: chapterintro
+Embedded systems rely heavily on the C programming language due to its efficiency, low-level hardware access, and portability across different microcontroller architectures. This chapter explores the foundational concepts of C programming in the context of embedded systems, with a focus on optimizing performance, managing data types, and effectively using hardware resources. By mastering these fundamental concepts, readers will be better prepared to develop efficient and reliable embedded systems using the Silicon Labs EFR32XG24 BLE microcontroller.
+:::
+
+## Simplicity Studio IDE for Silicon Labs EFR32XG24 Microcontroller
+
+Simplicity Studio is the official Integrated Development Environment (IDE) provided by Silicon Labs for embedded development with their microcontrollers, including the EFR32XG24 BLE microcontroller to be covered in this textbook. It is a feature-rich platform designed to streamline the development process, offering a library of example projects, application templates, and related tools for writing, debugging, profiling, and deploying firmware applications efficiently. It integrates multiple tools into one unified interface:
+
+-   **Project Management:** Create, organize, and manage embedded projects.
+
+-   **Device Configuration:** Configure peripheral modules and optimize hardware settings.
+
+-   **Debugging Tools:** Real-time debugging with SEGGER J-Link integration.
+
+-   **Energy Profiler:** Monitor and optimize power consumption of embedded applications.
+
+-   **Wireless Network Analyzer:** Analyze wireless traffic and optimize communication protocols.
+
+Simplicity Studio supports a range of compilers tailored for embedded systems:
+
+-   **GCC (GNU Compiler Collection):** Open-source compiler widely used in embedded systems.
+
+-   **IAR Embedded Workbench Compiler:** Commercial compiler known for its optimization capabilities.
+
+-   **Keil ARM Compiler (ARMCC):** Industry-standard compiler for ARM Cortex-M series microcontrollers.
+
+For the EFR32XG24 microcontroller, ***GCC*** is the default compiler bundled with Simplicity Studio, offering robust optimization and compatibility with ARM Cortex-M33 cores.
+
+### Development Workflow in Simplicity Studio
+
+The typical workflow when using Simplicity Studio for EFR32XG24 development involves:
+
+1.  **Device Selection:** Select the target microcontroller (EFR32XG24) from the device catalog.
+
+2.  **Project Creation:** Use templates or start from scratch to create firmware projects.
+
+3.  **Peripheral Configuration:** Use the graphical configuration tool to set up GPIO, timers, UART, SPI, etc.
+
+4.  **Code Generation:** Auto-generate initialization code based on configuration settings.
+
+5.  **Build and Compile:** Compile code using GCC or other selected compilers.
+
+6.  **Debug and Test:** Use SEGGER J-Link debugger for step-by-step debugging and breakpoint management.
+
+7.  **Energy Profiling:** Use the energy profiler to optimize power consumption.
+
+### Key Features of Simplicity Studio for EFR32XG24
+
+The **Graphical Peripheral Configuration Tool** provides an intuitive interface for configuring peripherals and pin assignments, reducing setup errors. The **Real-Time Energy Profiler** enables precise monitoring and analysis of energy consumption, helping developers optimize power efficiency. The **Wireless Network Analyzer** facilitates debugging and fine-tuning of Bluetooth communication channels, ensuring reliable wireless connectivity. Additionally, Simplicity Studio includes **SDK Integration** with pre-built libraries and frameworks for BLE and IoT applications. Developers can also leverage an **Extensive Example Codebase**, which contains numerous pre-written projects for rapid prototyping and reduced development time.
+
+To maximize productivity and ensure reliable outcomes, developers should follow established best practices when using Simplicity Studio. It is essential to keep the IDE updated to the latest version to benefit from bug fixes and new features. The graphical configuration tools should be used whenever possible to minimize errors during peripheral setup. Compiler optimizations should be enabled to account for the resource-constrained nature of embedded environments. Regular energy profiling should be conducted throughout firmware development to identify and address power inefficiencies. Lastly, developers should use the **SEGGER J-Link Debugger** for precise, real-time debugging and analysis of embedded applications.
+
+## Structure of an Embedded C Program
+
+A typical embedded C program follows a standardized structure to maintain clarity, modularity, and efficient hardware interaction. A common format that is found in Arduino IDE is as follows:
+
+```c         
+#include <stdint.h>
+#define LED_PIN 13
+
+void init();
+void loop();
+
+int main() {
+    init();
+    while (1) {
+        loop();
+    }
+}
+
+void init() {
+    // Initialization code
+}
+
+void loop() {
+    // Main functionality code
+}
+```
+
+At the core lies the `main()` function, which serves as the entry point for program execution. The program begins with an `init()` function, responsible for hardware and peripheral initialization, such as configuring GPIO pins, timers, and communication interfaces. Following initialization, the program enters an infinite `while(1)` loop, where the `loop()` function is repeatedly called to handle the system's primary tasks. This structure separates setup and runtime logic, promoting code readability and easier debugging. The use of `#include <stdint.h>` ensures access to fixed-width integer types, while the `#define LED_PIN 13` macro simplifies hardware pin configuration. This modular design allows embedded systems to maintain deterministic behavior.
+
+## Structure of an Embedded C Program in Simplicity Studio
+
+In Simplicity Studio, an embedded C program adheres to a standardized structure designed to ensure modularity, hardware abstraction, and efficient execution on microcontrollers like the EFR32XG24. A typical program format is shown below:
+
+```c         
+#include "em_device.h"
+#include "em_chip.h"
+#include "em_gpio.h"
+
+#define LED_PIN 13
+
+void init();
+void loop();
+
+int main(void) {
+    CHIP_Init(); // Initialize the microcontroller system
+    init();
+    while (1) {
+        loop();
+    }
+}
+
+void init() {
+    // GPIO and peripheral initialization code
+}
+
+void loop() {
+    // Main functionality code
+}
+```
+
+In Simplicity Studio, the `CHIP_Init()` function is typically called at the beginning of the `main()` function to configure essential hardware components, including the clock management unit (CMU) and device-specific registers. The `init()` function follows, serving to initialize peripherals, configure GPIO pins, and set up timers or communication interfaces. The program then enters an infinite `while(1)` loop, where the `loop()` function repeatedly executes core tasks. Header files such as `em_device.h` provide device-specific definitions, while `em_chip.h` ensures system-level configurations are applied. The use of predefined macros like `#define LED_PIN 13` simplifies hardware abstraction, improving code clarity and reducing errors. This structure leverages Simplicity Studio's hardware abstraction layer (HAL) to provide a consistent programming interface, ensuring scalability and portability across Silicon Labs microcontroller families.
+
+## Generic Data Types in Embedded Systems
+
+Data types in embedded systems are carefully chosen based on performance requirements, memory constraints, and application-specific needs. Common data types include:
+
+#### Integer Data Types (ISO C99 Standard)
+
+-   **int:** Standard integer type, typically 16 or 32 bits depending on the microcontroller.
+
+-   **uint8_t, uint16_t, uint32_t:** Unsigned integer types offering precise control over memory usage.
+
+-   **int8_t, int16_t, int32_t:** Signed integer types for representing both positive and negative values.
+
+#### Floating-Point Data Types (IEEE 754 Standard)
+
+-   **float:** 32-bit floating-point type for representing decimal values.
+
+-   **double:** 64-bit floating-point type for higher precision.
+
+A summary of these types is displayed in Table [2.1](#tab:integersizes){reference-type="ref" reference="tab:integersizes"}.
+
+The EFR32XG24 microcontroller includes an FPU (Floating-Point Unit) to handle floating-point calculations, but such operations can introduce performance and power efficiency overhead. Therefore, floating-point types should be used sparingly in embedded applications.
+
+::: {#tab:integersizes}
+| **Data type** | **Size** | **Range min** | **Range max** |
+|:-----------------|:-----------------|:-----------------|:-----------------|
+| **int8_t** | 8 bits (1 byte) | -128 | 127 |
+| **uint8_t** | 8 bits (1 byte) | 0 | 255 |
+| **int16_t** | 16 bits (2 bytes) | -32768 | 32767 |
+| **uint16_t** | 16 bits (2 bytes) | 0 | 65535 |
+| **int32_t** | 32 bits (4 bytes) | -2,147,483,648 | 2,147,483,647 |
+| **uint32_t** | 32 bits (4 bytes) | 0 | 4,294,967,295 |
+| **int64_t** | 64 bits (8 bytes) | -9,223,372,036,854,775,808 | 9,223,372,036,854,775,807 |
+| **uint64_t** | 64 bits (8 bytes) | 0 | 18,446,744,073,709,551,615 |
+
+: Commonly used integer types when programming embedded systems
+:::
+
+## Choosing the Right Data Type
+
+Selecting an appropriate data type in embedded systems programming is a crucial step to ensure optimal memory usage, computational efficiency, and prevention of data-related errors. The choice of data type must balance several key factors, including:
+
+-   **Performance:** Larger data types consume more memory and require longer processing times.
+
+-   **Overflow:** Variables must be chosen to prevent exceeding their maximum allowable value.
+
+-   **Coercion and Truncation:** Automatic type conversion can lead to unintended behavior if not managed carefully.
+
+In embedded systems, memory is a scarce resource, and improper data type selection can lead to unnecessary overhead. For example:
+
+-   On an 8-bit microcontroller, using a 4-byte `int` instead of a 1-byte `char` for a simple counter wastes memory and processing cycles. For example,
+
+    ```         
+    int counter = 0; // Uses 4 bytes unnecessarily on an 8-bit system
+    uint8_t counter = 0; // Optimized for an 8-bit system
+    ```
+
+-   On a 32-bit microcontroller like the ARM Cortex-M, memory access is optimized for 4-byte alignment, and using smaller data types may not yield significant performance improvements.
+
+#### Handling Overflow
+
+Overflow occurs when a variable exceeds the maximum value that can be stored in its data type. In embedded systems, overflow can lead to unpredictable behavior or silent data corruption. For example:
+
+```c         
+uint8_t seconds = 255; 
+seconds += 1; // Overflow occurs, seconds resets to 0
+```
+
+To prevent overflow:
+
+-   Use larger data types if overflow is anticipated.
+
+-   Implement overflow detection mechanisms.
+
+#### Data Coercion and Truncation
+
+In embedded C, implicit type conversions (coercion) and truncation can lead to unintended results:
+
+-   When a smaller data type is promoted to a larger data type (e.g., `uint8_t` to `uint16_t`), padding may occur. For example,
+
+    ```c         
+    uint8_t smallValue = 200;
+    uint16_t largeValue = smallValue; // Coercion from 8-bit to 16-bit
+    ```
+
+-   When a larger data type is truncated to a smaller one (e.g., `uint16_t` to `uint8_t`), significant data loss may occur. For example,
+
+    ```c         
+    uint16_t largeValue = 1025;
+    uint8_t smallValue = largeValue; // Truncation, smallValue = 1
+    ```
+
+#### Best Practices for Data Type Selection
+
+-   Use fixed-width integer types from the `stdint.h` library (`int8_t`, `uint16_t`, etc.).
+
+-   Avoid mixing signed and unsigned data types in arithmetic operations.
+
+-   Be explicit in type casting and ensure expected results are validated.
+
+-   Always check compiler warnings related to type conversions.
+
+## Memory Alignment in Embedded Systems
+
+Efficient memory alignment is critical in embedded systems to optimize performance, reduce access latency, and ensure compatibility with the processor's architecture. In microcontrollers like the EFR32XG24, unaligned memory access can lead to performance penalties or even cause system faults on certain architectures.
+
+#### Understanding Memory Alignment
+
+-   **Aligned Access:** Data is stored in memory at addresses that are multiples of its size. For example:
+
+    -   A 2-byte `short int` should be stored at an address divisible by
+        2.  
+    -   A 4-byte `int` or `float` should be stored at an address divisible by 4.
+
+-   **Unaligned Access:** Data is stored at an address that does not adhere to its size requirements. For example:
+
+    -   Storing a 4-byte `int` at an address like `0x20000003` is considered unaligned.
+
+Aligned access is preferred because microcontrollers fetch data in word-sized chunks (e.g., 4 bytes on ARM Cortex-M processors). Misaligned data may require multiple memory accesses, increasing latency and power consumption.
+
+#### Example of Memory Alignment
+
+**Aligned Memory Example (Efficient Access):**
+
+```c         
+unsigned char a;       // 1-byte aligned at 0x20000000
+unsigned short b;      // 2-byte aligned at 0x20000002
+unsigned int c;        // 4-byte aligned at 0x20000004
+```
+
+**Unaligned Memory Example (Potential Performance Penalty):**
+
+```c         
+unsigned char a;       // Stored at 0x20000000
+unsigned short b;      // Stored at 0x20000001 (misaligned)
+unsigned int c;        // Stored at 0x20000003 (misaligned)
+```
+
+**Aligned Memory Example (Efficient Access with Padding):**
+
+```c         
+unsigned char a;       // Stored at 0x20000000
+unsigned char padding; // Added for alignment
+unsigned short b;      // Stored at 0x20000002
+unsigned int c;        // Stored at 0x20000004
+```
+
+#### Best Practices for Memory Alignment
+
+-   Use compiler directives or attributes to enforce memory alignment.
+
+-   Group variables by size (e.g., group all `char`, then `short`, then `int` variables).
+
+-   Avoid unaligned data structures in performance-critical paths.
+
+**Compiler Attribute Example (ARM GCC/Keil):**
+
+```c         
+struct __attribute__((aligned(4))) AlignedStruct {
+    uint8_t a;
+    uint16_t b;
+    uint32_t c;
+};
+```
+
+Efficient memory alignment reduces CPU cycles for memory fetches and avoids unnecessary overhead, making it a critical practice in embedded systems programming.
+
+### Bitwise Operations
+
+Bitwise operators are essential in embedded systems for manipulating hardware registers and performing efficient computations. These operations are fundamental for efficiently interacting with GPIO (General Purpose Input Output) registers in embedded systems. They allow precise control over individual bits, enabling configuration, status checking, and manipulation of GPIO pins without affecting other bits in the register.
+
+```c         
+AND (&): Used for masking bits.
+OR (|): Used for setting bits.
+XOR (^): Used for toggling bits.
+NOT (~): Used for inverting bits.
+```
+
+**Example:**
+
+```c         
+uint8_t reg = 0b00001111;
+reg |= (1 << 4); // Set the 5th bit
+reg &= ~(1 << 2); // Clear the 3rd bit
+```
+
+### Bitwise Shift Operations
+
+Shift operators move bits left (`<<`) or right (`>>`) and are commonly used for:
+
+-   Multiplying or dividing numbers by powers of two.
+
+-   Setting or clearing specific bits.
+
+**Example:**
+
+```c         
+uint8_t value = 0x01;
+value <<= 3; // Shift left by 3 bits (Result: 0x08)
+```
+
+### Atomic Register Usage for GPIO Control
+
+Atomic GPIO operations are critical in embedded systems where precise and thread-safe pin manipulation is required. Unlike standard `DOUT` register operations (data directly outputs to pin), atomic registers (`SET`, `CLR`, and `TGL`) allow direct modification of specific bits without requiring a read-modify-write cycle.
+
+#### Advantages of Atomic GPIO Operations
+
+-   **Thread-Safe:** Prevents unintended side effects in concurrent operations.
+
+-   **Efficient:** Eliminates the overhead of read-modify-write cycles.
+
+-   **Precision:** Ensures only the target bit is modified.
+
+#### Key Atomic Registers
+
+-   **SET Register:** Sets specific GPIO pins to a high state without affecting others.
+
+-   **CLR Register:** Clears specific GPIO pins to a low state without affecting others.
+
+-   **TGL Register:** Toggles specific GPIO pins without affecting others.
+
+#### Atomic Operations Examples (Explanation in Section 2.6)
+
+**1. Setting Multiple Pins Atomically:**
+
+```c         
+GPIO->P_SET[gpioPortB].DOUT = (1 << 2) | (1 << 4); // Set pins 2 and 4 on Port B
+```
+
+**2. Clearing Specific Pins Atomically:**
+
+```c         
+GPIO->P_CLR[gpioPortC].DOUT = (1 << 5); // Clear pin 5 on Port C
+```
+
+**3. Toggling Multiple Pins Atomically:**
+
+```c         
+GPIO->P_TGL[gpioPortD].DOUT = (1 << 1) | (1 << 3); // Toggle pins 1 and 3 on Port D
+```
+
+#### Avoiding Race Conditions in GPIO Control
+
+In real-time systems, race conditions can occur when multiple threads or interrupt routines attempt to modify GPIO pins simultaneously. Atomic registers mitigate this risk by ensuring:
+
+-   Only the targeted pins are modified.
+
+-   No unintended overwrites occur during concurrent access.
+
+**Example of Thread-Safe Pin Toggle:**
+
+```c         
+void toggleLedThreadSafe(void) {
+    GPIO->P_TGL[gpioPortA].DOUT = (1 << 6); // Safely toggle pin 6
+}
+```
+
+#### Best Practices for Using Atomic Registers
+
+-   Prefer atomic registers for time-critical pin operations.
+
+-   Avoid mixing standard `DOUT` operations with atomic operations on the same pins.
+
+-   Document atomic operations in shared resources clearly.
+
+-   Test interrupt-driven routines for predictable behavior with atomic GPIO controls.
+
+#### Checking the State of a GPIO Pin:
+
+```c         
+uint8_t pinState = (GPIO->P[gpioPortA].DIN >> 3) & 1; // Read state of pin 3
+```
+
+#### Using Shift Operators for Pin Masking
+
+Shift operators are commonly used to create masks for setting, clearing, or toggling specific bits in GPIO registers.
+
+**Example - Setting Multiple Pins:**
+
+```c         
+GPIO->P[gpioPortA].DOUT |= (1 << 3) | (1 << 5); // Set pins 3 and 5
+```
+
+**Example - Clearing Multiple Pins:**
+
+```c         
+GPIO->P[gpioPortA].DOUT &= ~((1 << 3) | (1 << 5)); // Clear pins 3 and 5
+```
+
+#### Practical Example: Blinking an LED Using Bitwise Operations
+
+The following example demonstrates how to blink an LED connected to Port D, Pin 2 using bitwise operations:
+
+```c         
+#define LED_PIN 2
+
+// Configure pin as output
+GPIO->P[gpioPortD].MODEL |= (1 << (4 * LED_PIN)); // MODEL is the MODE Low register
+
+// Toggle the LED state in a loop
+while (1) {
+    GPIO->P[gpioPortD].DOUT ^= (1 << LED_PIN); // Toggle LED pin
+    delay(1000); // 1-second delay
+}
+```
+
+#### Best Practices for Bitwise GPIO Operations
+
+-   Always mask the specific bits you intend to modify.
+
+-   Avoid direct assignments to GPIO registers; prefer bitwise operations.
+
+-   Use clear and descriptive macros for pin numbers and masks.
+
+-   Test configurations thoroughly to prevent accidental overwrites.
+
+Bitwise operations provide low-level control over GPIO registers, ensuring efficient and predictable manipulation of hardware pins. Mastering these operations is essential for embedded systems programming.
+
+## Understanding the `->` Operator in Atomic GPIO Operations
+
+In embedded systems programming, especially when interfacing with hardware peripherals such as GPIO registers, it is common to encounter expressions utilizing the `->` operator. This operator is used to access members of a structure through a pointer. In the context of atomic GPIO operations with the Silicon Labs EFR32XG24 microcontroller, the `->` operator simplifies hardware register access and enhance code clarity.
+
+### Pointer to Structure and the `->` Operator
+
+In C, the `->` operator is used to access a member of a structure when the structure is referred to by a pointer. The syntax is:
+
+```c         
+pointer->member
+```
+
+This is equivalent to:
+
+```c         
+(*pointer).member
+```
+
+Here:
+
+-   **pointer**: Points to a structure (e.g., GPIO peripheral base address).
+
+-   **member**: Represents a specific field in the structure (e.g., registers like `P_SET`, `P_CLR`, `P_TGL`).
+
+### GPIO Structure and Enums in EFR32XG24
+
+The GPIO peripheral on the EFR32XG24 microcontroller is represented as a structure, typically defined in the hardware abstraction layer (HAL). For example:
+
+```c         
+typedef struct {
+    volatile uint32_t DOUT;
+    volatile uint32_t SET;
+    volatile uint32_t CLR;
+    volatile uint32_t TGL;
+} GPIO_Port_TypeDef;
+```
+
+Additionally, GPIO ports are often enumerated for easy reference:
+
+```c        
+typedef enum {
+    gpioPortA,
+    gpioPortB,
+    gpioPortC,
+    gpioPortD
+} GPIO_Port_Type;
+```
+
+### Atomic GPIO Operations with `->`
+
+When performing atomic GPIO operations, the structure pointer enables access to specific GPIO port registers. For example:
+
+```c         
+GPIO->P_SET[gpioPortB].DOUT = (1 << 2) | (1 << 4);
+```
+
+Explanation:
+
+-   **GPIO**: Base pointer to the GPIO peripheral structure.
+
+-   **P_SET**: Array of registers representing SET operations for each port.
+
+-   **gpioPortB**: Index to select Port B.
+
+-   **DOUT**: Data Output register for atomic SET operation.
+
+Similarly:
+
+```c         
+GPIO->P_CLR[gpioPortC].DOUT = (1 << 5); // Clear pin 5 on Port C
+GPIO->P_TGL[gpioPortD].DOUT = (1 << 1) | (1 << 3); // Toggle pins 1 and 3 on Port D
+```
+
+### Advantages of Using Structures and the `->` Operator
+
+-   **Code Clarity**: Clear and readable syntax for hardware register access.
+
+-   **Portability**: Standardized structure definitions across different microcontrollers.
+
+-   **Efficiency**: Direct register access through pointer dereferencing minimizes CPU cycles.
+
+## Exercise: Multiple Choice Questions
+
+1.  **What is the primary reason C is preferred for embedded systems programming?**
+
+    1.  User-friendly syntax
+
+    2.  High-level abstraction
+
+    3.  Low-level hardware access and efficiency
+
+    4.  Automatic memory management
+
+    **Correct Answer: C**
+
+2.  **Which header file is commonly included in an embedded C program for fixed-width integer types?**
+
+    1.  `stdio.h`
+
+    2.  `stdint.h`
+
+    3.  `string.h`
+
+    4.  `stdlib.h`
+
+    **Correct Answer: B**
+
+3.  **What happens if a variable exceeds the maximum value of its data type?**
+
+    1.  It goes back to zero
+
+    2.  It causes a system crash
+
+    3.  It triggers an interrupt
+
+    4.  It generates a compiler warning
+
+    **Correct Answer: A**
+
+4.  **Which data type is best suited for a counter variable on an 8-bit microcontroller?**
+
+    1.  `int`
+
+    2.  `uint8_t`
+
+    3.  `float`
+
+    4.  `double`
+
+    **Correct Answer: B**
+
+5.  **What is the key advantage of using floating-point data types sparingly in embedded systems?**
+
+    1.  Reduced memory usage
+
+    2.  Increased processing speed
+
+    3.  Better precision
+
+    4.  Simplified syntax
+
+    **Correct Answer: A**
+
+6.  **Which of the following is an example of memory alignment in embedded systems?**
+
+    1.  Address divisible by 2 for a short integer
+
+    2.  Randomly allocated memory address
+
+    3.  Using dynamic memory allocation
+
+    4.  Overwriting stack memory
+
+    **Correct Answer: A**
+
+7.  **What does the bitwise 'AND' operator do in GPIO manipulation?**
+
+    1.  Sets specific bits
+
+    2.  Clears specific bits
+
+    3.  Masks specific bits
+
+    4.  Toggles specific bits
+
+    **Correct Answer: C**
+
+8.  **What is the purpose of the 'SET' register in GPIO control?**
+
+    1.  Clear specific GPIO pins
+
+    2.  Toggle specific GPIO pins
+
+    3.  Set specific GPIO pins
+
+    4.  Read GPIO pin status
+
+    **Correct Answer: C**
+
+9.  **Which best describes data coercion in embedded systems?**
+
+    1.  Automatic type conversion
+
+    2.  Forced memory alignment
+
+    3.  Manual data truncation
+
+    4.  Dynamic memory reallocation
+
+    **Correct Answer: A**
+
+10. **What happens when a uint16_t variable is assigned to a uint8_t variable with a value greater than 255?**
+
+    1.  Value remains unchanged
+
+    2.  Compiler error
+
+    3.  Value is truncated
+
+    4.  System crash
+
+    **Correct Answer: C**
+
+11. **Which of the following prevents race conditions in GPIO control?**
+
+    1.  Using 'DOUT' register
+
+    2.  Using 'SET' and 'CLR' registers atomically
+
+    3.  Disabling interrupts
+
+    4.  Using global variables
+
+    **Correct Answer: B**
+
+12. **Why is aligned memory access preferred in embedded systems?**
+
+    1.  Better energy efficiency
+
+    2.  Increased memory usage
+
+    3.  Reduced CPU latency
+
+    4.  Dynamic memory allocation
+
+    **Correct Answer: C**
+
+13. **What is the main function of bitwise shift operators ('\<\<' and '\>\>') in embedded C?**
+
+    1.  Inverting bits
+
+    2.  Multiplying or dividing by powers of two
+
+    3.  Clearing specific bits
+
+    4.  Reading GPIO pin status
+
+    **Correct Answer: B**
+
+14. **What should you avoid when working with GPIO atomic operations?**
+
+    1.  Mixing standard 'DOUT' and atomic operations
+
+    2.  Using specific masks
+
+    3.  Documenting shared resources
+
+    4.  Testing configurations
+
+    **Correct Answer: A**
+
+15. **Which fixed-width integer type ensures consistent size across platforms?**
+
+    1.  `int`
+
+    2.  `long`
+
+    3.  `uint16_t`
+
+    4.  `short`
+
+    **Correct Answer: C**

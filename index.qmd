@@ -1,0 +1,26 @@
+# Preface {.unnumbered}
+
+---
+description-meta: |
+  This book is a comprehensive guide to embedded systems and machine learning with the Silicon Lab EFR32XG24 BLE Microcontroller. Designed for engineers and students, it combines hands-on examples and theoretical insights. You'll learn about programming microcontrollers, building applications, and integrating machine learning for real-world solutions. Each chapter builds on the last, guiding you through practical applications and advanced design concepts.
+---
+
+## Welcome {.unnumbered}
+
+Welcome to the **"System Design with Silicon Lab EFR32XG24 BLE Microcontroller"**. This book is designed to guide you through the process of programming, building applications, and integrating machine learning with the EFR32XG24 BLE Microcontroller. Whether you're an engineering student or a seasoned professional, this book offers hands-on examples to make advanced concepts accessible.
+
+You'll learn how to: - Program the EFR32XG24 microcontroller using C. - Design and implement embedded systems applications. - Apply machine learning techniques to solve real-world problems. - Explore gesture recognition, anomaly detection, and audio-based ML solutions.
+
+The book balances theory with practice, empowering readers to develop embedded systems that are robust, efficient, and intelligent.
+
+If you're interested in broader programming concepts or other machine learning platforms, we encourage you to explore additional resources and apply your learning across domains.
+
+::: {.callout-note appearance="simple"}
+This book was originally developed as part of the EE260 and EE513 courses at Clarkson University. The Quarto-based version serves as an example of modern technical publishing and open access education.
+:::
+
+## License
+
+This book is **free to use** under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/) License. You are welcome to share, adapt, and use the material for educational purposes, as long as proper attribution is given and no commercial use is made.
+
+If you'd like to support the project or contribute, you can report issues or submit pull requests at [github.com/clarkson-edge/ee513_book](https://github.com/clarkson-edge/ee513_book). Thank you for helping improve this resource for the community.
