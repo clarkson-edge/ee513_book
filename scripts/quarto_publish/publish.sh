@@ -6,18 +6,18 @@ TIMESTAMP=$(date '+%Y-%m-%d_%H-%M-%S')
 exec 1> >(tee -a "$LOG_FILE") 2>&1
 echo "Starting publish at $TIMESTAMP"
 
-# Ensure on main and up-to-date
+# Ensure on dev and up-to-date 
 current_branch=$(git branch --show-current)
-if [[ "$current_branch" != "main" ]]; then
-    echo "Error: Not on main branch."
+if [[ "$current_branch" != "dev" ]]; then
+    echo "Error: Not on dev branch."
     exit 1
 fi
 
-# Push main branch first
+# Push dev branch first
 git add .
 git commit -m "Update content $(date '+%Y-%m-%d')" || true
-git push origin main || {
-    echo "Failed to push to main"
+git push origin dev || {
+    echo "Failed to push to dev"
     exit 1
 }
 

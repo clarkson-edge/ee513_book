@@ -1,80 +1,64 @@
-Here's the updated contributing guide:
+```markdown
+# Contributing to EE513 Book
 
-**# Contributing to EE513 Book**
+## Development Workflow
 
-**## How to Contribute**
-1. **Fork and Setup Repository**
+1. **Fork and Setup**
 ```bash
 git clone https://github.com/YOUR_USERNAME/ee513_book.git
 cd ee513_book
 git remote add upstream https://github.com/clarkson-edge/ee513_book.git
 ```
 
-2. **Branch and Development**
-- Create branch: `issue<number>-brief-description`
-- Work on your changes
-- Test locally: `quarto render`
+2. **Branch Guidelines**
+- Branch from `dev`
+- Name format: `issue<number>-description`
+- Keep changes focused
+- Rebase before PR
 
 3. **Content Structure**
 ```
 ee513_book/
-├── _quarto.yml # Book configuration
+├── _quarto.yml      # Configuration
 ├── contents/
-│ └── core/ # Chapter content
-│ ├── 01-intro.qmd
-│ ├── 02-setup.qmd
-│ └── img/ # Image assets
-└── references.bib # Bibliography
+│   └── core/        # Chapters
+│       ├── *.qmd    # Content files
+│       └── img/     # Images
+└── references.bib   # Bibliography
 ```
 
-4. **Update Book Structure**
-- Edit `_quarto.yml` to add/modify chapters:
-```yaml
-project:
-type: book
-book:
-chapters:
-- contents/core/01-intro.qmd
-- contents/core/02-setup.qmd
-```
+4. **Images**
+- Save to `contents/core/img/`
+- Format: `chapter-name_description.{png|jpg|svg}`
+- Usage: `![Caption](img/chapter-name_description.png)`
 
-5. **Image Guidelines**
-- Place in `contents/core/img/`
-- Naming: `chapter-name_image-description.{png|jpg|svg}`
-- Reference: `![Caption](img/chapter-name_image-description.png)`
-
-6. **Submit Changes**
+5. **Build and Test**
 ```bash
-git add .
-git commit -m "description (issue #X)"
-git push origin issue-X-description
+quarto preview  # Live preview
+quarto render   # Full build
 ```
-- Create PR to dev branch
-- Add [WIP] if work in progress
 
-**## Publishing**
-1. **Setup**
+6. **Publishing**
 ```bash
 chmod +x scripts/quarto_publish/publish.sh
-```
-
-2. **Build and Publish**
-```bash
 ./scripts/quarto_publish/publish.sh
 ```
 
-This script:
-- Checks if on main branch
-- Renders book
-- Compresses PDF
-- Publishes to gh-pages
-- Logs process to `publish_log.txt`
+7. **Pull Requests**
+- Submit to `dev` branch
+- Reference issue number
+- Add [WIP] if incomplete
+- Fill template completely
 
-**## Testing**
-```bash
-quarto preview # Live preview
-quarto render # Build book
+## Style Guide
+
+- Use American English
+- Write in active voice
+- Keep paragraphs short
+- Include code examples
+- Add comments for clarity
+- Follow Quarto markdown specs
+
+## Questions
+Open an issue labeled 'question'
 ```
-
-**## Questions?**
-Open an issue for contribution questions.
