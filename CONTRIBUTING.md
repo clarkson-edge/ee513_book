@@ -1,7 +1,8 @@
-# Contributing to EE513 Book
+Here's the updated contributing guide:
 
-## How to Contribute
+**# Contributing to EE513 Book**
 
+**## How to Contribute**
 1. **Fork and Setup Repository**
 ```bash
 git clone https://github.com/YOUR_USERNAME/ee513_book.git
@@ -17,24 +18,24 @@ git remote add upstream https://github.com/clarkson-edge/ee513_book.git
 3. **Content Structure**
 ```
 ee513_book/
-├── _quarto.yml           # Book configuration
+├── _quarto.yml # Book configuration
 ├── contents/
-│   └── core/            # Chapter content
-│       ├── 01-intro.qmd
-│       ├── 02-setup.qmd
-│       └── img/         # Image assets
-└── references.bib      # Bibliography
+│ └── core/ # Chapter content
+│ ├── 01-intro.qmd
+│ ├── 02-setup.qmd
+│ └── img/ # Image assets
+└── references.bib # Bibliography
 ```
 
 4. **Update Book Structure**
 - Edit `_quarto.yml` to add/modify chapters:
 ```yaml
 project:
-  type: book
+type: book
 book:
-  chapters:
-    - contents/core/01-intro.qmd
-    - contents/core/02-setup.qmd
+chapters:
+- contents/core/01-intro.qmd
+- contents/core/02-setup.qmd
 ```
 
 5. **Image Guidelines**
@@ -51,12 +52,29 @@ git push origin issue-X-description
 - Create PR to dev branch
 - Add [WIP] if work in progress
 
-## Testing
+**## Publishing**
+1. **Setup**
 ```bash
-quarto preview   # Live preview
-quarto render   # Build book
-quarto publish  # Deploy to gh-pages
+chmod +x scripts/quarto_publish/publish.sh
 ```
 
-## Questions?
+2. **Build and Publish**
+```bash
+./scripts/quarto_publish/publish.sh
+```
+
+This script:
+- Checks if on main branch
+- Renders book
+- Compresses PDF
+- Publishes to gh-pages
+- Logs process to `publish_log.txt`
+
+**## Testing**
+```bash
+quarto preview # Live preview
+quarto render # Build book
+```
+
+**## Questions?**
 Open an issue for contribution questions.

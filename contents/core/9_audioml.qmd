@@ -28,7 +28,7 @@ The explanations and code examples are presented below for clarity. The required
 
 Labeled audio clips containing the words *Yes* and *No* are required for training a model. A pre-recorded audio dataset, available in WAV format, will be used in this example. These audio files are first loaded, processed to extract MFCC features, and splitted into training and test sets.
 
-```         
+```c         
 import tensorflow as tf
 import librosa
 import numpy as np
@@ -65,7 +65,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 A neural network is defined for binary classification of audio features.
 
-```         
+```c         
 model = tf.keras.Sequential([
     tf.keras.layers.Dense(64, activation='relu', input_shape=(13,)),  # 13 MFCC features
     tf.keras.layers.Dense(32, activation='relu'),
@@ -84,7 +84,7 @@ model.save('yes_no_model.h5')
 
 The trained TensorFlow model is converted into TensorFlow Lite (TFLite) format for efficient deployment on resource-constrained devices.
 
-```         
+```c         
 model = tf.keras.models.load_model('yes_no_model.h5')
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
@@ -112,7 +112,7 @@ The following components are required for setting up the development environment
 
 The TensorFlow Lite model is loaded onto the MCU, input data is prepared, and inference is performed.
 
-```         
+```c         
 #include "tensorflow/lite/c/common.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/model.h"
@@ -175,7 +175,7 @@ An onboard microphone or an external microphone is often used to interface with 
 
 Here is an example of how to collect and process audio data using an ADC for feature extraction using the EFR32 SDK.
 
-```         
+```c         
 #include "em_device.h"
 #include "em_chip.h"
 #include "em_adc.h"
@@ -246,7 +246,7 @@ Once the raw ADC samples are in the buffer, preprocessing is needed for the ML m
 
 An example is provided on how to use the buffer data to classify using a Tensorflow Lite model.
 
-```         
+```c         
 void ProcessAudioAndClassify() {
     // Preprocess the raw ADC samples (simplified; actual MFCC extraction would be more complex)
     float mfcc_input[INPUT_SIZE];  // Assumed 13 MFCC features
@@ -271,7 +271,7 @@ void ProcessAudioAndClassify() {
 
 The main loop manages continuous audio capture and classification.
 
-```         
+```c         
 int main(void) {
     CHIP_Init();
     ADC_InitAudio();
