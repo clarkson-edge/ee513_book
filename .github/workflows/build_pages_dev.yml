@@ -20,9 +20,9 @@ jobs:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
         with:
           source-directory: '_book'
-          destination-github-username: 'harvard-edge'
-          destination-repository-name: 'cs249r_book_dev'
-          user-email: khoshnevis.naeem@gmail.com
+          destination-github-username: 'clarkson-edge'
+          destination-repository-name: 'ee513_book_dev'
+          user-email: storeyaw@clarkson.edu
           target-branch: 'main'
           target-directory: 'docs'
           commit-message: 'Push dev branch build'

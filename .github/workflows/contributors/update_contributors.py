@@ -13,13 +13,10 @@ CONTRIBUTORS_FILE = ".all-contributorsrc"
 EXCLUDED_USERS = {
     "web-flow",
     "github-actions[bot]",
-    "mrdragonbear",
-    "jveejay",
-    "Matthew Steward",
 }
 
-OWNER = "harvard-edge"
-REPO = "cs249r_book"
+OWNER = "clarkson-edge"
+REPO = "ee513_book"
 BRANCH = "dev"
 RESULTS_PER_PAGE = 1000
 
