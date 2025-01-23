@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -291,64 +325,64 @@ ul.task-list li input[type="checkbox"] {
 <section id="preparing-the-data" class="level3" data-number="9.2.1">
 <h3 data-number="9.2.1" class="anchored" data-anchor-id="preparing-the-data"><span class="header-section-number">9.2.1</span> Preparing the Data</h3>
 <p>Labeled audio clips containing the words <em>Yes</em> and <em>No</em> are required for training a model. A pre-recorded audio dataset, available in WAV format, will be used in this example. These audio files are first loaded, processed to extract MFCC features, and splitted into training and test sets.</p>
-<pre><code>import tensorflow as tf
-import librosa
-import numpy as np
-import os
-
-# Extract MFCC features from an audio file
-def extract_mfcc(file_path):
-    y, sr = librosa.load(file_path, sr=None)  # Load the audio file
-    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)  # Extract MFCCs
-    return np.mean(mfcc, axis=1)  # Return the average of the MFCCs
-
-
-# Dataset preparation
-def prepare_dataset(audio_dir):
-    features = []
-    labels = []
-    for label in ['yes', 'no']:
-        for file in os.listdir(os.path.join(audio_dir, label)):
-            if file.endswith('.wav'):
-                file_path = os.path.join(audio_dir, label, file)
-                mfcc_features = extract_mfcc(file_path)
-                features.append(mfcc_features)
-                labels.append(0 if label == 'no' else 1)  # 0 for "No", 1 for "Yes"
-    return np.array(features), np.array(labels)
-
-X, y = prepare_dataset('data/audio')
-
-# Splitting dataset into training and testing sets
-from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>import tensorflow as tf</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>import librosa</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>import numpy as np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>import os</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="pp"># </span><span class="er">Extract MFCC features from an audio file</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>def extract_mfcc<span class="op">(</span>file_path<span class="op">):</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    y<span class="op">,</span> sr <span class="op">=</span> librosa<span class="op">.</span>load<span class="op">(</span>file_path<span class="op">,</span> sr<span class="op">=</span>None<span class="op">)</span>  # Load the audio file</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    mfcc <span class="op">=</span> librosa<span class="op">.</span>feature<span class="op">.</span>mfcc<span class="op">(</span>y<span class="op">=</span>y<span class="op">,</span> sr<span class="op">=</span>sr<span class="op">,</span> n_mfcc<span class="op">=</span><span class="dv">13</span><span class="op">)</span>  # Extract MFCCs</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np<span class="op">.</span>mean<span class="op">(</span>mfcc<span class="op">,</span> axis<span class="op">=</span><span class="dv">1</span><span class="op">)</span>  # Return the average of the MFCCs</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="pp"># </span><span class="er">Dataset preparation</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>def prepare_dataset<span class="op">(</span>audio_dir<span class="op">):</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> <span class="op">[]</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> <span class="op">[]</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> label in <span class="op">[</span><span class="ch">'y</span><span class="er">es</span><span class="ch">'</span><span class="op">,</span> <span class="ch">'n</span><span class="er">o</span><span class="ch">'</span><span class="op">]:</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> file in os<span class="op">.</span>listdir<span class="op">(</span>os<span class="op">.</span>path<span class="op">.</span>join<span class="op">(</span>audio_dir<span class="op">,</span> label<span class="op">)):</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> file<span class="op">.</span>endswith<span class="op">(</span><span class="ch">'.</span><span class="er">wav</span><span class="ch">'</span><span class="op">):</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                file_path <span class="op">=</span> os<span class="op">.</span>path<span class="op">.</span>join<span class="op">(</span>audio_dir<span class="op">,</span> label<span class="op">,</span> file<span class="op">)</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                mfcc_features <span class="op">=</span> extract_mfcc<span class="op">(</span>file_path<span class="op">)</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                features<span class="op">.</span>append<span class="op">(</span>mfcc_features<span class="op">)</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>                labels<span class="op">.</span>append<span class="op">(</span><span class="dv">0</span> <span class="cf">if</span> label <span class="op">==</span> <span class="ch">'n</span><span class="er">o</span><span class="ch">'</span> <span class="cf">else</span> <span class="dv">1</span><span class="op">)</span>  # <span class="dv">0</span> <span class="cf">for</span> <span class="st">"No"</span><span class="op">,</span> <span class="dv">1</span> <span class="cf">for</span> <span class="st">"Yes"</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np<span class="op">.</span>array<span class="op">(</span>features<span class="op">),</span> np<span class="op">.</span>array<span class="op">(</span>labels<span class="op">)</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>X<span class="op">,</span> y <span class="op">=</span> prepare_dataset<span class="op">(</span><span class="ch">'d</span><span class="er">ata/audio</span><span class="ch">'</span><span class="op">)</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="pp"># </span><span class="er">Splitting dataset into training and testing sets</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>from sklearn<span class="op">.</span>model_selection import train_test_split</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>X_train<span class="op">,</span> X_test<span class="op">,</span> y_train<span class="op">,</span> y_test <span class="op">=</span> train_test_split<span class="op">(</span>X<span class="op">,</span> y<span class="op">,</span> test_size<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="training-the-neural-network-model" class="level3" data-number="9.2.2">
 <h3 data-number="9.2.2" class="anchored" data-anchor-id="training-the-neural-network-model"><span class="header-section-number">9.2.2</span> Training the Neural Network Model</h3>
 <p>A neural network is defined for binary classification of audio features.</p>
-<pre><code>model = tf.keras.Sequential([
-    tf.keras.layers.Dense(64, activation='relu', input_shape=(13,)),  # 13 MFCC features
-    tf.keras.layers.Dense(32, activation='relu'),
-    tf.keras.layers.Dense(1, activation='sigmoid')  # Sigmoid for binary classification
-
-])
-
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
-
-# Save the trained model
-model.save('yes_no_model.h5')</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf<span class="op">.</span>keras<span class="op">.</span>Sequential<span class="op">([</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    tf<span class="op">.</span>keras<span class="op">.</span>layers<span class="op">.</span>Dense<span class="op">(</span><span class="dv">64</span><span class="op">,</span> activation<span class="op">=</span><span class="ch">'r</span><span class="er">elu</span><span class="ch">'</span><span class="op">,</span> input_shape<span class="op">=(</span><span class="dv">13</span><span class="op">,)),</span>  # <span class="dv">13</span> MFCC features</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    tf<span class="op">.</span>keras<span class="op">.</span>layers<span class="op">.</span>Dense<span class="op">(</span><span class="dv">32</span><span class="op">,</span> activation<span class="op">=</span><span class="ch">'r</span><span class="er">elu</span><span class="ch">'</span><span class="op">),</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    tf<span class="op">.</span>keras<span class="op">.</span>layers<span class="op">.</span>Dense<span class="op">(</span><span class="dv">1</span><span class="op">,</span> activation<span class="op">=</span><span class="ch">'s</span><span class="er">igmoid</span><span class="ch">'</span><span class="op">)</span>  # Sigmoid <span class="cf">for</span> binary classification</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="op">])</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>model<span class="op">.</span>compile<span class="op">(</span>optimizer<span class="op">=</span><span class="ch">'a</span><span class="er">dam</span><span class="ch">'</span><span class="op">,</span> loss<span class="op">=</span><span class="ch">'b</span><span class="er">inary_crossentropy</span><span class="ch">'</span><span class="op">,</span> metrics<span class="op">=[</span><span class="ch">'a</span><span class="er">ccuracy</span><span class="ch">'</span><span class="op">])</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>model<span class="op">.</span>fit<span class="op">(</span>X_train<span class="op">,</span> y_train<span class="op">,</span> epochs<span class="op">=</span><span class="dv">10</span><span class="op">,</span> batch_size<span class="op">=</span><span class="dv">32</span><span class="op">,</span> validation_data<span class="op">=(</span>X_test<span class="op">,</span> y_test<span class="op">))</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="pp"># </span><span class="er">Save the trained model</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>model<span class="op">.</span>save<span class="op">(</span><span class="ch">'y</span><span class="er">es_no_model.h5</span><span class="ch">'</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="converting-the-model-for-mcu-deployment" class="level2" data-number="9.3">
 <h2 data-number="9.3" class="anchored" data-anchor-id="converting-the-model-for-mcu-deployment"><span class="header-section-number">9.3</span> Converting the Model for MCU Deployment</h2>
 <p>The trained TensorFlow model is converted into TensorFlow Lite (TFLite) format for efficient deployment on resource-constrained devices.</p>
-<pre><code>model = tf.keras.models.load_model('yes_no_model.h5')
-converter = tf.lite.TFLiteConverter.from_keras_model(model)
-tflite_model = converter.convert()
-
-# Save the TensorFlow Lite model
-with open('yes_no_model.tflite', 'wb') as f:
-    f.write(tflite_model)</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf<span class="op">.</span>keras<span class="op">.</span>models<span class="op">.</span>load_model<span class="op">(</span><span class="ch">'y</span><span class="er">es_no_model.h5</span><span class="ch">'</span><span class="op">)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> tf<span class="op">.</span>lite<span class="op">.</span>TFLiteConverter<span class="op">.</span>from_keras_model<span class="op">(</span>model<span class="op">)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>tflite_model <span class="op">=</span> converter<span class="op">.</span>convert<span class="op">()</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="pp"># </span><span class="er">Save the TensorFlow Lite model</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>with open<span class="op">(</span><span class="ch">'y</span><span class="er">es_no_model.tflite</span><span class="ch">'</span><span class="op">,</span> <span class="ch">'w</span><span class="er">b</span><span class="ch">'</span><span class="op">)</span> as f<span class="op">:</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    f<span class="op">.</span>write<span class="op">(</span>tflite_model<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The conversion produces a ‘.tflite’ file suitable for embedded deployment.</p>
 </section>
 <section id="implementing-the-model-on-the-efr32xg24" class="level2" data-number="9.4">
@@ -365,46 +399,46 @@ with open('yes_no_model.tflite', 'wb') as f:
 <section id="loading-the-model-and-running-inference" class="level3" data-number="9.4.2">
 <h3 data-number="9.4.2" class="anchored" data-anchor-id="loading-the-model-and-running-inference"><span class="header-section-number">9.4.2</span> Loading the Model and Running Inference</h3>
 <p>The TensorFlow Lite model is loaded onto the MCU, input data is prepared, and inference is performed.</p>
-<pre><code>#include "tensorflow/lite/c/common.h"
-#include "tensorflow/lite/micro/micro_interpreter.h"
-#include "tensorflow/lite/model.h"
-#include "tensorflow/lite/schema/schema_generated.h"
-#include "tensorflow/lite/kernels/register.h"
-
-#define INPUT_SIZE 13
-
-// Declare tensors and interpreter
-tflite::MicroInterpreter* interpreter;
-tflite::Model* model;
-tflite::MicroAllocator* allocator;
-
-float input_data[INPUT_SIZE];  // Input data (MFCCs)
-float output_data[1];  // Output data (prediction)
-
-
-// Load the TensorFlow Lite model
-void LoadModel(const uint8_t* model_data) {
-    model = tflite::GetModel(model_data);
-    tflite::ops::micro::RegisterAllOps();
-    tflite::MicroInterpreter interpreter(model, tensor_arena, kTensorArenaSize, &amp;resolver, &amp;allocator);
-    interpreter.AllocateTensors();
-}
-
-// Perform audio classification
-int ClassifyAudio(float* mfcc_input) {
-    // Copy MFCC data into the input tensor
-    memcpy(interpreter.input(0)-&gt;data.f, mfcc_input, sizeof(float) * INPUT_SIZE);
-    
-    // Perform inference
-    interpreter.Invoke();
-
-    // Get the output prediction
-    float prediction = interpreter.output(0)-&gt;data.f[0];
-
-    // Return classification result: 1 for "Yes", 0 for "No"
-    return prediction &gt; 0.5 ? 1 : 0;
-
-}</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/c/common.h"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/micro/micro_interpreter.h"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/model.h"</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/schema/schema_generated.h"</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/kernels/register.h"</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="pp">#define INPUT_SIZE </span><span class="dv">13</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Declare tensors and interpreter</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>tflite<span class="op">::</span>MicroInterpreter<span class="op">*</span> interpreter<span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>tflite<span class="op">::</span>Model<span class="op">*</span> model<span class="op">;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>tflite<span class="op">::</span>MicroAllocator<span class="op">*</span> allocator<span class="op">;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> input_data<span class="op">[</span>INPUT_SIZE<span class="op">];</span>  <span class="co">// Input data (MFCCs)</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> output_data<span class="op">[</span><span class="dv">1</span><span class="op">];</span>  <span class="co">// Output data (prediction)</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">// Load the TensorFlow Lite model</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> LoadModel<span class="op">(</span><span class="dt">const</span> <span class="dt">uint8_t</span><span class="op">*</span> model_data<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> tflite<span class="op">::</span>GetModel<span class="op">(</span>model_data<span class="op">);</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    tflite<span class="op">::</span>ops<span class="op">::</span>micro<span class="op">::</span>RegisterAllOps<span class="op">();</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    tflite<span class="op">::</span>MicroInterpreter interpreter<span class="op">(</span>model<span class="op">,</span> tensor_arena<span class="op">,</span> kTensorArenaSize<span class="op">,</span> <span class="op">&amp;</span>resolver<span class="op">,</span> <span class="op">&amp;</span>allocator<span class="op">);</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    interpreter<span class="op">.</span>AllocateTensors<span class="op">();</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">// Perform audio classification</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> ClassifyAudio<span class="op">(</span><span class="dt">float</span><span class="op">*</span> mfcc_input<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Copy MFCC data into the input tensor</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    memcpy<span class="op">(</span>interpreter<span class="op">.</span>input<span class="op">(</span><span class="dv">0</span><span class="op">)-&gt;</span>data<span class="op">.</span>f<span class="op">,</span> mfcc_input<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">)</span> <span class="op">*</span> INPUT_SIZE<span class="op">);</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Perform inference</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    interpreter<span class="op">.</span>Invoke<span class="op">();</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Get the output prediction</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> prediction <span class="op">=</span> interpreter<span class="op">.</span>output<span class="op">(</span><span class="dv">0</span><span class="op">)-&gt;</span>data<span class="op">.</span>f<span class="op">[</span><span class="dv">0</span><span class="op">];</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Return classification result: 1 for "Yes", 0 for "No"</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> prediction <span class="op">&gt;</span> <span class="fl">0.5</span> <span class="op">?</span> <span class="dv">1</span> <span class="op">:</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The inference results are interpreted as:</p>
 <ul>
 <li><p>1: Detected <em>Yes</em></p></li>
@@ -421,54 +455,54 @@ int ClassifyAudio(float* mfcc_input) {
 <li><p>Feed these features into the model for classification.</p></li>
 </ol>
 <p>Here is an example of how to collect and process audio data using an ADC for feature extraction using the EFR32 SDK.</p>
-<pre><code>#include "em_device.h"
-#include "em_chip.h"
-#include "em_adc.h"
-#include "em_cmu.h"
-#include "em_gpio.h"
-#include "em_interrupt.h"
-
-// ADC buffer for storing captured samples
-#define BUFFER_SIZE 1024
-static uint16_t adc_buffer[BUFFER_SIZE];
-static volatile uint32_t adc_index = 0;  // Index for storing samples in the buffer
-
-// ADC interrupt handler to collect samples
-void ADC0_IRQHandler(void) {
-    // Read the ADC data from the ADC data register
-    adc_buffer[adc_index++] = ADC_DataSingleGet(ADC0);
-
-    // If the buffer is full, stop the ADC conversion
-    if (adc_index &gt;= BUFFER_SIZE) {
-        ADC0-&gt;CMD = ADC_CMD_STOP;
-        adc_index = 0;
-    }
-}
-
-// Initialize the ADC for audio sampling
-void ADC_InitAudio(void) {
-    // Enable the clock for ADC and GPIO
-    CMU_ClockEnable(cmuClock_ADC0, true);
-    CMU_ClockEnable(cmuClock_GPIO, true);
-
-    // Configure the GPIO pin for the microphone (assuming it is connected to a pin, e.g., PA0)
-    GPIO_PinModeSet(gpioPortA, 0, gpioModeInput, 0);
-
-    // Configure the ADC to sample at a reasonable rate for audio (e.g., 16 kHz)
-    ADC_Init_TypeDef adcInit = ADC_INIT_DEFAULT;
-    adcInit.prescale = ADC_PrescaleCalc(16000, 0);  // Calculate prescaler for 16kHz sampling rate
-    ADC_Init(ADC0, &amp;adcInit);
-
-    // Configure the ADC single conversion mode
-    ADC_InitSingle_TypeDef adcSingleInit = ADC_INITSINGLE_DEFAULT;
-    adcSingleInit.input = adcSingleInputPin0;  // Set the input channel (e.g., PA0)
-    adcSingleInit.acqTime = adcAcqTime4;       // Set acquisition time
-    ADC_InitSingle(ADC0, &amp;adcSingleInit);
-
-    // Enable the ADC interrupt and start ADC conversions
-    NVIC_EnableIRQ(ADC0_IRQn);
-    ADC0-&gt;CMD = ADC_CMD_START;
-}</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_device.h"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_chip.h"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_adc.h"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_cmu.h"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_gpio.h"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_interrupt.h"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">// ADC buffer for storing captured samples</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="pp">#define BUFFER_SIZE </span><span class="dv">1024</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">uint16_t</span> adc_buffer<span class="op">[</span>BUFFER_SIZE<span class="op">];</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">volatile</span> <span class="dt">uint32_t</span> adc_index <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>  <span class="co">// Index for storing samples in the buffer</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">// ADC interrupt handler to collect samples</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> ADC0_IRQHandler<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Read the ADC data from the ADC data register</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    adc_buffer<span class="op">[</span>adc_index<span class="op">++]</span> <span class="op">=</span> ADC_DataSingleGet<span class="op">(</span>ADC0<span class="op">);</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// If the buffer is full, stop the ADC conversion</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>adc_index <span class="op">&gt;=</span> BUFFER_SIZE<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        ADC0<span class="op">-&gt;</span>CMD <span class="op">=</span> ADC_CMD_STOP<span class="op">;</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        adc_index <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">// Initialize the ADC for audio sampling</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> ADC_InitAudio<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Enable the clock for ADC and GPIO</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    CMU_ClockEnable<span class="op">(</span>cmuClock_ADC0<span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    CMU_ClockEnable<span class="op">(</span>cmuClock_GPIO<span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Configure the GPIO pin for the microphone (assuming it is connected to a pin, e.g., PA0)</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    GPIO_PinModeSet<span class="op">(</span>gpioPortA<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> gpioModeInput<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Configure the ADC to sample at a reasonable rate for audio (e.g., 16 kHz)</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    ADC_Init_TypeDef adcInit <span class="op">=</span> ADC_INIT_DEFAULT<span class="op">;</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    adcInit<span class="op">.</span>prescale <span class="op">=</span> ADC_PrescaleCalc<span class="op">(</span><span class="dv">16000</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span>  <span class="co">// Calculate prescaler for 16kHz sampling rate</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    ADC_Init<span class="op">(</span>ADC0<span class="op">,</span> <span class="op">&amp;</span>adcInit<span class="op">);</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Configure the ADC single conversion mode</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>    ADC_InitSingle_TypeDef adcSingleInit <span class="op">=</span> ADC_INITSINGLE_DEFAULT<span class="op">;</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    adcSingleInit<span class="op">.</span>input <span class="op">=</span> adcSingleInputPin0<span class="op">;</span>  <span class="co">// Set the input channel (e.g., PA0)</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    adcSingleInit<span class="op">.</span>acqTime <span class="op">=</span> adcAcqTime4<span class="op">;</span>       <span class="co">// Set acquisition time</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    ADC_InitSingle<span class="op">(</span>ADC0<span class="op">,</span> <span class="op">&amp;</span>adcSingleInit<span class="op">);</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Enable the ADC interrupt and start ADC conversions</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>    NVIC_EnableIRQ<span class="op">(</span>ADC0_IRQn<span class="op">);</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    ADC0<span class="op">-&gt;</span>CMD <span class="op">=</span> ADC_CMD_START<span class="op">;</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="audio-preprocessing-and-classification" class="level3" data-number="9.4.4">
 <h3 data-number="9.4.4" class="anchored" data-anchor-id="audio-preprocessing-and-classification"><span class="header-section-number">9.4.4</span> Audio Preprocessing and Classification</h3>
@@ -485,36 +519,36 @@ void ADC_InitAudio(void) {
 <li><p>Extract MFCC features from the frequency-domain signal.</p></li>
 </ul>
 <p>An example is provided on how to use the buffer data to classify using a Tensorflow Lite model.</p>
-<pre><code>void ProcessAudioAndClassify() {
-    // Preprocess the raw ADC samples (simplified; actual MFCC extraction would be more complex)
-    float mfcc_input[INPUT_SIZE];  // Assumed 13 MFCC features
-    
-    // For simplicity, the ADC data is copied directly into the input array
-    // In a real case, processing is required (e.g., via FFT and MFCC extraction)
-
-    float mfcc_input[INPUT_SIZE];
-    for (int i = 0; i &lt; INPUT_SIZE; i++) {
-        mfcc_input[i] = (float)adc_buffer[i];
-    }
-
-    // Run the model to classify the audio
-    int prediction = ClassifyAudio(mfcc_input);
-    if (prediction == 1) {
-        printf("Detected: Yes\n");
-    } else {
-        printf("Detected: No\n");
-    }
-}</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> ProcessAudioAndClassify<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Preprocess the raw ADC samples (simplified; actual MFCC extraction would be more complex)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> mfcc_input<span class="op">[</span>INPUT_SIZE<span class="op">];</span>  <span class="co">// Assumed 13 MFCC features</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// For simplicity, the ADC data is copied directly into the input array</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// In a real case, processing is required (e.g., via FFT and MFCC extraction)</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> mfcc_input<span class="op">[</span>INPUT_SIZE<span class="op">];</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> INPUT_SIZE<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        mfcc_input<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="op">(</span><span class="dt">float</span><span class="op">)</span>adc_buffer<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Run the model to classify the audio</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> prediction <span class="op">=</span> ClassifyAudio<span class="op">(</span>mfcc_input<span class="op">);</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>prediction <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">"Detected: Yes</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        printf<span class="op">(</span><span class="st">"Detected: No</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The main loop manages continuous audio capture and classification.</p>
-<pre><code>int main(void) {
-    CHIP_Init();
-    ADC_InitAudio();
-
-    while (1) {
-        ProcessAudioAndClassify();
-        EMU_EnterEM1();
-    }
-}</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    CHIP_Init<span class="op">();</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    ADC_InitAudio<span class="op">();</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        ProcessAudioAndClassify<span class="op">();</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        EMU_EnterEM1<span class="op">();</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="considerations-for-optimization" class="level3" data-number="9.4.5">
 <h3 data-number="9.4.5" class="anchored" data-anchor-id="considerations-for-optimization"><span class="header-section-number">9.4.5</span> Considerations for Optimization</h3>
