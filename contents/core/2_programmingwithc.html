@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>2&nbsp; Programming Embedded Systems with C – Embedded Systems Design</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../contents/core/3_devkitoverview.html" rel="next">
+<link href="../../contents/core/1_introduction.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-86daaaaad7353f9cc0c554efc1dd6d94.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-f8dc6eab18fde03278982b0b35885446.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-b4fc4dddb6ec1a779f0a285a431e56d0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-eae2d66f002e799350c2a60e45471621.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "~",
+    "/"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Embedded Systems Design</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-wide tools-end">
+    <a href="https://github.com/clarkson-edge/ee513_book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../../Embedded-Systems-Design.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Systems Design</a></li><li class="breadcrumb-item"><a href="../../contents/core/2_programmingwithc.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><strong>Programming Embedded Systems with C</strong></span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Embedded Systems Design</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/1_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/2_programmingwithc.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><strong>Programming Embedded Systems with C</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/3_devkitoverview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title"><strong>EFR32xG24 Development Kit Overview</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/4_efr32programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title"><strong>EFR32 I/O Programming</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/5_efr32applications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title"><strong>Applications of EFR32 I/O</strong></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Embedded Machine Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/6_gesturerecog_realtime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/7_gesturerecog_magicwand.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/8_anomalydetection_htm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/9_audioml.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#simplicity-studio-ide-for-silicon-labs-efr32xg24-microcontroller" id="toc-simplicity-studio-ide-for-silicon-labs-efr32xg24-microcontroller" class="nav-link active" data-scroll-target="#simplicity-studio-ide-for-silicon-labs-efr32xg24-microcontroller"><span class="header-section-number">2.1</span> Simplicity Studio IDE for Silicon Labs EFR32XG24 Microcontroller</a>
+  <ul>
+  <li><a href="#development-workflow-in-simplicity-studio" id="toc-development-workflow-in-simplicity-studio" class="nav-link" data-scroll-target="#development-workflow-in-simplicity-studio"><span class="header-section-number">2.1.1</span> Development Workflow in Simplicity Studio</a></li>
+  <li><a href="#key-features-of-simplicity-studio-for-efr32xg24" id="toc-key-features-of-simplicity-studio-for-efr32xg24" class="nav-link" data-scroll-target="#key-features-of-simplicity-studio-for-efr32xg24"><span class="header-section-number">2.1.2</span> Key Features of Simplicity Studio for EFR32XG24</a></li>
+  </ul></li>
+  <li><a href="#structure-of-an-embedded-c-program" id="toc-structure-of-an-embedded-c-program" class="nav-link" data-scroll-target="#structure-of-an-embedded-c-program"><span class="header-section-number">2.2</span> Structure of an Embedded C Program</a></li>
+  <li><a href="#structure-of-an-embedded-c-program-in-simplicity-studio" id="toc-structure-of-an-embedded-c-program-in-simplicity-studio" class="nav-link" data-scroll-target="#structure-of-an-embedded-c-program-in-simplicity-studio"><span class="header-section-number">2.3</span> Structure of an Embedded C Program in Simplicity Studio</a></li>
+  <li><a href="#generic-data-types-in-embedded-systems" id="toc-generic-data-types-in-embedded-systems" class="nav-link" data-scroll-target="#generic-data-types-in-embedded-systems"><span class="header-section-number">2.4</span> Generic Data Types in Embedded Systems</a>
+  <ul>
+  <li><a href="#integer-data-types-iso-c99-standard" id="toc-integer-data-types-iso-c99-standard" class="nav-link" data-scroll-target="#integer-data-types-iso-c99-standard">Integer Data Types (ISO C99 Standard)</a></li>
+  <li><a href="#floating-point-data-types-ieee-754-standard" id="toc-floating-point-data-types-ieee-754-standard" class="nav-link" data-scroll-target="#floating-point-data-types-ieee-754-standard">Floating-Point Data Types (IEEE 754 Standard)</a></li>
+  </ul></li>
+  <li><a href="#choosing-the-right-data-type" id="toc-choosing-the-right-data-type" class="nav-link" data-scroll-target="#choosing-the-right-data-type"><span class="header-section-number">2.5</span> Choosing the Right Data Type</a>
+  <ul>
+  <li><a href="#handling-overflow" id="toc-handling-overflow" class="nav-link" data-scroll-target="#handling-overflow">Handling Overflow</a></li>
+  <li><a href="#data-coercion-and-truncation" id="toc-data-coercion-and-truncation" class="nav-link" data-scroll-target="#data-coercion-and-truncation">Data Coercion and Truncation</a></li>
+  <li><a href="#best-practices-for-data-type-selection" id="toc-best-practices-for-data-type-selection" class="nav-link" data-scroll-target="#best-practices-for-data-type-selection">Best Practices for Data Type Selection</a></li>
+  </ul></li>
+  <li><a href="#memory-alignment-in-embedded-systems" id="toc-memory-alignment-in-embedded-systems" class="nav-link" data-scroll-target="#memory-alignment-in-embedded-systems"><span class="header-section-number">2.6</span> Memory Alignment in Embedded Systems</a>
+  <ul>
+  <li><a href="#understanding-memory-alignment" id="toc-understanding-memory-alignment" class="nav-link" data-scroll-target="#understanding-memory-alignment">Understanding Memory Alignment</a></li>
+  <li><a href="#example-of-memory-alignment" id="toc-example-of-memory-alignment" class="nav-link" data-scroll-target="#example-of-memory-alignment">Example of Memory Alignment</a></li>
+  <li><a href="#best-practices-for-memory-alignment" id="toc-best-practices-for-memory-alignment" class="nav-link" data-scroll-target="#best-practices-for-memory-alignment">Best Practices for Memory Alignment</a></li>
+  <li><a href="#bitwise-operations" id="toc-bitwise-operations" class="nav-link" data-scroll-target="#bitwise-operations"><span class="header-section-number">2.6.1</span> Bitwise Operations</a></li>
+  <li><a href="#bitwise-shift-operations" id="toc-bitwise-shift-operations" class="nav-link" data-scroll-target="#bitwise-shift-operations"><span class="header-section-number">2.6.2</span> Bitwise Shift Operations</a></li>
+  <li><a href="#atomic-register-usage-for-gpio-control" id="toc-atomic-register-usage-for-gpio-control" class="nav-link" data-scroll-target="#atomic-register-usage-for-gpio-control"><span class="header-section-number">2.6.3</span> Atomic Register Usage for GPIO Control</a>
+  <ul class="collapse">
+  <li><a href="#advantages-of-atomic-gpio-operations" id="toc-advantages-of-atomic-gpio-operations" class="nav-link" data-scroll-target="#advantages-of-atomic-gpio-operations">Advantages of Atomic GPIO Operations</a></li>
+  <li><a href="#key-atomic-registers" id="toc-key-atomic-registers" class="nav-link" data-scroll-target="#key-atomic-registers">Key Atomic Registers</a></li>
+  <li><a href="#atomic-operations-examples-explanation-in-section-2.6" id="toc-atomic-operations-examples-explanation-in-section-2.6" class="nav-link" data-scroll-target="#atomic-operations-examples-explanation-in-section-2.6">Atomic Operations Examples (Explanation in Section 2.6)</a></li>
+  <li><a href="#avoiding-race-conditions-in-gpio-control" id="toc-avoiding-race-conditions-in-gpio-control" class="nav-link" data-scroll-target="#avoiding-race-conditions-in-gpio-control">Avoiding Race Conditions in GPIO Control</a></li>
+  <li><a href="#best-practices-for-using-atomic-registers" id="toc-best-practices-for-using-atomic-registers" class="nav-link" data-scroll-target="#best-practices-for-using-atomic-registers">Best Practices for Using Atomic Registers</a></li>
+  <li><a href="#checking-the-state-of-a-gpio-pin" id="toc-checking-the-state-of-a-gpio-pin" class="nav-link" data-scroll-target="#checking-the-state-of-a-gpio-pin">Checking the State of a GPIO Pin:</a></li>
+  <li><a href="#using-shift-operators-for-pin-masking" id="toc-using-shift-operators-for-pin-masking" class="nav-link" data-scroll-target="#using-shift-operators-for-pin-masking">Using Shift Operators for Pin Masking</a></li>
+  <li><a href="#practical-example-blinking-an-led-using-bitwise-operations" id="toc-practical-example-blinking-an-led-using-bitwise-operations" class="nav-link" data-scroll-target="#practical-example-blinking-an-led-using-bitwise-operations">Practical Example: Blinking an LED Using Bitwise Operations</a></li>
+  <li><a href="#best-practices-for-bitwise-gpio-operations" id="toc-best-practices-for-bitwise-gpio-operations" class="nav-link" data-scroll-target="#best-practices-for-bitwise-gpio-operations">Best Practices for Bitwise GPIO Operations</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#understanding-the---operator-in-atomic-gpio-operations" id="toc-understanding-the---operator-in-atomic-gpio-operations" class="nav-link" data-scroll-target="#understanding-the---operator-in-atomic-gpio-operations"><span class="header-section-number">2.7</span> Understanding the <code>-&gt;</code> Operator in Atomic GPIO Operations</a>
+  <ul>
+  <li><a href="#pointer-to-structure-and-the---operator" id="toc-pointer-to-structure-and-the---operator" class="nav-link" data-scroll-target="#pointer-to-structure-and-the---operator"><span class="header-section-number">2.7.1</span> Pointer to Structure and the <code>-&gt;</code> Operator</a></li>
+  <li><a href="#gpio-structure-and-enums-in-efr32xg24" id="toc-gpio-structure-and-enums-in-efr32xg24" class="nav-link" data-scroll-target="#gpio-structure-and-enums-in-efr32xg24"><span class="header-section-number">2.7.2</span> GPIO Structure and Enums in EFR32XG24</a></li>
+  <li><a href="#atomic-gpio-operations-with--" id="toc-atomic-gpio-operations-with--" class="nav-link" data-scroll-target="#atomic-gpio-operations-with--"><span class="header-section-number">2.7.3</span> Atomic GPIO Operations with <code>-&gt;</code></a></li>
+  <li><a href="#advantages-of-using-structures-and-the---operator" id="toc-advantages-of-using-structures-and-the---operator" class="nav-link" data-scroll-target="#advantages-of-using-structures-and-the---operator"><span class="header-section-number">2.7.4</span> Advantages of Using Structures and the <code>-&gt;</code> Operator</a></li>
+  </ul></li>
+  <li><a href="#exercise-multiple-choice-questions" id="toc-exercise-multiple-choice-questions" class="nav-link" data-scroll-target="#exercise-multiple-choice-questions"><span class="header-section-number">2.8</span> Exercise: Multiple Choice Questions</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/2_programmingwithc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/2_programmingwithc.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Systems Design</a></li><li class="breadcrumb-item"><a href="../../contents/core/2_programmingwithc.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><strong>Programming Embedded Systems with C</strong></span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><strong>Programming Embedded Systems with C</strong></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="chapterintro">
+<p>Embedded systems rely heavily on the C programming language due to its efficiency, low-level hardware access, and portability across different microcontroller architectures. This chapter explores the foundational concepts of C programming in the context of embedded systems, with a focus on optimizing performance, managing data types, and effectively using hardware resources. By mastering these fundamental concepts, readers will be better prepared to develop efficient and reliable embedded systems using the Silicon Labs EFR32XG24 BLE microcontroller.</p>
+</div>
+<section id="simplicity-studio-ide-for-silicon-labs-efr32xg24-microcontroller" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="simplicity-studio-ide-for-silicon-labs-efr32xg24-microcontroller"><span class="header-section-number">2.1</span> Simplicity Studio IDE for Silicon Labs EFR32XG24 Microcontroller</h2>
+<p>Simplicity Studio is the official Integrated Development Environment (IDE) provided by Silicon Labs for embedded development with their microcontrollers, including the EFR32XG24 BLE microcontroller to be covered in this textbook. It is a feature-rich platform designed to streamline the development process, offering a library of example projects, application templates, and related tools for writing, debugging, profiling, and deploying firmware applications efficiently. It integrates multiple tools into one unified interface:</p>
+<ul>
+<li><p><strong>Project Management:</strong> Create, organize, and manage embedded projects.</p></li>
+<li><p><strong>Device Configuration:</strong> Configure peripheral modules and optimize hardware settings.</p></li>
+<li><p><strong>Debugging Tools:</strong> Real-time debugging with SEGGER J-Link integration.</p></li>
+<li><p><strong>Energy Profiler:</strong> Monitor and optimize power consumption of embedded applications.</p></li>
+<li><p><strong>Wireless Network Analyzer:</strong> Analyze wireless traffic and optimize communication protocols.</p></li>
+</ul>
+<p>Simplicity Studio supports a range of compilers tailored for embedded systems:</p>
+<ul>
+<li><p><strong>GCC (GNU Compiler Collection):</strong> Open-source compiler widely used in embedded systems.</p></li>
+<li><p><strong>IAR Embedded Workbench Compiler:</strong> Commercial compiler known for its optimization capabilities.</p></li>
+<li><p><strong>Keil ARM Compiler (ARMCC):</strong> Industry-standard compiler for ARM Cortex-M series microcontrollers.</p></li>
+</ul>
+<p>For the EFR32XG24 microcontroller, <strong><em>GCC</em></strong> is the default compiler bundled with Simplicity Studio, offering robust optimization and compatibility with ARM Cortex-M33 cores.</p>
+<section id="development-workflow-in-simplicity-studio" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="development-workflow-in-simplicity-studio"><span class="header-section-number">2.1.1</span> Development Workflow in Simplicity Studio</h3>
+<p>The typical workflow when using Simplicity Studio for EFR32XG24 development involves:</p>
+<ol type="1">
+<li><p><strong>Device Selection:</strong> Select the target microcontroller (EFR32XG24) from the device catalog.</p></li>
+<li><p><strong>Project Creation:</strong> Use templates or start from scratch to create firmware projects.</p></li>
+<li><p><strong>Peripheral Configuration:</strong> Use the graphical configuration tool to set up GPIO, timers, UART, SPI, etc.</p></li>
+<li><p><strong>Code Generation:</strong> Auto-generate initialization code based on configuration settings.</p></li>
+<li><p><strong>Build and Compile:</strong> Compile code using GCC or other selected compilers.</p></li>
+<li><p><strong>Debug and Test:</strong> Use SEGGER J-Link debugger for step-by-step debugging and breakpoint management.</p></li>
+<li><p><strong>Energy Profiling:</strong> Use the energy profiler to optimize power consumption.</p></li>
+</ol>
+</section>
+<section id="key-features-of-simplicity-studio-for-efr32xg24" class="level3" data-number="2.1.2">
+<h3 data-number="2.1.2" class="anchored" data-anchor-id="key-features-of-simplicity-studio-for-efr32xg24"><span class="header-section-number">2.1.2</span> Key Features of Simplicity Studio for EFR32XG24</h3>
+<p>The <strong>Graphical Peripheral Configuration Tool</strong> provides an intuitive interface for configuring peripherals and pin assignments, reducing setup errors. The <strong>Real-Time Energy Profiler</strong> enables precise monitoring and analysis of energy consumption, helping developers optimize power efficiency. The <strong>Wireless Network Analyzer</strong> facilitates debugging and fine-tuning of Bluetooth communication channels, ensuring reliable wireless connectivity. Additionally, Simplicity Studio includes <strong>SDK Integration</strong> with pre-built libraries and frameworks for BLE and IoT applications. Developers can also leverage an <strong>Extensive Example Codebase</strong>, which contains numerous pre-written projects for rapid prototyping and reduced development time.</p>
+<p>To maximize productivity and ensure reliable outcomes, developers should follow established best practices when using Simplicity Studio. It is essential to keep the IDE updated to the latest version to benefit from bug fixes and new features. The graphical configuration tools should be used whenever possible to minimize errors during peripheral setup. Compiler optimizations should be enabled to account for the resource-constrained nature of embedded environments. Regular energy profiling should be conducted throughout firmware development to identify and address power inefficiencies. Lastly, developers should use the <strong>SEGGER J-Link Debugger</strong> for precise, real-time debugging and analysis of embedded applications.</p>
+</section>
+</section>
+<section id="structure-of-an-embedded-c-program" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="structure-of-an-embedded-c-program"><span class="header-section-number">2.2</span> Structure of an Embedded C Program</h2>
+<p>A typical embedded C program follows a standardized structure to maintain clarity, modularity, and efficient hardware interaction. A common format that is found in Arduino IDE is as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdint.h&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define LED_PIN </span><span class="dv">13</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> init<span class="op">();</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> loop<span class="op">();</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    init<span class="op">();</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        loop<span class="op">();</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> init<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Initialization code</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> loop<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Main functionality code</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>At the core lies the <code>main()</code> function, which serves as the entry point for program execution. The program begins with an <code>init()</code> function, responsible for hardware and peripheral initialization, such as configuring GPIO pins, timers, and communication interfaces. Following initialization, the program enters an infinite <code>while(1)</code> loop, where the <code>loop()</code> function is repeatedly called to handle the system’s primary tasks. This structure separates setup and runtime logic, promoting code readability and easier debugging. The use of <code>#include &lt;stdint.h&gt;</code> ensures access to fixed-width integer types, while the <code>#define LED_PIN 13</code> macro simplifies hardware pin configuration. This modular design allows embedded systems to maintain deterministic behavior.</p>
+</section>
+<section id="structure-of-an-embedded-c-program-in-simplicity-studio" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="structure-of-an-embedded-c-program-in-simplicity-studio"><span class="header-section-number">2.3</span> Structure of an Embedded C Program in Simplicity Studio</h2>
+<p>In Simplicity Studio, an embedded C program adheres to a standardized structure designed to ensure modularity, hardware abstraction, and efficient execution on microcontrollers like the EFR32XG24. A typical program format is shown below:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_device.h"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_chip.h"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_gpio.h"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="pp">#define LED_PIN </span><span class="dv">13</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> init<span class="op">();</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> loop<span class="op">();</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    CHIP_Init<span class="op">();</span> <span class="co">// Initialize the microcontroller system</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    init<span class="op">();</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        loop<span class="op">();</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> init<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// GPIO and peripheral initialization code</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> loop<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Main functionality code</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In Simplicity Studio, the <code>CHIP_Init()</code> function is typically called at the beginning of the <code>main()</code> function to configure essential hardware components, including the clock management unit (CMU) and device-specific registers. The <code>init()</code> function follows, serving to initialize peripherals, configure GPIO pins, and set up timers or communication interfaces. The program then enters an infinite <code>while(1)</code> loop, where the <code>loop()</code> function repeatedly executes core tasks. Header files such as <code>em_device.h</code> provide device-specific definitions, while <code>em_chip.h</code> ensures system-level configurations are applied. The use of predefined macros like <code>#define LED_PIN 13</code> simplifies hardware abstraction, improving code clarity and reducing errors. This structure leverages Simplicity Studio’s hardware abstraction layer (HAL) to provide a consistent programming interface, ensuring scalability and portability across Silicon Labs microcontroller families.</p>
+</section>
+<section id="generic-data-types-in-embedded-systems" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="generic-data-types-in-embedded-systems"><span class="header-section-number">2.4</span> Generic Data Types in Embedded Systems</h2>
+<p>Data types in embedded systems are carefully chosen based on performance requirements, memory constraints, and application-specific needs. Common data types include:</p>
+<section id="integer-data-types-iso-c99-standard" class="level4">
+<h4 class="anchored" data-anchor-id="integer-data-types-iso-c99-standard">Integer Data Types (ISO C99 Standard)</h4>
+<ul>
+<li><p><strong>int:</strong> Standard integer type, typically 16 or 32 bits depending on the microcontroller.</p></li>
+<li><p><strong>uint8_t, uint16_t, uint32_t:</strong> Unsigned integer types offering precise control over memory usage.</p></li>
+<li><p><strong>int8_t, int16_t, int32_t:</strong> Signed integer types for representing both positive and negative values.</p></li>
+</ul>
+</section>
+<section id="floating-point-data-types-ieee-754-standard" class="level4">
+<h4 class="anchored" data-anchor-id="floating-point-data-types-ieee-754-standard">Floating-Point Data Types (IEEE 754 Standard)</h4>
+<ul>
+<li><p><strong>float:</strong> 32-bit floating-point type for representing decimal values.</p></li>
+<li><p><strong>double:</strong> 64-bit floating-point type for higher precision.</p></li>
+</ul>
+<p>A summary of these types is displayed in Table <a href="#tab:integersizes" data-reference-type="ref" data-reference="tab:integersizes">2.1</a>.</p>
+<p>The EFR32XG24 microcontroller includes an FPU (Floating-Point Unit) to handle floating-point calculations, but such operations can introduce performance and power efficiency overhead. Therefore, floating-point types should be used sparingly in embedded applications.</p>
+<div id="tab:integersizes">
+<table class="caption-top table">
+<caption>Commonly used integer types when programming embedded systems</caption>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"><strong>Data type</strong></th>
+<th style="text-align: left;"><strong>Size</strong></th>
+<th style="text-align: left;"><strong>Range min</strong></th>
+<th style="text-align: left;"><strong>Range max</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>int8_t</strong></td>
+<td style="text-align: left;">8 bits (1 byte)</td>
+<td style="text-align: left;">-128</td>
+<td style="text-align: left;">127</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>uint8_t</strong></td>
+<td style="text-align: left;">8 bits (1 byte)</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">255</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>int16_t</strong></td>
+<td style="text-align: left;">16 bits (2 bytes)</td>
+<td style="text-align: left;">-32768</td>
+<td style="text-align: left;">32767</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>uint16_t</strong></td>
+<td style="text-align: left;">16 bits (2 bytes)</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">65535</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>int32_t</strong></td>
+<td style="text-align: left;">32 bits (4 bytes)</td>
+<td style="text-align: left;">-2,147,483,648</td>
+<td style="text-align: left;">2,147,483,647</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>uint32_t</strong></td>
+<td style="text-align: left;">32 bits (4 bytes)</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">4,294,967,295</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>int64_t</strong></td>
+<td style="text-align: left;">64 bits (8 bytes)</td>
+<td style="text-align: left;">-9,223,372,036,854,775,808</td>
+<td style="text-align: left;">9,223,372,036,854,775,807</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>uint64_t</strong></td>
+<td style="text-align: left;">64 bits (8 bytes)</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">18,446,744,073,709,551,615</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="choosing-the-right-data-type" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="choosing-the-right-data-type"><span class="header-section-number">2.5</span> Choosing the Right Data Type</h2>
+<p>Selecting an appropriate data type in embedded systems programming is a crucial step to ensure optimal memory usage, computational efficiency, and prevention of data-related errors. The choice of data type must balance several key factors, including:</p>
+<ul>
+<li><p><strong>Performance:</strong> Larger data types consume more memory and require longer processing times.</p></li>
+<li><p><strong>Overflow:</strong> Variables must be chosen to prevent exceeding their maximum allowable value.</p></li>
+<li><p><strong>Coercion and Truncation:</strong> Automatic type conversion can lead to unintended behavior if not managed carefully.</p></li>
+</ul>
+<p>In embedded systems, memory is a scarce resource, and improper data type selection can lead to unnecessary overhead. For example:</p>
+<ul>
+<li><p>On an 8-bit microcontroller, using a 4-byte <code>int</code> instead of a 1-byte <code>char</code> for a simple counter wastes memory and processing cycles. For example,</p>
+<pre><code>int counter = 0; // Uses 4 bytes unnecessarily on an 8-bit system
+uint8_t counter = 0; // Optimized for an 8-bit system</code></pre></li>
+<li><p>On a 32-bit microcontroller like the ARM Cortex-M, memory access is optimized for 4-byte alignment, and using smaller data types may not yield significant performance improvements.</p></li>
+</ul>
+<section id="handling-overflow" class="level4">
+<h4 class="anchored" data-anchor-id="handling-overflow">Handling Overflow</h4>
+<p>Overflow occurs when a variable exceeds the maximum value that can be stored in its data type. In embedded systems, overflow can lead to unpredictable behavior or silent data corruption. For example:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">uint8_t</span> seconds <span class="op">=</span> <span class="dv">255</span><span class="op">;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>seconds <span class="op">+=</span> <span class="dv">1</span><span class="op">;</span> <span class="co">// Overflow occurs, seconds resets to 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To prevent overflow:</p>
+<ul>
+<li><p>Use larger data types if overflow is anticipated.</p></li>
+<li><p>Implement overflow detection mechanisms.</p></li>
+</ul>
+</section>
+<section id="data-coercion-and-truncation" class="level4">
+<h4 class="anchored" data-anchor-id="data-coercion-and-truncation">Data Coercion and Truncation</h4>
+<p>In embedded C, implicit type conversions (coercion) and truncation can lead to unintended results:</p>
+<ul>
+<li><p>When a smaller data type is promoted to a larger data type (e.g., <code>uint8_t</code> to <code>uint16_t</code>), padding may occur. For example,</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">uint8_t</span> smallValue <span class="op">=</span> <span class="dv">200</span><span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">uint16_t</span> largeValue <span class="op">=</span> smallValue<span class="op">;</span> <span class="co">// Coercion from 8-bit to 16-bit</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>When a larger data type is truncated to a smaller one (e.g., <code>uint16_t</code> to <code>uint8_t</code>), significant data loss may occur. For example,</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">uint16_t</span> largeValue <span class="op">=</span> <span class="dv">1025</span><span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">uint8_t</span> smallValue <span class="op">=</span> largeValue<span class="op">;</span> <span class="co">// Truncation, smallValue = 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul>
+</section>
+<section id="best-practices-for-data-type-selection" class="level4">
+<h4 class="anchored" data-anchor-id="best-practices-for-data-type-selection">Best Practices for Data Type Selection</h4>
+<ul>
+<li><p>Use fixed-width integer types from the <code>stdint.h</code> library (<code>int8_t</code>, <code>uint16_t</code>, etc.).</p></li>
+<li><p>Avoid mixing signed and unsigned data types in arithmetic operations.</p></li>
+<li><p>Be explicit in type casting and ensure expected results are validated.</p></li>
+<li><p>Always check compiler warnings related to type conversions.</p></li>
+</ul>
+</section>
+</section>
+<section id="memory-alignment-in-embedded-systems" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="memory-alignment-in-embedded-systems"><span class="header-section-number">2.6</span> Memory Alignment in Embedded Systems</h2>
+<p>Efficient memory alignment is critical in embedded systems to optimize performance, reduce access latency, and ensure compatibility with the processor’s architecture. In microcontrollers like the EFR32XG24, unaligned memory access can lead to performance penalties or even cause system faults on certain architectures.</p>
+<section id="understanding-memory-alignment" class="level4">
+<h4 class="anchored" data-anchor-id="understanding-memory-alignment">Understanding Memory Alignment</h4>
+<ul>
+<li><p><strong>Aligned Access:</strong> Data is stored in memory at addresses that are multiples of its size. For example:</p>
+<ul>
+<li>A 2-byte <code>short int</code> should be stored at an address divisible by
+<ol start="2" type="1">
+<li></li>
+</ol></li>
+<li>A 4-byte <code>int</code> or <code>float</code> should be stored at an address divisible by 4.</li>
+</ul></li>
+<li><p><strong>Unaligned Access:</strong> Data is stored at an address that does not adhere to its size requirements. For example:</p>
+<ul>
+<li>Storing a 4-byte <code>int</code> at an address like <code>0x20000003</code> is considered unaligned.</li>
+</ul></li>
+</ul>
+<p>Aligned access is preferred because microcontrollers fetch data in word-sized chunks (e.g., 4 bytes on ARM Cortex-M processors). Misaligned data may require multiple memory accesses, increasing latency and power consumption.</p>
+</section>
+<section id="example-of-memory-alignment" class="level4">
+<h4 class="anchored" data-anchor-id="example-of-memory-alignment">Example of Memory Alignment</h4>
+<p><strong>Aligned Memory Example (Efficient Access):</strong></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">char</span> a<span class="op">;</span>       <span class="co">// 1-byte aligned at 0x20000000</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">short</span> b<span class="op">;</span>      <span class="co">// 2-byte aligned at 0x20000002</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">int</span> c<span class="op">;</span>        <span class="co">// 4-byte aligned at 0x20000004</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Unaligned Memory Example (Potential Performance Penalty):</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">char</span> a<span class="op">;</span>       <span class="co">// Stored at 0x20000000</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">short</span> b<span class="op">;</span>      <span class="co">// Stored at 0x20000001 (misaligned)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">int</span> c<span class="op">;</span>        <span class="co">// Stored at 0x20000003 (misaligned)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Aligned Memory Example (Efficient Access with Padding):</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">char</span> a<span class="op">;</span>       <span class="co">// Stored at 0x20000000</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">char</span> padding<span class="op">;</span> <span class="co">// Added for alignment</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">short</span> b<span class="op">;</span>      <span class="co">// Stored at 0x20000002</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="dt">unsigned</span> <span class="dt">int</span> c<span class="op">;</span>        <span class="co">// Stored at 0x20000004</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="best-practices-for-memory-alignment" class="level4">
+<h4 class="anchored" data-anchor-id="best-practices-for-memory-alignment">Best Practices for Memory Alignment</h4>
+<ul>
+<li><p>Use compiler directives or attributes to enforce memory alignment.</p></li>
+<li><p>Group variables by size (e.g., group all <code>char</code>, then <code>short</code>, then <code>int</code> variables).</p></li>
+<li><p>Avoid unaligned data structures in performance-critical paths.</p></li>
+</ul>
+<p><strong>Compiler Attribute Example (ARM GCC/Keil):</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> __attribute__<span class="op">((</span>aligned<span class="op">(</span><span class="dv">4</span><span class="op">)))</span> AlignedStruct <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint8_t</span> a<span class="op">;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint16_t</span> b<span class="op">;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint32_t</span> c<span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Efficient memory alignment reduces CPU cycles for memory fetches and avoids unnecessary overhead, making it a critical practice in embedded systems programming.</p>
+</section>
+<section id="bitwise-operations" class="level3" data-number="2.6.1">
+<h3 data-number="2.6.1" class="anchored" data-anchor-id="bitwise-operations"><span class="header-section-number">2.6.1</span> Bitwise Operations</h3>
+<p>Bitwise operators are essential in embedded systems for manipulating hardware registers and performing efficient computations. These operations are fundamental for efficiently interacting with GPIO (General Purpose Input Output) registers in embedded systems. They allow precise control over individual bits, enabling configuration, status checking, and manipulation of GPIO pins without affecting other bits in the register.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>AND <span class="op">(&amp;):</span> Used <span class="cf">for</span> masking bits<span class="op">.</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>OR <span class="op">(|):</span> Used <span class="cf">for</span> setting bits<span class="op">.</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>XOR <span class="op">(^):</span> Used <span class="cf">for</span> toggling bits<span class="op">.</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>NOT <span class="op">(~):</span> Used <span class="cf">for</span> inverting bits<span class="op">.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">uint8_t</span> reg <span class="op">=</span> <span class="bn">0b00001111</span><span class="op">;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>reg <span class="op">|=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">4</span><span class="op">);</span> <span class="co">// Set the 5th bit</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>reg <span class="op">&amp;=</span> <span class="op">~(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">2</span><span class="op">);</span> <span class="co">// Clear the 3rd bit</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="bitwise-shift-operations" class="level3" data-number="2.6.2">
+<h3 data-number="2.6.2" class="anchored" data-anchor-id="bitwise-shift-operations"><span class="header-section-number">2.6.2</span> Bitwise Shift Operations</h3>
+<p>Shift operators move bits left (<code>&lt;&lt;</code>) or right (<code>&gt;&gt;</code>) and are commonly used for:</p>
+<ul>
+<li><p>Multiplying or dividing numbers by powers of two.</p></li>
+<li><p>Setting or clearing specific bits.</p></li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dt">uint8_t</span> value <span class="op">=</span> <span class="bn">0x01</span><span class="op">;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>value <span class="op">&lt;&lt;=</span> <span class="dv">3</span><span class="op">;</span> <span class="co">// Shift left by 3 bits (Result: 0x08)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="atomic-register-usage-for-gpio-control" class="level3" data-number="2.6.3">
+<h3 data-number="2.6.3" class="anchored" data-anchor-id="atomic-register-usage-for-gpio-control"><span class="header-section-number">2.6.3</span> Atomic Register Usage for GPIO Control</h3>
+<p>Atomic GPIO operations are critical in embedded systems where precise and thread-safe pin manipulation is required. Unlike standard <code>DOUT</code> register operations (data directly outputs to pin), atomic registers (<code>SET</code>, <code>CLR</code>, and <code>TGL</code>) allow direct modification of specific bits without requiring a read-modify-write cycle.</p>
+<section id="advantages-of-atomic-gpio-operations" class="level4">
+<h4 class="anchored" data-anchor-id="advantages-of-atomic-gpio-operations">Advantages of Atomic GPIO Operations</h4>
+<ul>
+<li><p><strong>Thread-Safe:</strong> Prevents unintended side effects in concurrent operations.</p></li>
+<li><p><strong>Efficient:</strong> Eliminates the overhead of read-modify-write cycles.</p></li>
+<li><p><strong>Precision:</strong> Ensures only the target bit is modified.</p></li>
+</ul>
+</section>
+<section id="key-atomic-registers" class="level4">
+<h4 class="anchored" data-anchor-id="key-atomic-registers">Key Atomic Registers</h4>
+<ul>
+<li><p><strong>SET Register:</strong> Sets specific GPIO pins to a high state without affecting others.</p></li>
+<li><p><strong>CLR Register:</strong> Clears specific GPIO pins to a low state without affecting others.</p></li>
+<li><p><strong>TGL Register:</strong> Toggles specific GPIO pins without affecting others.</p></li>
+</ul>
+</section>
+<section id="atomic-operations-examples-explanation-in-section-2.6" class="level4">
+<h4 class="anchored" data-anchor-id="atomic-operations-examples-explanation-in-section-2.6">Atomic Operations Examples (Explanation in Section 2.6)</h4>
+<p><strong>1. Setting Multiple Pins Atomically:</strong></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>GPIO<span class="op">-&gt;</span>P_SET<span class="op">[</span>gpioPortB<span class="op">].</span>DOUT <span class="op">=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">2</span><span class="op">)</span> <span class="op">|</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">4</span><span class="op">);</span> <span class="co">// Set pins 2 and 4 on Port B</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>2. Clearing Specific Pins Atomically:</strong></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>GPIO<span class="op">-&gt;</span>P_CLR<span class="op">[</span>gpioPortC<span class="op">].</span>DOUT <span class="op">=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">5</span><span class="op">);</span> <span class="co">// Clear pin 5 on Port C</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>3. Toggling Multiple Pins Atomically:</strong></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>GPIO<span class="op">-&gt;</span>P_TGL<span class="op">[</span>gpioPortD<span class="op">].</span>DOUT <span class="op">=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">1</span><span class="op">)</span> <span class="op">|</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">3</span><span class="op">);</span> <span class="co">// Toggle pins 1 and 3 on Port D</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="avoiding-race-conditions-in-gpio-control" class="level4">
+<h4 class="anchored" data-anchor-id="avoiding-race-conditions-in-gpio-control">Avoiding Race Conditions in GPIO Control</h4>
+<p>In real-time systems, race conditions can occur when multiple threads or interrupt routines attempt to modify GPIO pins simultaneously. Atomic registers mitigate this risk by ensuring:</p>
+<ul>
+<li><p>Only the targeted pins are modified.</p></li>
+<li><p>No unintended overwrites occur during concurrent access.</p></li>
+</ul>
+<p><strong>Example of Thread-Safe Pin Toggle:</strong></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> toggleLedThreadSafe<span class="op">(</span><span class="dt">void</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    GPIO<span class="op">-&gt;</span>P_TGL<span class="op">[</span>gpioPortA<span class="op">].</span>DOUT <span class="op">=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">6</span><span class="op">);</span> <span class="co">// Safely toggle pin 6</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="best-practices-for-using-atomic-registers" class="level4">
+<h4 class="anchored" data-anchor-id="best-practices-for-using-atomic-registers">Best Practices for Using Atomic Registers</h4>
+<ul>
+<li><p>Prefer atomic registers for time-critical pin operations.</p></li>
+<li><p>Avoid mixing standard <code>DOUT</code> operations with atomic operations on the same pins.</p></li>
+<li><p>Document atomic operations in shared resources clearly.</p></li>
+<li><p>Test interrupt-driven routines for predictable behavior with atomic GPIO controls.</p></li>
+</ul>
+</section>
+<section id="checking-the-state-of-a-gpio-pin" class="level4">
+<h4 class="anchored" data-anchor-id="checking-the-state-of-a-gpio-pin">Checking the State of a GPIO Pin:</h4>
+<div class="sourceCode" id="cb18"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="dt">uint8_t</span> pinState <span class="op">=</span> <span class="op">(</span>GPIO<span class="op">-&gt;</span>P<span class="op">[</span>gpioPortA<span class="op">].</span>DIN <span class="op">&gt;&gt;</span> <span class="dv">3</span><span class="op">)</span> <span class="op">&amp;</span> <span class="dv">1</span><span class="op">;</span> <span class="co">// Read state of pin 3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="using-shift-operators-for-pin-masking" class="level4">
+<h4 class="anchored" data-anchor-id="using-shift-operators-for-pin-masking">Using Shift Operators for Pin Masking</h4>
+<p>Shift operators are commonly used to create masks for setting, clearing, or toggling specific bits in GPIO registers.</p>
+<p><strong>Example - Setting Multiple Pins:</strong></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>GPIO<span class="op">-&gt;</span>P<span class="op">[</span>gpioPortA<span class="op">].</span>DOUT <span class="op">|=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">3</span><span class="op">)</span> <span class="op">|</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">5</span><span class="op">);</span> <span class="co">// Set pins 3 and 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Example - Clearing Multiple Pins:</strong></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>GPIO<span class="op">-&gt;</span>P<span class="op">[</span>gpioPortA<span class="op">].</span>DOUT <span class="op">&amp;=</span> <span class="op">~((</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">3</span><span class="op">)</span> <span class="op">|</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">5</span><span class="op">));</span> <span class="co">// Clear pins 3 and 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="practical-example-blinking-an-led-using-bitwise-operations" class="level4">
+<h4 class="anchored" data-anchor-id="practical-example-blinking-an-led-using-bitwise-operations">Practical Example: Blinking an LED Using Bitwise Operations</h4>
+<p>The following example demonstrates how to blink an LED connected to Port D, Pin 2 using bitwise operations:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define LED_PIN </span><span class="dv">2</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Configure pin as output</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>GPIO<span class="op">-&gt;</span>P<span class="op">[</span>gpioPortD<span class="op">].</span>MODEL <span class="op">|=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="op">(</span><span class="dv">4</span> <span class="op">*</span> LED_PIN<span class="op">));</span> <span class="co">// MODEL is the MODE Low register</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Toggle the LED state in a loop</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    GPIO<span class="op">-&gt;</span>P<span class="op">[</span>gpioPortD<span class="op">].</span>DOUT <span class="op">^=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> LED_PIN<span class="op">);</span> <span class="co">// Toggle LED pin</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    delay<span class="op">(</span><span class="dv">1000</span><span class="op">);</span> <span class="co">// 1-second delay</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="best-practices-for-bitwise-gpio-operations" class="level4">
+<h4 class="anchored" data-anchor-id="best-practices-for-bitwise-gpio-operations">Best Practices for Bitwise GPIO Operations</h4>
+<ul>
+<li><p>Always mask the specific bits you intend to modify.</p></li>
+<li><p>Avoid direct assignments to GPIO registers; prefer bitwise operations.</p></li>
+<li><p>Use clear and descriptive macros for pin numbers and masks.</p></li>
+<li><p>Test configurations thoroughly to prevent accidental overwrites.</p></li>
+</ul>
+<p>Bitwise operations provide low-level control over GPIO registers, ensuring efficient and predictable manipulation of hardware pins. Mastering these operations is essential for embedded systems programming.</p>
+</section>
+</section>
+</section>
+<section id="understanding-the---operator-in-atomic-gpio-operations" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="understanding-the---operator-in-atomic-gpio-operations"><span class="header-section-number">2.7</span> Understanding the <code>-&gt;</code> Operator in Atomic GPIO Operations</h2>
+<p>In embedded systems programming, especially when interfacing with hardware peripherals such as GPIO registers, it is common to encounter expressions utilizing the <code>-&gt;</code> operator. This operator is used to access members of a structure through a pointer. In the context of atomic GPIO operations with the Silicon Labs EFR32XG24 microcontroller, the <code>-&gt;</code> operator simplifies hardware register access and enhance code clarity.</p>
+<section id="pointer-to-structure-and-the---operator" class="level3" data-number="2.7.1">
+<h3 data-number="2.7.1" class="anchored" data-anchor-id="pointer-to-structure-and-the---operator"><span class="header-section-number">2.7.1</span> Pointer to Structure and the <code>-&gt;</code> Operator</h3>
+<p>In C, the <code>-&gt;</code> operator is used to access a member of a structure when the structure is referred to by a pointer. The syntax is:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pointer<span class="op">-&gt;</span>member</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is equivalent to:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="op">(*</span>pointer<span class="op">).</span>member</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Here:</p>
+<ul>
+<li><p><strong>pointer</strong>: Points to a structure (e.g., GPIO peripheral base address).</p></li>
+<li><p><strong>member</strong>: Represents a specific field in the structure (e.g., registers like <code>P_SET</code>, <code>P_CLR</code>, <code>P_TGL</code>).</p></li>
+</ul>
+</section>
+<section id="gpio-structure-and-enums-in-efr32xg24" class="level3" data-number="2.7.2">
+<h3 data-number="2.7.2" class="anchored" data-anchor-id="gpio-structure-and-enums-in-efr32xg24"><span class="header-section-number">2.7.2</span> GPIO Structure and Enums in EFR32XG24</h3>
+<p>The GPIO peripheral on the EFR32XG24 microcontroller is represented as a structure, typically defined in the hardware abstraction layer (HAL). For example:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">volatile</span> <span class="dt">uint32_t</span> DOUT<span class="op">;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">volatile</span> <span class="dt">uint32_t</span> SET<span class="op">;</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">volatile</span> <span class="dt">uint32_t</span> CLR<span class="op">;</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">volatile</span> <span class="dt">uint32_t</span> TGL<span class="op">;</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> GPIO_Port_TypeDef<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Additionally, GPIO ports are often enumerated for easy reference:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">enum</span> <span class="op">{</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    gpioPortA<span class="op">,</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    gpioPortB<span class="op">,</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    gpioPortC<span class="op">,</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    gpioPortD</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> GPIO_Port_Type<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="atomic-gpio-operations-with--" class="level3" data-number="2.7.3">
+<h3 data-number="2.7.3" class="anchored" data-anchor-id="atomic-gpio-operations-with--"><span class="header-section-number">2.7.3</span> Atomic GPIO Operations with <code>-&gt;</code></h3>
+<p>When performing atomic GPIO operations, the structure pointer enables access to specific GPIO port registers. For example:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>GPIO<span class="op">-&gt;</span>P_SET<span class="op">[</span>gpioPortB<span class="op">].</span>DOUT <span class="op">=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">2</span><span class="op">)</span> <span class="op">|</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">4</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Explanation:</p>
+<ul>
+<li><p><strong>GPIO</strong>: Base pointer to the GPIO peripheral structure.</p></li>
+<li><p><strong>P_SET</strong>: Array of registers representing SET operations for each port.</p></li>
+<li><p><strong>gpioPortB</strong>: Index to select Port B.</p></li>
+<li><p><strong>DOUT</strong>: Data Output register for atomic SET operation.</p></li>
+</ul>
+<p>Similarly:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>GPIO<span class="op">-&gt;</span>P_CLR<span class="op">[</span>gpioPortC<span class="op">].</span>DOUT <span class="op">=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">5</span><span class="op">);</span> <span class="co">// Clear pin 5 on Port C</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>GPIO<span class="op">-&gt;</span>P_TGL<span class="op">[</span>gpioPortD<span class="op">].</span>DOUT <span class="op">=</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">1</span><span class="op">)</span> <span class="op">|</span> <span class="op">(</span><span class="dv">1</span> <span class="op">&lt;&lt;</span> <span class="dv">3</span><span class="op">);</span> <span class="co">// Toggle pins 1 and 3 on Port D</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="advantages-of-using-structures-and-the---operator" class="level3" data-number="2.7.4">
+<h3 data-number="2.7.4" class="anchored" data-anchor-id="advantages-of-using-structures-and-the---operator"><span class="header-section-number">2.7.4</span> Advantages of Using Structures and the <code>-&gt;</code> Operator</h3>
+<ul>
+<li><p><strong>Code Clarity</strong>: Clear and readable syntax for hardware register access.</p></li>
+<li><p><strong>Portability</strong>: Standardized structure definitions across different microcontrollers.</p></li>
+<li><p><strong>Efficiency</strong>: Direct register access through pointer dereferencing minimizes CPU cycles.</p></li>
+</ul>
+</section>
+</section>
+<section id="exercise-multiple-choice-questions" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="exercise-multiple-choice-questions"><span class="header-section-number">2.8</span> Exercise: Multiple Choice Questions</h2>
+<ol type="1">
+<li><p><strong>What is the primary reason C is preferred for embedded systems programming?</strong></p>
+<ol type="1">
+<li><p>User-friendly syntax</p></li>
+<li><p>High-level abstraction</p></li>
+<li><p>Low-level hardware access and efficiency</p></li>
+<li><p>Automatic memory management</p></li>
+</ol>
+<p><strong>Correct Answer: C</strong></p></li>
+<li><p><strong>Which header file is commonly included in an embedded C program for fixed-width integer types?</strong></p>
+<ol type="1">
+<li><p><code>stdio.h</code></p></li>
+<li><p><code>stdint.h</code></p></li>
+<li><p><code>string.h</code></p></li>
+<li><p><code>stdlib.h</code></p></li>
+</ol>
+<p><strong>Correct Answer: B</strong></p></li>
+<li><p><strong>What happens if a variable exceeds the maximum value of its data type?</strong></p>
+<ol type="1">
+<li><p>It goes back to zero</p></li>
+<li><p>It causes a system crash</p></li>
+<li><p>It triggers an interrupt</p></li>
+<li><p>It generates a compiler warning</p></li>
+</ol>
+<p><strong>Correct Answer: A</strong></p></li>
+<li><p><strong>Which data type is best suited for a counter variable on an 8-bit microcontroller?</strong></p>
+<ol type="1">
+<li><p><code>int</code></p></li>
+<li><p><code>uint8_t</code></p></li>
+<li><p><code>float</code></p></li>
+<li><p><code>double</code></p></li>
+</ol>
+<p><strong>Correct Answer: B</strong></p></li>
+<li><p><strong>What is the key advantage of using floating-point data types sparingly in embedded systems?</strong></p>
+<ol type="1">
+<li><p>Reduced memory usage</p></li>
+<li><p>Increased processing speed</p></li>
+<li><p>Better precision</p></li>
+<li><p>Simplified syntax</p></li>
+</ol>
+<p><strong>Correct Answer: A</strong></p></li>
+<li><p><strong>Which of the following is an example of memory alignment in embedded systems?</strong></p>
+<ol type="1">
+<li><p>Address divisible by 2 for a short integer</p></li>
+<li><p>Randomly allocated memory address</p></li>
+<li><p>Using dynamic memory allocation</p></li>
+<li><p>Overwriting stack memory</p></li>
+</ol>
+<p><strong>Correct Answer: A</strong></p></li>
+<li><p><strong>What does the bitwise ‘AND’ operator do in GPIO manipulation?</strong></p>
+<ol type="1">
+<li><p>Sets specific bits</p></li>
+<li><p>Clears specific bits</p></li>
+<li><p>Masks specific bits</p></li>
+<li><p>Toggles specific bits</p></li>
+</ol>
+<p><strong>Correct Answer: C</strong></p></li>
+<li><p><strong>What is the purpose of the ‘SET’ register in GPIO control?</strong></p>
+<ol type="1">
+<li><p>Clear specific GPIO pins</p></li>
+<li><p>Toggle specific GPIO pins</p></li>
+<li><p>Set specific GPIO pins</p></li>
+<li><p>Read GPIO pin status</p></li>
+</ol>
+<p><strong>Correct Answer: C</strong></p></li>
+<li><p><strong>Which best describes data coercion in embedded systems?</strong></p>
+<ol type="1">
+<li><p>Automatic type conversion</p></li>
+<li><p>Forced memory alignment</p></li>
+<li><p>Manual data truncation</p></li>
+<li><p>Dynamic memory reallocation</p></li>
+</ol>
+<p><strong>Correct Answer: A</strong></p></li>
+<li><p><strong>What happens when a uint16_t variable is assigned to a uint8_t variable with a value greater than 255?</strong></p>
+<ol type="1">
+<li><p>Value remains unchanged</p></li>
+<li><p>Compiler error</p></li>
+<li><p>Value is truncated</p></li>
+<li><p>System crash</p></li>
+</ol>
+<p><strong>Correct Answer: C</strong></p></li>
+<li><p><strong>Which of the following prevents race conditions in GPIO control?</strong></p>
+<ol type="1">
+<li><p>Using ‘DOUT’ register</p></li>
+<li><p>Using ‘SET’ and ‘CLR’ registers atomically</p></li>
+<li><p>Disabling interrupts</p></li>
+<li><p>Using global variables</p></li>
+</ol>
+<p><strong>Correct Answer: B</strong></p></li>
+<li><p><strong>Why is aligned memory access preferred in embedded systems?</strong></p>
+<ol type="1">
+<li><p>Better energy efficiency</p></li>
+<li><p>Increased memory usage</p></li>
+<li><p>Reduced CPU latency</p></li>
+<li><p>Dynamic memory allocation</p></li>
+</ol>
+<p><strong>Correct Answer: C</strong></p></li>
+<li><p><strong>What is the main function of bitwise shift operators (‘&lt;&lt;’ and ‘&gt;&gt;’) in embedded C?</strong></p>
+<ol type="1">
+<li><p>Inverting bits</p></li>
+<li><p>Multiplying or dividing by powers of two</p></li>
+<li><p>Clearing specific bits</p></li>
+<li><p>Reading GPIO pin status</p></li>
+</ol>
+<p><strong>Correct Answer: B</strong></p></li>
+<li><p><strong>What should you avoid when working with GPIO atomic operations?</strong></p>
+<ol type="1">
+<li><p>Mixing standard ‘DOUT’ and atomic operations</p></li>
+<li><p>Using specific masks</p></li>
+<li><p>Documenting shared resources</p></li>
+<li><p>Testing configurations</p></li>
+</ol>
+<p><strong>Correct Answer: A</strong></p></li>
+<li><p><strong>Which fixed-width integer type ensures consistent size across platforms?</strong></p>
+<ol type="1">
+<li><p><code>int</code></p></li>
+<li><p><code>long</code></p></li>
+<li><p><code>uint16_t</code></p></li>
+<li><p><code>short</code></p></li>
+</ol>
+<p><strong>Correct Answer: C</strong></p></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../contents/core/1_introduction.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../contents/core/3_devkitoverview.html" class="pagination-link" aria-label="**EFR32xG24 Development Kit Overview**">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title"><strong>EFR32xG24 Development Kit Overview</strong></span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Written by Masuldul Imtiaz, PhD (Clarkson University)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/2_programmingwithc.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/2_programmingwithc.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; Real-Time Gesture Recognition – Embedded Systems Design</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../contents/core/7_gesturerecog_magicwand.html" rel="next">
+<link href="../../contents/core/5_efr32applications.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-86daaaaad7353f9cc0c554efc1dd6d94.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-f8dc6eab18fde03278982b0b35885446.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-b4fc4dddb6ec1a779f0a285a431e56d0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-eae2d66f002e799350c2a60e45471621.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "~",
+    "/"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Embedded Systems Design</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-wide tools-end">
+    <a href="https://github.com/clarkson-edge/ee513_book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../../Embedded-Systems-Design.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Embedded Systems Design</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/1_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/2_programmingwithc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><strong>Programming Embedded Systems with C</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/3_devkitoverview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title"><strong>EFR32xG24 Development Kit Overview</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/4_efr32programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title"><strong>EFR32 I/O Programming</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/5_efr32applications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title"><strong>Applications of EFR32 I/O</strong></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Embedded Machine Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/6_gesturerecog_realtime.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/7_gesturerecog_magicwand.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/8_anomalydetection_htm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/9_audioml.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-to-edge-ai-in-embedded-systems" id="toc-introduction-to-edge-ai-in-embedded-systems" class="nav-link active" data-scroll-target="#introduction-to-edge-ai-in-embedded-systems"><span class="header-section-number">6.1</span> Introduction to Edge AI in Embedded Systems</a>
+  <ul>
+  <li><a href="#advantages-of-edge-ai" id="toc-advantages-of-edge-ai" class="nav-link" data-scroll-target="#advantages-of-edge-ai"><span class="header-section-number">6.1.1</span> Advantages of Edge AI</a></li>
+  <li><a href="#why-efr32xg24-for-edge-ai" id="toc-why-efr32xg24-for-edge-ai" class="nav-link" data-scroll-target="#why-efr32xg24-for-edge-ai"><span class="header-section-number">6.1.2</span> Why EFR32XG24 for Edge AI?</a></li>
+  </ul></li>
+  <li><a href="#gesture-recognition-system-overview" id="toc-gesture-recognition-system-overview" class="nav-link" data-scroll-target="#gesture-recognition-system-overview"><span class="header-section-number">6.2</span> Gesture Recognition System Overview</a>
+  <ul>
+  <li><a href="#system-components" id="toc-system-components" class="nav-link" data-scroll-target="#system-components"><span class="header-section-number">6.2.1</span> System Components</a></li>
+  <li><a href="#system-workflow" id="toc-system-workflow" class="nav-link" data-scroll-target="#system-workflow"><span class="header-section-number">6.2.2</span> System Workflow</a></li>
+  </ul></li>
+  <li><a href="#ai-model-design-for-gesture-recognition" id="toc-ai-model-design-for-gesture-recognition" class="nav-link" data-scroll-target="#ai-model-design-for-gesture-recognition"><span class="header-section-number">6.3</span> AI Model Design for Gesture Recognition</a>
+  <ul>
+  <li><a href="#model-architecture" id="toc-model-architecture" class="nav-link" data-scroll-target="#model-architecture"><span class="header-section-number">6.3.1</span> Model Architecture</a></li>
+  </ul></li>
+  <li><a href="#sec:methodology" id="toc-sec:methodology" class="nav-link" data-scroll-target="#sec\:methodology"><span class="header-section-number">6.4</span> Methodology</a>
+  <ul>
+  <li><a href="#data-acquisition" id="toc-data-acquisition" class="nav-link" data-scroll-target="#data-acquisition"><span class="header-section-number">6.4.1</span> Data Acquisition</a></li>
+  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link" data-scroll-target="#data-preprocessing"><span class="header-section-number">6.4.2</span> Data Preprocessing</a></li>
+  <li><a href="#ai-model-development" id="toc-ai-model-development" class="nav-link" data-scroll-target="#ai-model-development"><span class="header-section-number">6.4.3</span> AI Model Development</a></li>
+  <li><a href="#system-integration" id="toc-system-integration" class="nav-link" data-scroll-target="#system-integration"><span class="header-section-number">6.4.4</span> System Integration</a></li>
+  <li><a href="#evaluation-metrics" id="toc-evaluation-metrics" class="nav-link" data-scroll-target="#evaluation-metrics"><span class="header-section-number">6.4.5</span> Evaluation Metrics</a></li>
+  <li><a href="#hardware-and-software-tools" id="toc-hardware-and-software-tools" class="nav-link" data-scroll-target="#hardware-and-software-tools"><span class="header-section-number">6.4.6</span> Hardware and Software Tools</a></li>
+  </ul></li>
+  <li><a href="#sec:challenges" id="toc-sec:challenges" class="nav-link" data-scroll-target="#sec\:challenges"><span class="header-section-number">6.5</span> Challenges and Limitations</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/6_gesturerecog_realtime.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/6_gesturerecog_realtime.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="chapterintro">
+<p>Edge AI combines the power of artificial intelligence and edge computing to enable real-time decision-making directly on embedded devices. This chapter explores the implementation of Edge AI for gesture recognition using the EFR32XG24 microcontroller. By leveraging AI models optimized for resource-constrained environments, embedded systems can interpret gesture inputs with low latency and high accuracy, enhancing applications in fields such as human-computer interaction, rehabilitation, and IoT-based control systems.</p>
+</div>
+<section id="introduction-to-edge-ai-in-embedded-systems" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="introduction-to-edge-ai-in-embedded-systems"><span class="header-section-number">6.1</span> Introduction to Edge AI in Embedded Systems</h2>
+<p>Edge AI refers to deploying AI models on edge devices, such as microcontrollers, where data is processed locally instead of being sent to a centralized cloud server. This paradigm reduces latency, enhances data privacy, and ensures uninterrupted operation even in environments with limited connectivity.</p>
+<p>As embedded systems become more advanced, the need for efficient on-device data processing grows. Traditional systems rely heavily on cloud infrastructure, which can introduce latency, data privacy concerns, and increased operational costs. Edge AI addresses these issues by allowing computations to occur on the microcontroller itself, ensuring responsiveness and independence from network stability. With microcontrollers like the EFR32XG24, AI algorithms are executed efficiently despite hardware and memory constraints.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Example: Initialize Edge AI on EFR32XG24</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> initEdgeAI<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    configureClock<span class="op">();</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    enableAIAccelerator<span class="op">();</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    loadAIModel<span class="op">();</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    initializeSensors<span class="op">();</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>initEdgeAI<span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="advantages-of-edge-ai" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="advantages-of-edge-ai"><span class="header-section-number">6.1.1</span> Advantages of Edge AI</h3>
+<p>Edge AI offers several critical advantages that make it an essential technology for embedded systems:</p>
+<ul>
+<li><p><strong>Low Latency:</strong> Immediate processing without reliance on cloud servers.</p></li>
+<li><p><strong>Improved Privacy:</strong> Sensitive data remains on the device.</p></li>
+<li><p><strong>Reduced Bandwidth Usage:</strong> No need for constant data transmission.</p></li>
+<li><p><strong>Energy Efficiency:</strong> Optimized AI models reduce power consumption.</p></li>
+<li><p><strong>Scalability:</strong> Multiple devices can operate independently.</p></li>
+<li><p><strong>Offline Operation:</strong> Systems continue functioning without an active internet connection.</p></li>
+</ul>
+<p>These benefits are especially important in applications like gesture recognition, where real-time response is crucial for effective interaction. Devices deployed in remote or resource-limited environments can operate reliably without relying on continuous cloud access.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Example: Optimizing AI Model</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> optimizeAIModel<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    reducePrecision<span class="op">();</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    quantizeWeights<span class="op">();</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    minimizeMemoryFootprint<span class="op">();</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>optimizeAIModel<span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="why-efr32xg24-for-edge-ai" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="why-efr32xg24-for-edge-ai"><span class="header-section-number">6.1.2</span> Why EFR32XG24 for Edge AI?</h3>
+<p>The EFR32XG24 microcontroller, equipped with an ARM Cortex-M33 core and integrated BLE capabilities, provides an ideal platform for Edge AI applications. Its features include:</p>
+<ul>
+<li><p>Support for TinyML frameworks.</p></li>
+<li><p>Dedicated hardware accelerators for AI computations.</p></li>
+<li><p>Energy-efficient architecture for battery-operated devices.</p></li>
+<li><p>Advanced security features for data integrity.</p></li>
+<li><p>High-speed BLE communication for real-time data transfer.</p></li>
+<li><p>Integrated peripherals for sensor interfacing.</p></li>
+</ul>
+<!-- -->
+<div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Example: BLE Initialization for Edge AI</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> initBLE<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    BLE_init<span class="op">();</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    BLE_enable<span class="op">();</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    BLE_setMode<span class="op">(</span>BLE_LOW_POWER<span class="op">);</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>initBLE<span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Furthermore, the microcontroller’s native support for TensorFlow Lite for Microcontrollers (TFLM) allows seamless deployment of lightweight AI models. Its power efficiency ensures prolonged operational life.</p>
+</section>
+</section>
+<section id="gesture-recognition-system-overview" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="gesture-recognition-system-overview"><span class="header-section-number">6.2</span> Gesture Recognition System Overview</h2>
+<p>Gesture recognition systems are a subset of human-computer interaction technologies that allow users to control and interact with devices using physical gestures. In an embedded context, gesture recognition systems aim to interpret motion patterns captured by sensors like IMUs (Inertial Measurement Units). The EFR32XG24 microcontroller enables real-time gesture recognition while maintaining energy efficiency and responsiveness.</p>
+<section id="system-components" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="system-components"><span class="header-section-number">6.2.1</span> System Components</h3>
+<p>A gesture recognition system using the EFR32XG24 microcontroller involves several key components:</p>
+<ul>
+<li><p><strong>Sensors:</strong> Inertial Measurement Unit (IMU) for capturing motion data.</p></li>
+<li><p><strong>AI Model:</strong> A lightweight Convolutional Neural Network (CNN) optimized for TinyML.</p></li>
+<li><p><strong>Data Preprocessing:</strong> Noise filtering and segmentation.</p></li>
+<li><p><strong>BLE Communication:</strong> Real-time data transfer to mobile devices.</p></li>
+<li><p><strong>Power Management System:</strong> Ensures long battery life.</p></li>
+</ul>
+<!-- -->
+<div class="sourceCode" id="cb4"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Example: Read IMU Sensor Data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> readIMU<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> x <span class="op">=</span> IMU_getX<span class="op">();</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> y <span class="op">=</span> IMU_getY<span class="op">();</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> z <span class="op">=</span> IMU_getZ<span class="op">();</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>x <span class="op">+</span> y <span class="op">+</span> z<span class="op">)</span> <span class="op">/</span> <span class="dv">3</span><span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="system-workflow" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="system-workflow"><span class="header-section-number">6.2.2</span> System Workflow</h3>
+<p>The overall workflow of a gesture recognition system includes the following stages:</p>
+<ol type="1">
+<li><p>Raw sensor data is captured using IMU sensors.</p></li>
+<li><p>Data is preprocessed locally to remove noise.</p></li>
+<li><p>Preprocessed data is fed into the AI model.</p></li>
+<li><p>The AI model classifies the gesture.</p></li>
+<li><p>Results are sent via BLE to a connected device.</p></li>
+<li><p>Feedback is displayed in real-time on a mobile or desktop application.</p></li>
+</ol>
+</section>
+</section>
+<section id="ai-model-design-for-gesture-recognition" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="ai-model-design-for-gesture-recognition"><span class="header-section-number">6.3</span> AI Model Design for Gesture Recognition</h2>
+<p>The AI model for gesture recognition is implemented using a TinyML-compatible CNN architecture.</p>
+<section id="model-architecture" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="model-architecture"><span class="header-section-number">6.3.1</span> Model Architecture</h3>
+<p>The CNN architecture is carefully designed to balance accuracy, memory consumption, and computational efficiency:</p>
+<ul>
+<li><p><strong>Input Layer:</strong> Processes time-series IMU data.</p></li>
+<li><p><strong>Convolutional Layers:</strong> Extract spatial and temporal patterns.</p></li>
+<li><p><strong>Dropout Layers:</strong> Prevent overfitting.</p></li>
+<li><p><strong>Fully Connected Layer:</strong> Classifies gestures.</p></li>
+<li><p><strong>Softmax Layer:</strong> Provides final classification probabilities.</p></li>
+</ul>
+<!-- -->
+<div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Example: Preprocessing IMU Data</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> preprocessIMUData<span class="op">(</span><span class="dt">float</span><span class="op">*</span> data<span class="op">,</span> <span class="dt">int</span> size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> size<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        data<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> normalize<span class="op">(</span>data<span class="op">[</span>i<span class="op">]);</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<table class="caption-top table">
+<caption>Table 6.1: AI Model Layers and Parameters</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;"><strong>Layer</strong></th>
+<th style="text-align: left;"><strong>Type</strong></th>
+<th style="text-align: left;"><strong>Output Shape</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Input</td>
+<td style="text-align: left;">Time-Series Data</td>
+<td style="text-align: left;">(128, 3, 1)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conv2D</td>
+<td style="text-align: left;">Feature Extraction</td>
+<td style="text-align: left;">(64, 128, 3, 8)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MaxPooling2D</td>
+<td style="text-align: left;">Downsampling</td>
+<td style="text-align: left;">(32, 64, 8)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dropout</td>
+<td style="text-align: left;">Regularization</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Flatten</td>
+<td style="text-align: left;">Vectorization</td>
+<td style="text-align: left;">(512)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dense</td>
+<td style="text-align: left;">Classification</td>
+<td style="text-align: left;">(16)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Output</td>
+<td style="text-align: left;">Softmax</td>
+<td style="text-align: left;">(4)</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="sec:methodology" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="sec:methodology"><span class="header-section-number">6.4</span> Methodology</h2>
+<p>This section outlines the methodology used to design and implement an Edge AI-based gesture recognition system on the EFR32XG24 BLE microcontroller. The methodology consists of four main stages: Data Acquisition, Data Preprocessing, AI Model Development, and System Integration. Each stage is elaborated below.</p>
+<section id="data-acquisition" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="data-acquisition"><span class="header-section-number">6.4.1</span> Data Acquisition</h3>
+<p>The gesture recognition system utilizes an Inertial Measurement Unit (IMU) sensor to capture motion data. The IMU consists of accelerometers, gyroscopes, and magnetometers to measure linear acceleration, angular velocity, and orientation, respectively.</p>
+<p><strong>Sensor Configuration:</strong></p>
+<ul>
+<li><p><strong>Sensor Type:</strong> 6-axis IMU sensor.</p></li>
+<li><p><strong>Sampling Rate:</strong> 50 Hz.</p></li>
+<li><p><strong>Data Format:</strong> Time-series data with X, Y, and Z-axis readings.</p></li>
+</ul>
+<p>The IMU sensor outputs raw motion data, which is collected in real-time and fed into the microcontroller for preprocessing.</p>
+</section>
+<section id="data-preprocessing" class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="data-preprocessing"><span class="header-section-number">6.4.2</span> Data Preprocessing</h3>
+<p>Raw data from the IMU sensor is noisy and requires preprocessing before being fed into the AI model. The preprocessing pipeline includes the following steps:</p>
+<ol type="1">
+<li><p><strong>Noise Filtering:</strong> A low-pass filter is applied to remove high-frequency noise.</p></li>
+<li><p><strong>Normalization:</strong> Sensor readings are normalized to a common scale between 0 and 1.</p></li>
+<li><p><strong>Segmentation:</strong> The data is divided into fixed-size time windows for analysis.</p></li>
+</ol>
+<p>The preprocessed data ensures consistency and reduces variability, enabling robust AI model performance.</p>
+</section>
+<section id="ai-model-development" class="level3" data-number="6.4.3">
+<h3 data-number="6.4.3" class="anchored" data-anchor-id="ai-model-development"><span class="header-section-number">6.4.3</span> AI Model Development</h3>
+<p>The AI model is implemented using a TinyML-compatible Convolutional Neural Network (CNN). The architecture is optimized for low memory and computational constraints typical of embedded devices.</p>
+<p><strong>Model Architecture:</strong></p>
+<ul>
+<li><p><strong>Input Layer:</strong> Accepts preprocessed IMU time-series data.</p></li>
+<li><p><strong>Convolutional Layers:</strong> Extract spatial and temporal patterns.</p></li>
+<li><p><strong>Pooling Layers:</strong> Reduce dimensionality while retaining critical features.</p></li>
+<li><p><strong>Dropout Layers:</strong> Prevent overfitting during training.</p></li>
+<li><p><strong>Fully Connected Layers:</strong> Map learned features to output classes.</p></li>
+<li><p><strong>Output Layer:</strong> Softmax layer providing probabilities for each gesture class.</p></li>
+</ul>
+<p><strong>Training and Optimization:</strong></p>
+<ul>
+<li><p><strong>Framework:</strong> TensorFlow Lite for Microcontrollers (TFLM).</p></li>
+<li><p><strong>Training Dataset:</strong> Recorded gesture datasets.</p></li>
+<li><p><strong>Optimization Techniques:</strong> Weight quantization, reduced precision arithmetic, and model pruning.</p></li>
+</ul>
+<p>The model was trained offline on a high-performance server and deployed onto the EFR32XG24 microcontroller after optimization.</p>
+</section>
+<section id="system-integration" class="level3" data-number="6.4.4">
+<h3 data-number="6.4.4" class="anchored" data-anchor-id="system-integration"><span class="header-section-number">6.4.4</span> System Integration</h3>
+<p>The final deployment involves integrating the AI model with the EFR32XG24 microcontroller and establishing BLE communication for data transfer and feedback display.</p>
+<p><strong>System Workflow:</strong></p>
+<ol type="1">
+<li><p>IMU sensors capture real-time motion data.</p></li>
+<li><p>Data preprocessing is performed locally on the microcontroller.</p></li>
+<li><p>The preprocessed data is passed to the AI model for gesture classification.</p></li>
+<li><p>Results are transmitted via BLE to connected mobile or desktop applications.</p></li>
+<li><p>Feedback is displayed in real-time.</p></li>
+</ol>
+<p><strong>Power Management:</strong></p>
+<ul>
+<li><p>Adaptive power management is implemented to minimize battery consumption.</p></li>
+<li><p>Low-power BLE mode is enabled for data transmission.</p></li>
+</ul>
+</section>
+<section id="evaluation-metrics" class="level3" data-number="6.4.5">
+<h3 data-number="6.4.5" class="anchored" data-anchor-id="evaluation-metrics"><span class="header-section-number">6.4.5</span> Evaluation Metrics</h3>
+<p>The system’s performance was evaluated using the following metrics:</p>
+<ul>
+<li><p><strong>Accuracy:</strong> Percentage of correct gesture classifications.</p></li>
+<li><p><strong>Latency:</strong> Time taken for end-to-end gesture recognition.</p></li>
+<li><p><strong>Power Consumption:</strong> Average energy used per gesture recognition cycle.</p></li>
+</ul>
+</section>
+<section id="hardware-and-software-tools" class="level3" data-number="6.4.6">
+<h3 data-number="6.4.6" class="anchored" data-anchor-id="hardware-and-software-tools"><span class="header-section-number">6.4.6</span> Hardware and Software Tools</h3>
+<ul>
+<li><p><strong>Hardware:</strong> EFR32XG24 BLE microcontroller, IMU sensor module.</p></li>
+<li><p><strong>Software:</strong> TensorFlow Lite for Microcontrollers, Embedded C, BLE SDK.</p></li>
+</ul>
+<p>The methodology ensures an efficient, real-time, and scalable gesture recognition system optimized for embedded hardware constraints.</p>
+</section>
+</section>
+<section id="sec:challenges" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="sec:challenges"><span class="header-section-number">6.5</span> Challenges and Limitations</h2>
+<p>While implementing the Edge AI-based gesture recognition system on the EFR32XG24 microcontroller, several challenges and limitations were encountered. These are discussed below:</p>
+<ol type="1">
+<li><p><strong>Hardware Constraints:</strong> The limited computational power and memory resources of the microcontroller posed restrictions on the complexity and size of the AI model. Optimizing the AI model for memory efficiency while maintaining accuracy was a significant challenge.</p></li>
+<li><p><strong>Power Consumption:</strong> Real-time gesture recognition is computationally intensive, and ensuring prolonged battery life for portable devices required careful power management strategies.</p></li>
+<li><p><strong>Sensor Noise:</strong> IMU sensors are susceptible to noise and environmental disturbances, which can introduce inaccuracies in gesture data. Filtering and preprocessing techniques had to be carefully designed to address this issue.</p></li>
+<li><p><strong>Latency Constraints:</strong> Edge AI systems require minimal latency for real-time performance. Achieving low latency while balancing model accuracy and computational load was challenging.</p></li>
+<li><p><strong>BLE Communication Bottlenecks:</strong> Real-time data transfer via BLE can be affected by interference, limited bandwidth, and power constraints, impacting system responsiveness.</p></li>
+<li><p><strong>Scalability:**</strong> Scaling the system for multi-gesture recognition or increasing the number of edge devices posed integration challenges due to resource limitations.</p></li>
+<li><p><strong>Environmental Variability:</strong> Gesture recognition accuracy can degrade under varying environmental conditions, such as lighting changes, device orientation, or sudden movements.</p></li>
+</ol>
+<p>Addressing these challenges required a combination of hardware optimization, software fine-tuning, and iterative testing to ensure a balance between performance, accuracy, and efficiency.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../contents/core/5_efr32applications.html" class="pagination-link" aria-label="**Applications of EFR32 I/O**">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title"><strong>Applications of EFR32 I/O</strong></span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../contents/core/7_gesturerecog_magicwand.html" class="pagination-link" aria-label="**Magic Wand via Gesture Recognition**">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Written by Masuldul Imtiaz, PhD (Clarkson University)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/6_gesturerecog_realtime.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/6_gesturerecog_realtime.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
