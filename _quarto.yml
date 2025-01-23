@@ -64,7 +64,7 @@ book:
   reader-mode: true
   page-footer:
     left: |
-      Written by Masuldul Imtiaz, PhD (Clarkson University)
+      Written by Masudul Imtiaz, PhD (Clarkson University)
     right: |
       This book was built with <a href="https://quarto.org/">Quarto</a>.
 
@@ -193,7 +193,7 @@ format:
     coverpage-title: "Embedded Systems Design"
     coverpage-subtitle: "Utilizing the Silicon Labs EFR32XG24 BLE Microcontroller"
     coverpage-bg-image: "cover-image-transparent.png"
-    coverpage-author: ["Masuldul", "Imtiaz"]
+    coverpage-author: ["Masudul", "Imtiaz"]
     coverpage-theme:
         page-text-align: "center"
         
@@ -230,7 +230,7 @@ format:
     titlepage: true
     titlepage-theme:
       elements: [ "\\titleblock", 
-                  "Masuldul Imtiaz, PhD",
+                  "Masudul Imtiaz, PhD",
                   "Sigmond Kukla",
                   "Aaron Storey, MSAI",
                   "& TA's of EE260",
