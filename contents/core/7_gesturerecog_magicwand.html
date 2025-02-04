@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>7&nbsp; Magic Wand via Gesture Recognition – Embedded Systems Design</title>
+<title>8&nbsp; Magic Wand via Gesture Recognition – Embedded Systems Design</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -154,7 +154,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/7_gesturerecog_magicwand.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/7_gesturerecog_magicwand.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -232,26 +232,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../contents/core/10_ml_foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../contents/core/6_gesturerecog_realtime.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/7_gesturerecog_magicwand.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/8_anomalydetection_htm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/9_audioml.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
   </div>
 </li>
       </ul>
@@ -266,20 +272,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#system-overview" id="toc-system-overview" class="nav-link active" data-scroll-target="#system-overview"><span class="header-section-number">7.1</span> System Overview</a></li>
-  <li><a href="#data-collection-and-processing" id="toc-data-collection-and-processing" class="nav-link" data-scroll-target="#data-collection-and-processing"><span class="header-section-number">7.2</span> Data Collection and Processing</a></li>
-  <li><a href="#model-architecture-and-deployment" id="toc-model-architecture-and-deployment" class="nav-link" data-scroll-target="#model-architecture-and-deployment"><span class="header-section-number">7.3</span> Model Architecture and Deployment</a></li>
-  <li><a href="#firmware-and-model-inference" id="toc-firmware-and-model-inference" class="nav-link" data-scroll-target="#firmware-and-model-inference"><span class="header-section-number">7.4</span> Firmware and Model Inference</a></li>
-  <li><a href="#data-transfer-and-ble-communication" id="toc-data-transfer-and-ble-communication" class="nav-link" data-scroll-target="#data-transfer-and-ble-communication"><span class="header-section-number">7.5</span> Data Transfer and BLE Communication</a></li>
+  <li><a href="#system-overview" id="toc-system-overview" class="nav-link active" data-scroll-target="#system-overview"><span class="header-section-number">8.1</span> System Overview</a></li>
+  <li><a href="#data-collection-and-processing" id="toc-data-collection-and-processing" class="nav-link" data-scroll-target="#data-collection-and-processing"><span class="header-section-number">8.2</span> Data Collection and Processing</a></li>
+  <li><a href="#model-architecture-and-deployment" id="toc-model-architecture-and-deployment" class="nav-link" data-scroll-target="#model-architecture-and-deployment"><span class="header-section-number">8.3</span> Model Architecture and Deployment</a></li>
+  <li><a href="#firmware-and-model-inference" id="toc-firmware-and-model-inference" class="nav-link" data-scroll-target="#firmware-and-model-inference"><span class="header-section-number">8.4</span> Firmware and Model Inference</a></li>
+  <li><a href="#data-transfer-and-ble-communication" id="toc-data-transfer-and-ble-communication" class="nav-link" data-scroll-target="#data-transfer-and-ble-communication"><span class="header-section-number">8.5</span> Data Transfer and BLE Communication</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/7_gesturerecog_magicwand.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/7_gesturerecog_magicwand.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/7_gesturerecog_magicwand.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/7_gesturerecog_magicwand.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></h1>
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></h1>
 </div>
 
 
@@ -299,8 +305,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="chapterintro">
 <p>The EFR32xG24 board has high capabilities for edge computing necessary for capturing, processing, and analyzing data in real time with improved security and reduced latency. The Magic Wand with BLE Gesture Recognition (BLE-MW) is an ideal project to exemplify this concept through the implementation of a TinyML classifier for gesture recognition. It incorporates a quantized TinyML, accelerometer data processing of the onboard IMU, and a BLE communication protocol. The project files are available at <a href="https://github.com/Ijnaka22len/ble_magic_wand"><code>github.com/Ijnaka22len/ble_magic_wand</code></a>, following the original implementation in <a href="https://github.com/SiliconLabs/machine_learning_applications/tree/main/application/imu/ble_magic_wand"><code>github.com/SiliconLabs/machine_learning_applications</code></a>.</p>
 </div>
-<section id="system-overview" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="system-overview"><span class="header-section-number">7.1</span> System Overview</h2>
+<section id="system-overview" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="system-overview"><span class="header-section-number">8.1</span> System Overview</h2>
 <p>A convolutional neural network (CNN) model was trained in this TinyML project to recognize gestures such as Swipe Up, Swipe Down, and Circle based on the onboard accelerometer data. The detected gestures (Arrow Up, Arrow Down, and Play/Pause) are mapped to media control actions and transmitted over BLE as media key presses and over the UART interface. Figure&nbsp;<a href="#fig:output_instance" data-reference-type="ref" data-reference="fig:output_instance">7.1</a> shows an instance of the output.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -313,8 +319,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 </section>
-<section id="data-collection-and-processing" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="data-collection-and-processing"><span class="header-section-number">7.2</span> Data Collection and Processing</h2>
+<section id="data-collection-and-processing" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="data-collection-and-processing"><span class="header-section-number">8.2</span> Data Collection and Processing</h2>
 <p>The IMU data for this TinyML model was collected at 25Hz with a sequence length of 50 samples to form the input buffer for the CNN. The fastest way to do this is by following the <code>github.com/Ijnaka22len/FastDataCollection4MagicWangProjects</code> repository, which provides a detailed description of IMU data capture for TinyML projects. The captured data is preprocessed and fed into the model as an input image for pattern recognition.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span><span class="op">:</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    delFile<span class="op">(</span>file_path<span class="op">=</span><span class="st">"data/complete_data"</span><span class="op">)</span></span>
@@ -344,8 +350,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    write_data<span class="op">(</span>data<span class="op">,</span> <span class="st">"./data/complete_data"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="model-architecture-and-deployment" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="model-architecture-and-deployment"><span class="header-section-number">7.3</span> Model Architecture and Deployment</h2>
+<section id="model-architecture-and-deployment" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="model-architecture-and-deployment"><span class="header-section-number">8.3</span> Model Architecture and Deployment</h2>
 <p>TensorFlow Lite is used to create the CNN model, which takes the processed IMU data as an input image for multiclass classification of the various classes. The AIDrawPen chapter can be reviewed to show how to train a TinyML model for this microcontroller.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="st">"""Trains the model."""</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>calculate_model_size<span class="op">(</span>model<span class="op">)</span></span>
@@ -382,8 +388,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>                                     predictions<span class="op">=</span>tf<span class="op">.</span>constant<span class="op">(</span>pred<span class="op">),</span></span>
 <span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                                     num_classes<span class="op">=</span><span class="dv">4</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="firmware-and-model-inference" class="level2" data-number="7.4">
-<h2 data-number="7.4" class="anchored" data-anchor-id="firmware-and-model-inference"><span class="header-section-number">7.4</span> Firmware and Model Inference</h2>
+<section id="firmware-and-model-inference" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="firmware-and-model-inference"><span class="header-section-number">8.4</span> Firmware and Model Inference</h2>
 <p>The microcontroller firmware contains a code segment to capture the accelerometer data at the predetermined frequency and sampling rate. This data is stored in a buffer and updated every 100ms during gesture detection.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"accelerometer.h"</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"config.h"</span></span>
@@ -543,8 +549,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
 <span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="data-transfer-and-ble-communication" class="level2" data-number="7.5">
-<h2 data-number="7.5" class="anchored" data-anchor-id="data-transfer-and-ble-communication"><span class="header-section-number">7.5</span> Data Transfer and BLE Communication</h2>
+<section id="data-transfer-and-ble-communication" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="data-transfer-and-ble-communication"><span class="header-section-number">8.5</span> Data Transfer and BLE Communication</h2>
 <p>Predicted data is transferred through BLE using the GATT server as well as logged to the Putty terminal.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> send_gesture_via_ble<span class="op">(</span><span class="dt">uint8_t</span> gesture<span class="op">)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
@@ -1076,12 +1082,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../../contents/core/6_gesturerecog_realtime.html" class="pagination-link" aria-label="Real-Time Gesture Recognition">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../../contents/core/8_anomalydetection_htm.html" class="pagination-link" aria-label="**IMU Anomaly Detection Using Hierarchical Temporal Memory**">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

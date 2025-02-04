@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; The Art and Science of Machine Learning – Embedded Systems Design</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../contents/core/6_gesturerecog_realtime.html" rel="next">
+<link href="../../contents/core/5_efr32applications.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-86daaaaad7353f9cc0c554efc1dd6d94.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-f8dc6eab18fde03278982b0b35885446.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-b4fc4dddb6ec1a779f0a285a431e56d0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-eae2d66f002e799350c2a60e45471621.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "~",
+    "/"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Embedded Systems Design</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-wide tools-end">
+    <a href="https://github.com/clarkson-edge/ee513_book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../../Embedded-Systems-Design.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Embedded Systems Design</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/1_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/2_programmingwithc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><strong>Programming Embedded Systems with C</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/3_devkitoverview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title"><strong>EFR32xG24 Development Kit Overview</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/4_efr32programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title"><strong>EFR32 I/O Programming</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/5_efr32applications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title"><strong>Applications of EFR32 I/O</strong></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Embedded Machine Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/10_ml_foundations.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/6_gesturerecog_realtime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/7_gesturerecog_magicwand.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/8_anomalydetection_htm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/9_audioml.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#origins-and-evolution" id="toc-origins-and-evolution" class="nav-link active" data-scroll-target="#origins-and-evolution"><span class="header-section-number">6.1</span> Origins and Evolution</a>
+  <ul>
+  <li><a href="#historical-context" id="toc-historical-context" class="nav-link" data-scroll-target="#historical-context"><span class="header-section-number">6.1.1</span> Historical Context</a></li>
+  <li><a href="#from-rule-based-to-learning-systems" id="toc-from-rule-based-to-learning-systems" class="nav-link" data-scroll-target="#from-rule-based-to-learning-systems"><span class="header-section-number">6.1.2</span> From Rule-Based to Learning Systems</a></li>
+  <li><a href="#the-statistical-revolution" id="toc-the-statistical-revolution" class="nav-link" data-scroll-target="#the-statistical-revolution"><span class="header-section-number">6.1.3</span> The Statistical Revolution</a></li>
+  </ul></li>
+  <li><a href="#understanding-learning-systems" id="toc-understanding-learning-systems" class="nav-link" data-scroll-target="#understanding-learning-systems"><span class="header-section-number">6.2</span> Understanding Learning Systems</a>
+  <ul>
+  <li><a href="#the-learning-paradigm" id="toc-the-learning-paradigm" class="nav-link" data-scroll-target="#the-learning-paradigm"><span class="header-section-number">6.2.1</span> The Learning Paradigm</a></li>
+  <li><a href="#learning-from-data" id="toc-learning-from-data" class="nav-link" data-scroll-target="#learning-from-data"><span class="header-section-number">6.2.2</span> Learning from Data</a></li>
+  <li><a href="#the-nature-of-patterns" id="toc-the-nature-of-patterns" class="nav-link" data-scroll-target="#the-nature-of-patterns"><span class="header-section-number">6.2.3</span> The Nature of Patterns</a></li>
+  </ul></li>
+  <li><a href="#the-nature-of-machine-learning" id="toc-the-nature-of-machine-learning" class="nav-link" data-scroll-target="#the-nature-of-machine-learning"><span class="header-section-number">6.3</span> The Nature of Machine Learning</a>
+  <ul>
+  <li><a href="#learning-as-induction" id="toc-learning-as-induction" class="nav-link" data-scroll-target="#learning-as-induction"><span class="header-section-number">6.3.1</span> Learning as Induction</a></li>
+  <li><a href="#the-role-of-uncertainty" id="toc-the-role-of-uncertainty" class="nav-link" data-scroll-target="#the-role-of-uncertainty"><span class="header-section-number">6.3.2</span> The Role of Uncertainty</a></li>
+  <li><a href="#model-complexity-and-regularization" id="toc-model-complexity-and-regularization" class="nav-link" data-scroll-target="#model-complexity-and-regularization"><span class="header-section-number">6.3.3</span> Model Complexity and Regularization</a></li>
+  </ul></li>
+  <li><a href="#building-learning-systems" id="toc-building-learning-systems" class="nav-link" data-scroll-target="#building-learning-systems"><span class="header-section-number">6.4</span> Building Learning Systems</a>
+  <ul>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">6.4.1</span> Data Preparation</a></li>
+  <li><a href="#model-selection-and-training" id="toc-model-selection-and-training" class="nav-link" data-scroll-target="#model-selection-and-training"><span class="header-section-number">6.4.2</span> Model Selection and Training</a></li>
+  <li><a href="#model-evaluation-and-deployment" id="toc-model-evaluation-and-deployment" class="nav-link" data-scroll-target="#model-evaluation-and-deployment"><span class="header-section-number">6.4.3</span> Model Evaluation and Deployment</a></li>
+  </ul></li>
+  <li><a href="#the-ethics-and-governance-of-machine-learning" id="toc-the-ethics-and-governance-of-machine-learning" class="nav-link" data-scroll-target="#the-ethics-and-governance-of-machine-learning"><span class="header-section-number">6.5</span> The Ethics and Governance of Machine Learning</a>
+  <ul>
+  <li><a href="#fairness-and-bias" id="toc-fairness-and-bias" class="nav-link" data-scroll-target="#fairness-and-bias"><span class="header-section-number">6.5.1</span> Fairness and Bias</a></li>
+  <li><a href="#transparency-and-accountability" id="toc-transparency-and-accountability" class="nav-link" data-scroll-target="#transparency-and-accountability"><span class="header-section-number">6.5.2</span> Transparency and Accountability</a></li>
+  <li><a href="#safety-and-robustness" id="toc-safety-and-robustness" class="nav-link" data-scroll-target="#safety-and-robustness"><span class="header-section-number">6.5.3</span> Safety and Robustness</a></li>
+  <li><a href="#ethical-principles-and-governance-frameworks" id="toc-ethical-principles-and-governance-frameworks" class="nav-link" data-scroll-target="#ethical-principles-and-governance-frameworks"><span class="header-section-number">6.5.4</span> Ethical Principles and Governance Frameworks</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">6.6</span> Conclusion</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/10_ml_foundations.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/10_ml_foundations.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Learning lies at the heart of intelligence, whether natural or artificial. In this chapter, we will embark on a fascinating exploration of the fundamental principles that enable machines to learn from experience. Together, we will examine both the theoretical foundations that provide a rigorous mathematical basis for machine learning, as well as the practical considerations that shape the design and implementation of modern learning systems. Our journey will take us from the historical roots of the field through to the cutting-edge research defining the current state of the art and the open challenges guiding future directions. By the end of this chapter, you will have built a comprehensive understanding of how machines can acquire, represent, and apply knowledge to solve complex problems and enhance decision-making across a wide range of domains.</p>
+<p>To make our exploration as engaging and accessible as possible, I will aim to break down complex ideas into more easily digestible parts, building up gradually to the more advanced concepts. Along the way, I will make use of intuitive analogies, illustrative examples, and step-by-step explanations to help illuminate key points. Please feel free to ask questions or share your own insights at any point - learning is an interactive process and your contributions will only enrich our discussion!</p>
+<p>With that in mind, let’s begin our journey into the art and science of machine learning.</p>
+<section id="origins-and-evolution" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="origins-and-evolution"><span class="header-section-number">6.1</span> Origins and Evolution</h2>
+<p>To fully appreciate the current state and future potential of machine learning, it is helpful to understand its historical context and developmental trajectory. In this section, we will trace the origins of the field and highlight the pivotal advances that have shaped its evolution.</p>
+<section id="historical-context" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="historical-context"><span class="header-section-number">6.1.1</span> Historical Context</h3>
+<p>The dream of creating intelligent machines that can learn and adapt has captivated the human imagination for centuries. In mythology and folklore around the world, we find stories of animated beings imbued with ‘artificial’ intelligence, from the golems of Jewish legends to the mechanical servants of ancient China. These ageless visions speak to a deep fascination with the idea of breathing life and cognizance into inanimate matter.</p>
+<p>However, the emergence of machine learning as a scientific discipline is a more recent development, tracing its origins to the mid-20th century. In a profound sense, the birth of machine learning as we know it today arose from the convergence of several key intellectual traditions:</p>
+<p><em>Artificial intelligence</em> - The quest to create machines capable of intelligent behavior</p>
+<p><em>Statistics and probability theory</em> - The mathematical tools for quantifying and reasoning about uncertainty</p>
+<p><em>Optimization and control theory</em> - The principles for automated decision-making and goal-directed behavior</p>
+<p><em>Neuroscience and cognitive psychology</em> - The scientific study of natural learning in biological systems</p>
+<p>Each of these tributaries contributed essential ideas and techniques that merged together to form the foundations of modern machine learning.</p>
+<p>Some key milestones in the early history of the field:</p>
+<ul>
+<li><p><em>1943</em> - Warren McCulloch and Walter Pitts publish “A Logical Calculus of the Ideas Immanent in Nervous Activity”, laying the groundwork for artificial neural networks</p></li>
+<li><p><em>1950</em> - Alan Turing proposes the “Turing Test” in his seminal paper “Computing Machinery and Intelligence”, providing an operational definition of machine intelligence</p></li>
+<li><p><em>1952</em> - Arthur Samuel writes the first computer learning program, which learned to play checkers better than its creator</p></li>
+<li><p><em>1957</em> - Frank Rosenblatt invents the Perceptron, an early prototype of artificial neural networks capable of learning to classify visual patterns</p></li>
+<li><p><em>1967</em> - Covering numbers and the Vapnik–Chervonenkis dimension (VC dimension) introduced in the groundbreaking work of Vladimir Vapnik and Alexey Chervonenkis, providing the foundations for statistical learning theory</p></li>
+</ul>
+<p>These pioneering efforts laid the conceptual and technical groundwork for the subsequent decades of research that grew the field into the thriving discipline it is today.</p>
+</section>
+<section id="from-rule-based-to-learning-systems" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="from-rule-based-to-learning-systems"><span class="header-section-number">6.1.2</span> From Rule-Based to Learning Systems</h3>
+<p>In its early stages, artificial intelligence research focused heavily on symbolic logic and deductive reasoning. The prevailing paradigm was that of “expert systems” - computer programs that encoded human knowledge and expertise in the form of explicit logical rules. A canonical example was MYCIN, a program developed at Stanford University in the early 1970s to assist doctors in diagnosing and treating blood infections. MYCIN’s knowledge base contained hundreds of IF-THEN rules obtained by interviewing expert physicians, such as:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode prolog code-with-copy"><code class="sourceCode prolog"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">IF</span> (organism<span class="dv">-1</span> <span class="dt">is</span> gram<span class="dt">-</span>positive) <span class="dt">AND</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   (morphology of organism<span class="dv">-1</span> <span class="dt">is</span> coccus) <span class="dt">AND</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   (growth<span class="fu">-</span>conformation of organism<span class="dv">-1</span> <span class="dt">is</span> chains)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">THEN</span> there <span class="dt">is</span> suggestive evidence (<span class="fl">0.7</span>) that</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>     the identity of organism<span class="dv">-1</span> <span class="dt">is</span> streptococcus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>By chaining together inferences based on these rules, MYCIN could arrive at diagnostic conclusions and treatment recommendations that rivaled those of human specialists in its domain.</p>
+<p>However, the handcrafted knowledge-engineering approach of early expert systems soon ran into serious limitations:</p>
+<ul>
+<li><p>Knowledge acquisition bottleneck: Extracting and codifying expert knowledge proved to be extremely time-consuming and prone to inconsistencies and biases.</p></li>
+<li><p>Brittleness and inflexibility: Rule-based systems struggled to handle noisy data, adapt to novel situations, or keep up with changing knowledge.</p></li>
+<li><p>Opaque “black box” reasoning: The complex chains of inference generated by expert systems were often difficult for humans to inspect, understand, and debug.</p></li>
+<li><p>Inability to learn from experience: Once programmed, rule-based systems remained static and could not automatically improve their performance or acquire new knowledge.</p></li>
+</ul>
+<p>These shortcomings highlighted the need for a fundamentally different approach - one that could overcome the rigidity and opacity of handcrafted symbolical rules and instead acquire knowledge directly from data.</p>
+</section>
+<section id="the-statistical-revolution" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="the-statistical-revolution"><span class="header-section-number">6.1.3</span> The Statistical Revolution</h3>
+<p>The critical shift from rule-based to learning systems was catalyzed by two key insights: Many real-world domains are intrinsically uncertain and subject to noise, necessitating a probabilistic treatment. Expertise is often implicit and intuitive rather than explicit and axiomatic, making it more amenable to statistical extraction than symbolic codification.</p>
+<p>Consider again the task of medical diagnosis that systems like MYCIN sought to automate. While it is possible to elicit a set of logical rules from a human expert, there are several complicating factors:</p>
+<ul>
+<li><p>Patients present with constellations of symptoms that are imperfectly correlated with underlying disorders.</p></li>
+<li><p>Diagnostic tests yield results with varying levels of accuracy and associated error rates.</p></li>
+<li><p>Diseases evolve over time, manifesting differently at different stages.</p></li>
+<li><p>Treatments have uncertain effects that depend on individual patient characteristics.</p></li>
+<li><p>New diseases emerge and existing ones change in their prevalence and manifestation over time. In such an environment, definitive logical rules are the exception rather than the norm. Instead, diagnosis is fundamentally a process of probabilistic reasoning under uncertainty, based on a combination of empirical observations and prior knowledge.</p></li>
+</ul>
+<p>The key innovation that unlocked machine learning was to reframe the challenge in statistical terms:</p>
+<ul>
+<li><p>Instead of trying to manually encode deterministic rules, the goal became to automatically infer probabilistic relationships from observational data.</p></li>
+<li><p>Rather than requiring knowledge to be explicitly enumerated, learning algorithms aimed to implicitly extract latent patterns and regularities.</p></li>
+<li><p>In place of brittle logical chains, models learned robust statistical associations that could gracefully handle noise and uncertainty.</p></li>
+</ul>
+<p>This shift in perspective opened up a powerful new toolbox of techniques at the intersection of probability theory and optimization. Some key formal developments:</p>
+<ul>
+<li><p>Maximum likelihood estimation (Ronald Fisher, 1920s): A principled framework for inferring the parameters of statistical models from observed data.</p></li>
+<li><p>The perceptron (Frank Rosenblatt, 1957): A simple type of artificial neural network capable of learning to classify linearly separable patterns.</p></li>
+<li><p>Stochastic gradient descent (Herbert Robbins &amp; Sutton Monro, 1951): An efficient optimization procedure well-suited to large-scale machine learning problems.</p></li>
+<li><p>Backpropagation (multiple independent discoveries, 1970s-1980s): An algorithm for training multi-layer neural networks by propagating errors backwards through the network.</p></li>
+<li><p>The VC dimension (Vladimir Vapnik &amp; Alexey Chervonenkis, 1960s-1970s): A measure of the capacity of a hypothesis space that quantifies the conditions for stable learning from finite data.</p></li>
+<li><p>Maximum margin classifiers and support vector machines (Vladimir Vapnik et al., 1990s): Powerful discriminative learning algorithms with strong theoretical guarantees.</p></li>
+</ul>
+<p>Together, innovations like these provided the foundations for statistical learning systems that could effectively extract knowledge from raw data. They set the stage for the following decades of progress that would see machine learning mature into one of the most transformative technologies of our time.</p>
+</section>
+</section>
+<section id="understanding-learning-systems" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="understanding-learning-systems"><span class="header-section-number">6.2</span> Understanding Learning Systems</h2>
+<p>Having reviewed the historical context and key conceptual shifts behind the emergence of machine learning, we are now in a position to examine learning systems in greater depth. In this section, we will explore the fundamental principles that define the learning paradigm, the central role played by data, and the nature of the patterns that learning uncovers.</p>
+<section id="the-learning-paradigm" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="the-learning-paradigm"><span class="header-section-number">6.2.1</span> The Learning Paradigm</h3>
+<p>At its core, machine learning represents a radical departure from traditional programming approaches. To appreciate this, it is helpful to consider how we might go about solving a complex task such as object recognition using classical programming:</p>
+<p>First, we would need to sit down and think hard about all the steps involved in identifying objects in images. We might come up with rules like:</p>
+<ul>
+<li>“an eye has a roughly circular shape”</li>
+<li>“a nose is usually located below the eyes and above the mouth”</li>
+<li>“a face is an arrangement of eyes, nose and mouth”, etc.</li>
+</ul>
+<p>Next, we would translate these insights into specific programmatic instructions:</p>
+<ul>
+<li>“scan the image for circular regions”</li>
+<li>“check if there are two such regions in close horizontal proximity”</li>
+<li>“label these candidate eye regions”, etc.</li>
+</ul>
+<p>We would then need to painstakingly debug and refine our program to handle all the edge cases and sources of variability we failed to consider initially.</p>
+<p>If our program needs to recognize additional object categories, we would have to return to step 1 and repeat the whole arduous process for each new class.</p>
+<p>The classical approach places the entire explanatory burden on the human programmer - we start from a blank slate and must explicitly spell out every minute decision and edge case handling routine.</p>
+<p>In contrast, the machine learning approach follows a very different recipe:</p>
+<p>First, we collect a large dataset of labeled examples (e.g.&nbsp;images paired with the names of the objects they contain). We select a general-purpose model family that we believe has the capacity to capture the relevant patterns (e.g.&nbsp;deep convolutional neural networks for visual recognition). We specify a measure of success (e.g.&nbsp;what fraction of the images are labeled correctly) - this is our objective function.</p>
+<p>We feed the dataset to a learning algorithm that automatically adjusts the parameters of the model so as to optimize the objective function on the provided examples. We evaluate the trained model on a separate test set to assess its ability to generalize to new cases.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/chapter10_mlworkflow.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="img/chapter10_mlworkflow.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%"></a></p>
+</figure>
+</div>
+<p>Notice how the emphasis has shifted:</p>
+<ul>
+<li><p>Rather than having to explain “how” to solve the task, we provide examples of “what” we want and let the learning algorithm figure out the “how” for us.</p></li>
+<li><p>Instead of handcrafting detailed solution steps, we select a flexible model and offload the burden of tuning its parameters to an optimization procedure.</p></li>
+<li><p>In place of open-ended debugging, we can run controlled experiments to objectively measure generalization to unseen data.</p></li>
+</ul>
+<p>For a more concrete illustration, consider how we might apply machine learning to the task of spam email classification:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> CountVectorizer</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> MultinomialNB</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Collect labeled data </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>emails, labels <span class="op">=</span> load_email_data()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Select a model family</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>vectorizer <span class="op">=</span> CountVectorizer()  <span class="co"># convert email text to word counts</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>classifier <span class="op">=</span> MultinomialNB()    <span class="co"># naive Bayes with multinomial likelihood</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Specify an objective function</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> objective(model, X, y):  </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> accuracy_score(y, model.predict(X))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Feed data to a learning algorithm</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># learn a spam classifier from 70% of the data </span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>train_emails, test_emails, train_labels, test_labels <span class="op">=</span> train_test_split(</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        emails, labels, train_size<span class="op">=</span><span class="fl">0.7</span>, stratify<span class="op">=</span>labels)  </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> vectorizer.fit_transform(train_emails)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>classifier.fit(X_train, train_labels)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Evaluate generalization on held-out test set  </span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> vectorizer.transform(test_emails)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Test accuracy:"</span>, objective(classifier, X_test, test_labels))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This simple example illustrates the key ingredients:</p>
+<ul>
+<li><p>Data: A collection of example emails, along with human-provided labels indicating whether each one is spam or not.</p></li>
+<li><p>Model: The naive Bayes classifier, which specifies the general form of the relationship between the input features (word counts) and output labels (spam or not spam) in terms of probabilistic assumptions.</p></li>
+<li><p>Objective: The accuracy metric, which quantifies the quality of predictions made by the model in terms of the fraction of emails that are labeled correctly.</p></li>
+<li><p>Learning algorithm: The <code>fit</code> method of the classifier, which takes in the training data and finds the model parameters that maximize the likelihood of the observed labels.</p></li>
+<li><p>Generalization: The trained model is evaluated not on the data it was trained on, but rather on a separate test set that was held out during training. This provides an unbiased estimate of how well the model generalizes to new, unseen examples.</p></li>
+</ul>
+<p>Of course, this is just a toy example intended to illustrate the basic flow. Real-world applications involve much larger datasets, more complex models, and more challenging prediction tasks. But the fundamental paradigm remains the same: by optimizing an objective function on a sample of training data, learning algorithms can automatically extract useful patterns and knowledge that generalize to novel situations.</p>
+</section>
+<section id="learning-from-data" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="learning-from-data"><span class="header-section-number">6.2.2</span> Learning from Data</h3>
+<p>As the spam classification example makes clear, data plays a first-class role in machine learning. Indeed, one of the defining characteristics of the field is its focus on automatically extracting knowledge from empirical observations, rather than relying solely on human-encoded expertise. In this section, we take a closer look at how learning systems leverage data to acquire and refine their knowledge.</p>
+<p>To begin, it is useful to clarify what we mean by “data” in a machine learning context. At the most basic level, a dataset is a collection of examples, where each example (also known as a “sample” or “instance”) provides a concrete instantiation of the task or phenomenon we wish to learn about. In the spam classification scenario, for instance, each example corresponds to an actual email message, along with a label indicating whether it is spam or not.</p>
+<p>More formally, we can think of an example as a pair (x,y), where:</p>
+<ul>
+<li><p><span class="math inline">\(x\)</span> is a vector of input features that provide a quantitative representation of the relevant properties of the example. In the case of emails, the features might be counts of various words appearing in the message.</p></li>
+<li><p><span class="math inline">\(y\)</span> is the target output variable that we would like to predict given the input features. For spam classification, <span class="math inline">\(y\)</span> is a binary label, but in general it could be a continuous value (regression), a multi-class label (classification), or a more complex structure like a sequence or image.</p></li>
+</ul>
+<p>A dataset, then, is a collection of n such examples:</p>
+<p><span class="math display">\[D = {(x₁, y₁), ..., (xₙ, yₙ)}\]</span></p>
+<p>The goal of learning is to use the dataset <span class="math inline">\(D\)</span> to infer a function <span class="math inline">\(f\)</span> that maps from inputs to outputs:</p>
+<p><span class="math inline">\(f: X → Y\)</span> such that <span class="math inline">\(f(x) ≈ y\)</span> for future examples <span class="math inline">\((x,y)\)</span> that were not seen during training.</p>
+<p>With this formalism in mind, we can identify several key properties of data that are crucial for effective learning:</p>
+<ul>
+<li><p>Representativeness: To generalize well, the examples in <span class="math inline">\(D\)</span> should be representative of the distribution of inputs that will be encountered in the real world. If the training data is systematically biased or skewed relative to the actual test distribution, the learned model may fail to perform well on new cases.</p></li>
+<li><p>Quantity: In general, more data is better for learning, as it provides a richer sampling of the underlying phenomena and helps the model to avoid overfitting to accidental regularities. The amount of data needed to achieve a desired level of performance depends on the complexity of the task and the expressiveness of the model class.</p></li>
+<li><p>Quality: The utility of data for learning can be undermined by issues like noise, outliers, and missing values. Careful data preprocessing, cleaning, and augmentation are often necessary to ensure that the model is able to extract meaningful signal.</p></li>
+<li><p>Diversity: For learning to succeed, the training data must contain sufficient variability along the dimensions that are relevant for the task at hand. If all the examples are highly similar, the model may fail to capture the full range of behaviors needed for robust generalization.</p></li>
+<li><p>Labeling: In supervised learning tasks, the quality and consistency of the output labels is critical. Noisy, ambiguous, or inconsistent labels can severely degrade the quality of the learned model.</p></li>
+</ul>
+<p>To make these ideas more concrete, let’s return to the spam classification example. Consider the following toy dataset:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>train_emails <span class="op">=</span> [</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Subject: You won't believe this amazing offer!"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Subject: Request for project meeting"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Subject: URGENT: Update your information now!"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Hey there, just wanted to follow up on our conversation..."</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Subject: You've been selected for a special promotion!"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>train_labels <span class="op">=</span> [<span class="st">"spam"</span>, <span class="st">"not spam"</span>, <span class="st">"spam"</span>, <span class="st">"not spam"</span>, <span class="st">"spam"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Even without running any learning algorithms, we can identify some potential issues with this dataset:</p>
+<ul>
+<li><p>Small quantity: Only 5 examples is not enough to learn a robust spam classifier that covers the diversity of real-world emails. With so few examples, the model is likely to overfit to idiosyncratic patterns like the specific subject lines and fail to generalize well.</p></li>
+<li><p>Lack of diversity: The examples cover a very narrow range of email types (mainly short subject lines). A more representative sample would include a mix of subject lines, body text, sender information, etc. that better reflect the variability of real emails.</p></li>
+<li><p>Label inconsistency: On closer inspection, we might question whether the labeling is fully consistent. For instance, the 4th email seems potentially ambiguous - without more context about the content of the “conversation” it refers to, it’s unclear whether it should be classified as spam or not. Inconsistent labeling is a common source of problems in supervised learning.</p></li>
+</ul>
+<p>To address these issues, we would want to collect a much larger and more diverse set of labeled examples. We might also need to do more careful data cleaning and preprocessing, for instance:</p>
+<ul>
+<li><p>Tokenizing the email text into individual words or n-grams</p></li>
+<li><p>Removing stop words, punctuation, and other low-information content</p></li>
+<li><p>Stemming or lemmatizing words to collapse related variants</p></li>
+<li><p>Normalizing features like word counts to avoid undue influence of message length</p></li>
+<li><p>Checking for and resolving inconsistencies or ambiguities in label assignments</p></li>
+</ul>
+<p>In general, high-quality data is essential for successful learning. While it’s tempting to focus mainly on the choice of model class and learning algorithm, in practice the quality of the results is often determined by the quality of the data preparation pipeline.</p>
+<p><em>As the saying goes, </em>”garbage in, garbage out”* - if the input data is full of noise, bias, and inconsistencies, no amount of algorithmic sophistication can extract meaningful patterns.*</p>
+</section>
+<section id="the-nature-of-patterns" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="the-nature-of-patterns"><span class="header-section-number">6.2.3</span> The Nature of Patterns</h3>
+<p>Having looked at the role of data in learning, let’s now turn our attention to the other central ingredient - the patterns that learning algorithms aim to extract. What exactly do we mean by “patterns” in the context of machine learning, and how do learning systems represent and leverage them?</p>
+<p>In the most general sense, a pattern is any regularity or structure that exists in the data and captures some useful information for the task at hand. For instance, in spam classification, some relevant patterns might include:</p>
+<ul>
+<li><p>Certain words or phrases that are more common in spam messages than in normal emails (e.g.&nbsp;“special offer”, “free trial”, “no credit check”, etc.)</p></li>
+<li><p>Unusual formatting or stylistic choices that are suggestive of marketing content (e.g.&nbsp;excessive use of capitalization, colorful text, or images)</p></li>
+<li><p>Suspicious sender information, like mismatches between the stated identity and email address, or sending from known spam domains</p></li>
+</ul>
+<p>A key insight of machine learning is that such patterns can be represented and manipulated mathematically, as operations in some formal space. For instance, the presence or absence of specific words can be encoded as a binary vector, with each dimension corresponding to a word in the vocabulary:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>vocabulary <span class="op">=</span> [<span class="st">"credit"</span>, <span class="st">"offer"</span>, <span class="st">"special"</span>, <span class="st">"trial"</span>, <span class="st">"won't"</span>, <span class="st">"believe"</span>, ...]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> email_to_vector(email):</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    vector <span class="op">=</span> [<span class="dv">0</span>] <span class="op">*</span> <span class="bu">len</span>(vocabulary)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> word <span class="kw">in</span> email.split():</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> word <span class="kw">in</span> vocabulary:</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>            index <span class="op">=</span> vocabulary.index(word)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>            vector[index] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vector</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>message1 <span class="op">=</span> <span class="st">"Subject: You won't believe this amazing offer!"</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>message2 <span class="op">=</span> <span class="st">"Subject: Request for project meeting"</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(email_to_vector(message1))</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Output: [0, 1, 0, 0, 1, 1, ...]</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(email_to_vector(message2))  </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Output: [0, 0, 0, 0, 0, 0, ...]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In this simple “bag of words” representation, each email is transformed into a vector that indicates which words from a predefined vocabulary are present in it. Already, some potentially useful patterns start to emerge - notice how the spam message gets mapped to a vector with more non-zero entries, suggesting the presence of marketing language.</p>
+<p>Of course, this is a very crude representation that discards a lot of potentially relevant information (word order, punctuation, contextualized meanings, etc.). More sophisticated approaches attempt to preserve additional structure, for instance:</p>
+<ul>
+<li><p>Using counts or tf-idf weights instead of binary indicators to capture word frequencies</p></li>
+<li><p>Extracting <span class="math inline">\(n\)</span>-grams (contiguous sequences of <span class="math inline">\(n\)</span> words) to partially preserve local word order</p></li>
+<li><p>Applying techniques like latent semantic analysis or topic modeling to identify thematic structures</p></li>
+<li><p>Learning dense vector embeddings that map words and documents to points in a continuous semantic space</p></li>
+</ul>
+<p>What these approaches all have in common is that they define a systematic mapping from the raw data (e.g.&nbsp;natural language text) to some mathematically tractable representation (e.g.&nbsp;vectors in a high-dimensional space). This mapping is where the “learning” in “machine learning” really takes place - by discovering the specific parameters of the mapping that lead to effective performance on the training examples, the learning algorithm implicitly identifies patterns that are useful for the task at hand.</p>
+<p>To make this more concrete, let’s take a closer look at how a typical supervised learning algorithm actually goes about extracting patterns from data. Recall that the goal is to learn a function <span class="math inline">\(f: X → Y\)</span> that maps from input features to output labels, such that <span class="math inline">\(f(x) ≈ y\)</span> for examples <span class="math inline">\((x,y)\)</span> drawn from some underlying distribution.</p>
+<p>In practice, most learning algorithms work by defining a parametrized function family <span class="math inline">\(F_θ\)</span> and searching for the parameter values <span class="math inline">\(θ\)</span> that minimize the empirical risk (i.e.&nbsp;the average loss) on the training examples:</p>
+<p><span class="math display">\[θ* = argmin_θ 1/n ∑ᵢ L(F_θ(xᵢ), yᵢ)\]</span></p>
+<p>Here <span class="math inline">\(L\)</span> is a loss function that quantifies the discrepancy between the predicted labels <span class="math inline">\(F_θ(xᵢ)\)</span> and the true labels <span class="math inline">\(yᵢ\)</span>, and the summation ranges over the <span class="math inline">\(n\)</span> examples in the training dataset.</p>
+<p>Different learning algorithms are characterized by the specific function families <span class="math inline">\(F\)</span> and loss functions <span class="math inline">\(L\)</span> that they employ, as well as the optimization procedure used to search for <span class="math inline">\(θ*\)</span>. But at a high level, they all aim to find patterns - as captured by the parameters <span class="math inline">\(θ\)</span> - that enable the predictions <span class="math inline">\(F_θ(x)\)</span> to closely match the actual labels <span class="math inline">\(y\)</span> across the training examples.</p>
+<p>Let’s make this more vivid by returning to the spam classification example. A very simple model family for this task is logistic regression, which learns a linear function of the input features:</p>
+<p><span class="math display">\[F_θ(x) = σ(θ^T x)\]</span></p>
+<p>Here <span class="math inline">\(x\)</span> is the vector of word-presence features, <span class="math inline">\(θ\)</span> is a vector of real-valued weights, and <span class="math inline">\(σ\)</span> is the logistic sigmoid function that “squashes” the linear combination <span class="math inline">\(θ^T x\)</span> to a value between 0 and 1 interpretable as the probability that the email is spam.</p>
+<p>Coupled with the binary cross-entropy loss, the learning objective becomes:</p>
+<p><span class="math display">\[θ* = argmin_θ 1/n ∑ᵢ [- yᵢ log(F_θ(xᵢ)) - (1 - yᵢ) log(1 - F_θ(xᵢ))]\]</span></p>
+<p>where <span class="math inline">\(yᵢ ∈ {0,1}\)</span> indicates the true label (spam or not spam) for the <span class="math inline">\(ith\)</span> training example.</p>
+<p>Solving this optimization problem via a technique like gradient descent will yield a weight vector <span class="math inline">\(θ*\)</span> such that:</p>
+<ul>
+<li><p>Weights for words that are more common in spam messages (like “offer” or “free”) will tend to be positive, increasing the predicted probability of spam when those words are present.</p></li>
+<li><p>Weights for words that are more common in normal messages (like “meeting” or “project”) will tend to be negative, decreasing the predicted probability of spam when those words are present.</p></li>
+<li><p>The magnitude of each weight corresponds to how predictive the associated word is of spam vs.&nbsp;non-spam - larger positive weights indicate stronger spam signals, while larger negative weights indicate stronger non-spam signals.</p></li>
+</ul>
+<p>In this way, the learning process automatically discovers the specific patterns of word usage that are most informative for distinguishing spam from non-spam, as summarized in the weights <span class="math inline">\(θ*\)</span>. Furthermore, the learned weights implicitly define a decision boundary in the high-dimensional feature space - emails that fall on one side of this boundary (as determined by the sign of <span class="math inline">\(θ^T x\)</span>) are classified as spam, while those on the other side are classified as non-spam.</p>
+<p>This simple example illustrates several key properties that are common to many learning algorithms:</p>
+<p>The parameters <span class="math inline">\(θ\)</span> provide a compact summary of the patterns in the data that are relevant for the task at hand. In this case, they capture the correlations between the presence of certain words and the spam/non-spam label.</p>
+<p>The learning process is data-driven - the specific values of the weights are determined by the empirical distribution of word frequencies in the training examples, not by any a priori assumptions or hand-coded rules.</p>
+<p>The learned patterns are task-specific - the weights are tuned to optimize performance on the particular problem of spam classification, and may not be meaningful or useful for other tasks.</p>
+<p>The expressiveness of the learned patterns is limited by the model family - in this case, the assumption of a simple linear relationship between word presence and spam probability. More complex model families (like deep neural networks) can capture richer, more nuanced patterns.</p>
+<p>Of course, this is just a toy example intended to illustrate the basic principles. In practice, modern learning systems often employ much higher-dimensional feature spaces, more elaborate model families, and more sophisticated optimization procedures. But the fundamental idea remains the same - by adjusting the parameters of a flexible model to minimize the empirical risk on a training dataset, learning algorithms can automatically discover patterns that generalize to improve performance on novel examples.</p>
+</section>
+</section>
+<section id="the-nature-of-machine-learning" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="the-nature-of-machine-learning"><span class="header-section-number">6.3</span> The Nature of Machine Learning</h2>
+<p>Having examined the fundamental components of learning systems - the data they learn from and the patterns they aim to extract - we now turn to some higher-level questions about the nature of learning itself. What does it mean for a machine to “learn” in the first place? How does this process differ from other approaches to artificial intelligence? And what challenges and opportunities does the learning paradigm present?</p>
+<section id="learning-as-induction" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="learning-as-induction"><span class="header-section-number">6.3.1</span> Learning as Induction</h3>
+<p>At a fundamental level, machine learning can be understood as a form of inductive inference - the process of drawing general conclusions from specific examples. In philosophical terms, this contrasts with deductive inference, which derives specific conclusions from general premises.</p>
+<p>Consider a classic example of deductive reasoning:</p>
+<ul>
+<li>All men are mortal. (premise)</li>
+<li>Socrates is a man. (premise)</li>
+<li>Therefore, Socrates is mortal. (conclusion)</li>
+</ul>
+<p>Here, the conclusion follows necessarily from the premises - if we accept that all men are mortal and that Socrates is a man, we must also accept that Socrates is mortal. The conclusion is guaranteed to be true if the premises are true.</p>
+<p>Inductive reasoning, on the other hand, goes in the opposite direction:</p>
+<ul>
+<li>Socrates is a man and is mortal.</li>
+<li>Plato is a man and is mortal.</li>
+<li>Aristotle is a man and is mortal.</li>
+<li>Therefore, all men are mortal.</li>
+</ul>
+<p>Here, the conclusion is not guaranteed to be true, even if all the premises are true - we can never be certain that the next man we encounter will be mortal, no matter how many examples of mortal men we have seen. At best, the conclusion is probable, with a degree of confidence that depends on the number and diversity of examples observed.</p>
+<p>Machine learning can be seen as a form of algorithmic induction - instead of a human observer drawing conclusions from examples, we have a learning algorithm that discovers patterns in data and uses them to make predictions about novel cases. Just as with human induction, the conclusions of a machine learning model are never guaranteed to be true, but can be highly probable if the training data is sufficiently representative and the model family is appropriate for the task.</p>
+<p>To make this more concrete, let’s return to the spam classification example. Recall that our goal is to learn a function <span class="math inline">\(f\)</span> that maps from email features <span class="math inline">\(x\)</span> to spam labels <span class="math inline">\(y\)</span>, such that <span class="math inline">\(f(x) ≈ y\)</span> for new examples <span class="math inline">\((x,y)\)</span> drawn from the same distribution as the training data.</p>
+<p>In the logistic regression model we considered earlier, <span class="math inline">\(f\)</span> takes the form:</p>
+<p><span class="math display">\[f(x) = σ(θ^T x)\]</span></p>
+<p>where <span class="math inline">\(θ\)</span> is a vector of learned weights and <span class="math inline">\(σ\)</span> is the logistic sigmoid function.</p>
+<p>Now, imagine that we train this model on a dataset of 1000 labeled emails, using gradient descent to find the weights <span class="math inline">\(θ*\)</span> that minimize the average cross-entropy loss on the training examples. We can then apply the learned function f* to classify new emails as spam or not spam:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict_spam(email, weights):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> email_to_vector(email)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    score <span class="op">=</span> weights.dot(features)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    probability <span class="op">=</span> sigmoid(score)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> probability <span class="op">&gt;</span> <span class="fl">0.5</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> train_logistic_regression(train_emails, train_labels)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>new_email <span class="op">=</span> <span class="st">"Subject: Amazing opportunity to work from home!"</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>prediction <span class="op">=</span> predict_spam(new_email, weights)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(prediction)  <span class="co"># Output: True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This process is fundamentally inductive:</p>
+<ul>
+<li><p>We start with a collection of specific examples (the training emails and their labels).</p></li>
+<li><p>We use these examples to learn a general rule (the weight vector <span class="math inline">\(θ*\)</span>) for mapping from inputs to outputs.</p></li>
+<li><p>We apply this rule to make predictions about new, unseen examples (e.g.&nbsp;classifying the new email as spam).</p></li>
+</ul>
+<p>Just as with human induction, there is no guarantee that the predictions will be correct - the learned rule is only a generalization based on the limited sample of examples in the training data. If the training set is not perfectly representative of the real distribution of emails (which it almost never is), there will necessarily be some errors and edge cases that the model gets wrong.</p>
+<p>However, if the inductive reasoning is sound - i.e.&nbsp;if the patterns discovered by the learning algorithm actually capture meaningful regularities in the data - then the model’s predictions will be correct more often than not. Furthermore, as we train on larger and more diverse datasets, we can expect the accuracy and robustness of the learned patterns to improve, leading to better generalization performance.</p>
+<p>Of course, spam classification is a relatively simple example as far as machine learning tasks go. In more complex domains like computer vision, natural language processing, or strategic decision-making, the input features and output labels can be much higher-dimensional and more abstract, the model families more elaborate and multilayered, and the optimization procedures more intricate and computationally intensive.</p>
+<p>However, the fundamental inductive reasoning remains the same:</p>
+<ul>
+<li><p>Start with a set of training examples that (hopefully) capture relevant patterns and variations.</p></li>
+<li><p>Define a suitably expressive model family and objective function.</p></li>
+<li><p>Use an optimization algorithm to find the model parameters that minimize the objective on the training set.</p></li>
+<li><p>Apply the learned model to predict outputs for new, unseen inputs.</p></li>
+<li><p>Evaluate the quality of the predictions and iterate to improve the data, model, and optimization as needed.</p></li>
+</ul>
+<p>The power of this paradigm lies in its generality - by framing the search for patterns as an optimization problem, learning algorithms can be applied to an extremely wide range of domains and tasks without the need for detailed domain-specific knowledge engineering. Given enough data and compute, the same basic approach can be used to learn patterns in images, text, speech, sensor readings, economic trends, user behavior, and countless other types of data.</p>
+<p>At the same time, the generality of the paradigm also highlights some of its limitations and challenges:</p>
+<ul>
+<li><p>Dependence on data quality: The performance of a learning system is fundamentally limited by the quality and representativeness of its training data. If the data is noisy, biased, or incomplete, the learned patterns will reflect those limitations.</p></li>
+<li><p>Opacity of learned representations: The patterns discovered by learning algorithms can be highly complex and challenging to interpret. While simpler model families like linear regression produce relatively transparent representations, the internal structure of large neural networks is often inscrutable, making it difficult to understand how they arrive at their predictions.</p></li>
+<li><p>Lack of explicit reasoning: Learning systems excel at discovering statistical patterns, but struggle with the kind of explicit, logical reasoning that comes naturally to humans. Tasks that require careful deliberation, causal analysis, or manipulation of symbolic representations can be challenging to frame in purely statistical terms.</p></li>
+<li><p>Potential for bias and fairness issues: If the training data reflects societal biases or underrepresents certain groups, the learned models can perpetuate or even amplify those biases in their predictions. Careful auditing and debiasing of data and models is essential to ensure equitable outcomes.</p></li>
+</ul>
+<p>Despite these challenges, the inductive learning paradigm has proven remarkably effective across a wide range of applications. In domains from medical diagnosis and scientific discovery to robotics and autonomous vehicles, machine learning systems are able to match or exceed human performance by discovering patterns that are too subtle or complex for manual specification. As the availability of data and computing power continues to grow, it’s likely that the scope and impact of machine learning will only continue to expand.</p>
+</section>
+<section id="the-role-of-uncertainty" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="the-role-of-uncertainty"><span class="header-section-number">6.3.2</span> The Role of Uncertainty</h3>
+<p>One of the most crucial things to understand about machine learning is that it is, at its core, a fundamentally probabilistic endeavor. When a learning algorithm draws conclusions from data, those conclusions are never absolutely certain, but rather statements of probability based on the patterns in the training examples.</p>
+<p>Think back to our spam classification example. Even if our training dataset was very large and diverse, covering a wide range of both spam and legitimate emails, we can never be 100% sure that the patterns it captures will hold for every possible future email. There could always be some new type of spam that looks very different from what we’ve seen before, or some unusual legitimate email that happens to share many features with typical spam.</p>
+<p>What a good machine learning model gives us, then, is not a definite classification, but a probability estimate. When we use logistic regression to predict the “spamminess” of an email, the model’s output is a number between 0 and 1 that can be interpreted as the estimated probability that the email is spam, given its input features.</p>
+<p>This might seem like a limitation compared to a deterministic rule-based system that always gives a definite yes-or-no answer. However, having a principled way to quantify uncertainty is actually a key strength of the probabilistic approach. By explicitly representing the confidence of its predictions, a probabilistic model provides valuable information for downstream decision-making and risk assessment.</p>
+<p>For instance, consider an email client that uses a spam filter to automatically move suspected spam messages to a separate folder. If the filter is based on a probabilistic model, we can set a confidence threshold for taking this action - say, only move messages with a 95% or higher probability of being spam. This allows us to trade off between false positives (legitimate emails moved to the spam folder) and false negatives (spam emails left in the main inbox) in a principled way.</p>
+<p>More generally, having access to well-calibrated probability estimates opens up a range of possibilities for uncertainty-aware decision making, such as:</p>
+<ul>
+<li><p>Deferring to human judgment for borderline cases where the model is unsure</p></li>
+<li><p>Gathering additional information (e.g.&nbsp;asking the user for feedback) to resolve uncertainty</p></li>
+<li><p>Hedging decisions to balance risk and reward in the face of uncertain outcomes</p></li>
+<li><p>Combining predictions from multiple models to improve overall confidence</p></li>
+</ul>
+<p>Of course, for these benefits to be realized, it’s essential that the probability estimates produced by the model are actually well-calibrated - that is, they accurately reflect the true likelihood of the predicted outcomes. If a model consistently predicts 95% confidence for events that only occur 60% of the time, its uncertainty estimates are not reliable.</p>
+<p>There are various techniques for quantifying and calibrating uncertainty in machine learning models, including:</p>
+<ul>
+<li><p>Explicit probability models: Some model families, like Bayesian networks or Gaussian processes, are designed to naturally produce probability distributions over outcomes. By incorporating prior knowledge and explicitly modeling sources of uncertainty, these approaches can provide principled uncertainty estimates.</p></li>
+<li><p>Ensemble methods: Techniques like bagging (bootstrap aggregating) and boosting involve training multiple models on different subsets or weightings of the data, then combining their predictions. The variation among the ensemble’s predictions provides a measure of uncertainty.</p></li>
+<li><p>Calibration methods: Post-hoc calibration techniques like Platt scaling or isotonic regression can be used to adjust the raw confidence scores from a model to better align with empirical probabilities.</p></li>
+<li><p>Conformal prediction: A framework for providing guaranteed coverage rates for predictions, based on the assumption that the data are exchangeable. Conformal predictors accompany each prediction with a measure of confidence and a set of possible outcomes.</p></li>
+</ul>
+<p>The importance of quantifying uncertainty goes beyond just improving decision quality - it’s also crucial for building trust and promoting responsible use of machine learning systems. When a model accompanies its predictions with meaningful confidence estimates, users can make informed choices about when and how to rely on its outputs. This is especially important in high-stakes domains like healthcare or criminal justice, where the consequences of incorrect predictions can be serious.</p>
+<p>Finally, reasoning about uncertainty is also central to more advanced machine learning paradigms like reinforcement learning and active learning:</p>
+<ul>
+<li><p>In reinforcement learning, an agent learns to make decisions by interacting with an environment and receiving rewards or penalties. Because the environment is often stochastic and the consequences of actions are uncertain, the agent must reason about the expected long-term value of different choices under uncertainty.</p></li>
+<li><p>In active learning, a model is allowed to interactively query for labels of unlabeled examples that would be most informative for improving its predictions. Selecting these examples requires estimating the expected reduction in uncertainty from obtaining their labels, based on the model’s current state of knowledge.</p></li>
+</ul>
+<p>As we continue to push the boundaries of what machine learning systems can do, the ability to properly quantify and reason about uncertainty will only become more essential. From building robust and reliable models to enabling effective human-AI collaboration, embracing uncertainty is key to unlocking the full potential of machine learning.</p>
+</section>
+<section id="model-complexity-and-regularization" class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="model-complexity-and-regularization"><span class="header-section-number">6.3.3</span> Model Complexity and Regularization</h3>
+<p>Another fundamental challenge in machine learning is striking the right balance between model complexity and generalization performance. On one hand, we want our models to be expressive enough to capture meaningful patterns in the data. On the other hand, we don’t want them to overfit to noise or idiosyncrasies of the training set and fail to generalize to new examples.</p>
+<p>This tradeoff is commonly known as the bias-variance dilemma:</p>
+<ul>
+<li><p><strong>Bias</strong> refers to the error that comes from modeling assumptions and simplifications. A model with high bias makes strong assumptions about the data-generating process, which can lead to underfitting if those assumptions are wrong.</p></li>
+<li><p><strong>Variance</strong> refers to the error that comes from sensitivity to small fluctuations in the training data. A model with high variance can fit the training set very well but may overfit to noise and fail to generalize to unseen examples.</p></li>
+</ul>
+<p>As an analogy, think of trying to fit a curve to a set of scattered data points. A simple linear model has high bias but low variance - it makes the strong assumption that the relationship is linear, which limits its ability to fit complex patterns, but also makes it relatively stable across different subsets of the data. Conversely, a complex high-degree polynomial has low bias but high variance - it can fit the training points extremely well, but may wildly oscillate between them and make very poor predictions on new data.</p>
+<p>In general, as we increase the complexity of a model (e.g.&nbsp;by adding more features, increasing the depth of a neural network, or reducing the strength of regularization), we decrease bias but increase variance. The goal is to find the sweet spot where the model is complex enough to capture relevant patterns but not so complex that it overfits to noise.</p>
+<p>One way to control model complexity is through the choice of hypothesis space - the set of possible models that the learning algorithm can consider. A simple hypothesis space (like linear functions of the input features) will have low variance but potentially high bias, while a complex hypothesis space (like deep neural networks with millions of parameters) will have low bias but potentially high variance.</p>
+<p>Another key tool for managing complexity is <em>regularization</em> - techniques for constraining the model’s parameters or limiting its capacity to overfit. Some common regularization approaches include:</p>
+<ul>
+<li><p><strong>Parameter norm penalties</strong>: Adding a penalty term to the loss function that encourages the model’s weights to be small. L2 regularization (also known as weight decay) penalizes the squared Euclidean norm of the weights, while L1 regularization penalizes the absolute values. These penalties discourage the model from relying too heavily on any one feature.</p></li>
+<li><p><strong>Dropout</strong>: Randomly “dropping out” (setting to zero) a fraction of the activations in a neural network during training. This prevents the network from relying too heavily on any one pathway and encourages it to learn redundant representations.</p></li>
+<li><p><strong>Early stopping</strong>: Monitoring the model’s performance on a validation set during training and stopping the optimization process when the validation error starts to increase, even if the training error is still decreasing. This prevents the model from overfitting to the training data.</p></li>
+</ul>
+<p>The amount and type of regularization to apply is a key hyperparameter that must be tuned based on the characteristics of the data and the model. Too much regularization can lead to underfitting, while too little can lead to overfitting. Techniques like cross-validation and information criteria can help guide the selection of appropriate regularization settings.</p>
+<p>It’s worth noting that the bias-variance tradeoff and the role of regularization can vary depending on the amount of training data available. In the “classical” regime where the number of examples is small relative to the number of model parameters, regularization is essential for preventing overfitting. However, in the “modern” regime of very large datasets and overparameterized models (like deep neural networks with millions of parameters), the risk of overfitting is much lower, and the role of regularization is more subtle.</p>
+<p>In fact, recent research has suggested that overparameterized models can exhibit “double descent” behavior, where increasing the model complexity beyond the point of interpolating the training data can actually improve generalization performance. This challenges the classical view of the bias-variance tradeoff and suggests that our understanding of model complexity and generalization is still evolving. Despite these nuances, the basic principles of managing model complexity and using regularization to promote generalization remain central to the practice of machine learning. As we train increasingly powerful models on ever-larger datasets, finding the right balance between expressiveness and constrainedness will be key to achieving robust and reliable performance.</p>
+</section>
+</section>
+<section id="building-learning-systems" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="building-learning-systems"><span class="header-section-number">6.4</span> Building Learning Systems</h2>
+<p>Now that we’ve explored some of the key theoretical principles behind machine learning, let’s turn our attention to the practical considerations involved in building effective learning systems. What are the key components of a successful machine learning pipeline, and how do they fit together?</p>
+<section id="data-preparation" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">6.4.1</span> Data Preparation</h3>
+<p>The first and arguably most important step in any machine learning project is preparing the data. As we saw in Section 6.2.2, the quality and representativeness of the training data is essential for learning meaningful patterns that generalize well to new examples. No amount of algorithmic sophistication can make up for fundamentally flawed or insufficient data.</p>
+<p>Key aspects of data preparation include:</p>
+<ul>
+<li><p><strong>Data cleaning</strong>: Identifying and correcting errors, inconsistencies, and missing values in the raw data. This can involve steps like removing duplicate records, standardizing formats, and imputing missing values based on statistical patterns.</p></li>
+<li><p><strong>Feature engineering</strong>: Transforming the raw input data into a representation that is more amenable to learning. This can involve steps like normalizing numeric features, encoding categorical variables, extracting domain-specific features, and reducing dimensionality.</p></li>
+<li><p><strong>Data augmentation</strong>: Increasing the size and diversity of the training set by generating new examples through transformations of the existing data. This is especially common in domains like computer vision, where techniques like random cropping, flipping, and color jittering can help improve the robustness of the learned models.</p></li>
+<li><p><strong>Data splitting</strong>: Dividing the data into separate sets for training, validation, and testing. The training set is used to fit the model parameters, the validation set is used to tune hyperparameters and detect overfitting, and the test set is used to evaluate the final performance of the model on unseen data.</p></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/chapter10_ml.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="img/chapter10_ml.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:30.0%"></a></p>
+</figure>
+</div>
+<p>The specifics of data preparation will vary depending on the domain and the characteristics of the data, but the general principles of ensuring data quality, representativeness, and suitability for learning are universal. It’s often said that data preparation is 80% of the work in machine learning, and while this may be an exaggeration, it underscores the critical importance of getting the data right.</p>
+<p>To make this more concrete, let’s consider an example of data preparation in the context of a real-world problem. Suppose we’re working on a machine learning system to predict housing prices based on features like square footage, number of bedrooms, location, etc. Our raw data might look something like this:</p>
+<pre class="csv"><code>Address,Sq.Ft.,Beds,Baths,Price
+123 Main St,2000,3,2.5,$500,000
+456 Oak Ave,1500,2,1,"$350,000"
+789 Elm Rd,1800,3,2,425000</code></pre>
+<p>To prepare this data for learning, we might perform the following steps:</p>
+<ul>
+<li><p>Standardize the ‘Price’ column to remove the “$” and “,” characters and convert to a numeric type.</p></li>
+<li><p>Impute missing values in the ‘Beds’ and ‘Baths’ columns (if any) with the median or most frequent value.</p></li>
+<li><p>Normalize the ‘Sq.Ft.’ column by subtracting the mean and dividing by the standard deviation.</p></li>
+<li><p>One-hot encode the ‘Address’ column into separate binary features for each unique location.</p></li>
+<li><p>Split the data into training, validation, and test sets in a stratified fashion to ensure representative price distributions in each split.</p></li>
+</ul>
+<p>The end result might look something like this:</p>
+<pre class="csv"><code>Sq.Ft._Norm,Beds,Baths,123_Main_St,456_Oak_Ave,789_Elm_Rd,...,Price
+,3,2.5,1,0,0,...,500000
+-0.58,2,1,0,1,0,...,350000
+,3,2,0,0,1,...,425000
+...</code></pre>
+<p>Of course, this is just a toy example, and in practice the data preparation process can be much more involved. The key point is that investing time and effort into carefully preparing the data is essential for building successful learning systems.</p>
+</section>
+<section id="model-selection-and-training" class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="model-selection-and-training"><span class="header-section-number">6.4.2</span> Model Selection and Training</h3>
+<p>Once the data is prepared, the next step is to select an appropriate model family and training procedure. As we saw in Section 6.3.3, this involves striking a balance between model complexity and generalization ability, often through a combination of cross-validation and regularization techniques.</p>
+<p>Some key considerations in model selection include:</p>
+<ul>
+<li><p><em>Inductive biases</em>: The assumptions and constraints that are built into the model architecture. For example, convolutional neural networks have an inductive bias towards translation invariance and local connectivity, which makes them well-suited for image recognition tasks.</p></li>
+<li><p><em>Parameter complexity</em>: The number of learnable parameters in the model, which affects its capacity to fit complex patterns but also its potential to overfit to noise in the training data. Regularization techniques can help control parameter complexity.</p></li>
+<li><p><em>Computational complexity</em>: The time and memory requirements for training and inference with the model. More complex models may require specialized hardware (like GPUs) and longer training times, which can be a practical limitation.</p></li>
+<li><p><em>Interpretability</em>: The extent to which the learned model can be inspected and understood by humans. In some domains (like healthcare or finance), interpretability may be a key requirement for building trust and ensuring regulatory compliance.</p></li>
+</ul>
+<p>The choice of model family will depend on the nature of the problem and the characteristics of the data. For structured data with clear feature semantics, “shallow” models like linear regression, decision trees, or support vector machines may be appropriate. For unstructured data like images, audio, or text, “deep” models like convolutional or recurrent neural networks are often used.</p>
+<p>Once a model family is selected, the next step is to train the model on the prepared data. This typically involves the following steps:</p>
+<ul>
+<li><p>Instantiate the model with initial parameter values (e.g.&nbsp;random weights for a neural network).</p></li>
+<li><p>Define a loss function that measures the discrepancy between the model’s predictions and the true labels on the training set.</p></li>
+<li><p>Use an optimization algorithm (like stochastic gradient descent) to iteratively update the model parameters to minimize the loss function.</p></li>
+<li><p>Monitor the model’s performance on the validation set to detect overfitting and tune hyperparameters.</p></li>
+<li><p>Stop training when the validation performance plateaus or starts to degrade.</p></li>
+</ul>
+<p>The specifics of the training process will vary depending on the chosen model family and optimization algorithm, but the general goal is to find the model parameters that minimize the empirical risk on the training data while still generalizing well to unseen examples.</p>
+<p>To illustrate these ideas, let’s continue with our housing price prediction example. Suppose we’ve decided to use a regularized linear regression model of the form:</p>
+<p><span class="math display">\[price = w_0 + w_1 * sqft + w_2 * beds + w_3 * baths + ...\]</span></p>
+<p>where <span class="math inline">\(w_0, w_1, ...\)</span> are the learned weights and <code>sqft, beds, baths, ...</code> are the input features.</p>
+<p>We can train this model using gradient descent on the mean squared error loss function:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mse_loss(y_true, y_pred):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.mean((y_true <span class="op">-</span> y_pred) <span class="op">**</span> <span class="dv">2</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gradient_descent(X, y, w, lr<span class="op">=</span><span class="fl">0.01</span>, num_iters<span class="op">=</span><span class="dv">100</span>):</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(num_iters):</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        y_pred <span class="op">=</span> np.dot(X, w)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        error <span class="op">=</span> y_pred <span class="op">-</span> y</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        gradient <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> np.dot(X.T, error) <span class="op">/</span> <span class="bu">len</span>(y)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        w <span class="op">-=</span> lr <span class="op">*</span> gradient</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> w</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a bias term to the feature matrix</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.c_[np.ones(<span class="bu">len</span>(X)), X]  </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize weights to zero</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> np.zeros(X.shape[<span class="dv">1</span>])</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> gradient_descent(X, y, w)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can also add L2 regularization to the loss function to prevent overfitting:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mse_loss_regularized(y_true, y_pred, w, alpha<span class="op">=</span><span class="fl">0.01</span>):</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mse_loss(y_true, y_pred) <span class="op">+</span> alpha <span class="op">*</span> np.<span class="bu">sum</span>(w<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gradient_descent_regularized(X, y, w, lr<span class="op">=</span><span class="fl">0.01</span>, alpha<span class="op">=</span><span class="fl">0.01</span>, num_iters<span class="op">=</span><span class="dv">100</span>):</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(num_iters):</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        y_pred <span class="op">=</span> np.dot(X, w)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        error <span class="op">=</span> y_pred <span class="op">-</span> y</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        gradient <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> np.dot(X.T, error) <span class="op">/</span> <span class="bu">len</span>(y) <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> alpha <span class="op">*</span> w</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        w <span class="op">-=</span> lr <span class="op">*</span> gradient</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> w</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the regularized model</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> gradient_descent_regularized(X, y, w)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The <code>alpha</code> parameter controls the strength of the regularization - larger values will constrain the weights more strongly, while smaller values will allow the model to fit the training data more closely.</p>
+<p>By tuning the learning rate <code>lr</code>, regularization strength <code>alpha</code>, and number of iterations <code>num_iters</code>, we can find the model that achieves the best balance between fitting the training data and generalizing to new examples.</p>
+<p>Of course, linear regression is just one possible model choice for this problem. We could also experiment with more complex models like decision trees, random forests, or neural networks, each of which would have its own set of hyperparameters to tune. The key is to use a combination of domain knowledge, empirical validation, and iterative refinement to find the model that best suits the problem at hand.</p>
+</section>
+<section id="model-evaluation-and-deployment" class="level3" data-number="6.4.3">
+<h3 data-number="6.4.3" class="anchored" data-anchor-id="model-evaluation-and-deployment"><span class="header-section-number">6.4.3</span> Model Evaluation and Deployment</h3>
+<p>Once we’ve trained a model that performs well on the validation set, the final step is to evaluate its performance on the held-out test set. This gives us an unbiased estimate of how well the model is likely to generalize to real-world data.</p>
+<p>Common evaluation metrics for <em>classification problems</em> include:</p>
+<ul>
+<li><strong>Accuracy</strong>: The fraction of examples that are correctly classified.</li>
+<li><strong>Precision</strong>: The fraction of positive predictions that are actually positive.</li>
+<li><strong>Recall</strong>: The fraction of actual positives that are predicted positive.</li>
+<li><strong>F1 Score</strong>: The harmonic mean of precision and recall.</li>
+<li><strong>ROC AUC</strong>: The area under the receiver operating characteristic curve, which measures the tradeoff between true positive rate and false positive rate.</li>
+</ul>
+<p>For <em>regression problems</em>, common metrics include:</p>
+<ul>
+<li><strong>Mean squared error (MSE)</strong>: The average squared difference between the predicted and actual values.</li>
+<li><strong>Mean absolute error (MAE)</strong>: The average absolute difference between the predicted and actual values.</li>
+<li><strong>R-squared (R²)</strong>: The proportion of variance in the target variable that is predictable from the input features.</li>
+</ul>
+<p>It’s important to choose an evaluation metric that aligns with the business goals of the problem. For example, in a fraud detection system, we might care more about recall (catching as many fraudulent transactions as possible) than precision (avoiding false alarms), while in a medical diagnosis system, we might care more about precision (avoiding false positives that could lead to unnecessary treatments).</p>
+<p>If the model’s performance on the test set is satisfactory, we can proceed to deploy it in a production environment. This involves integrating the trained model into a larger software system that can apply it to new input data and surface the predictions to end users.</p>
+<p>Some key considerations in model deployment include:</p>
+<ul>
+<li><p>Scalability: Can the model handle the volume and velocity of data in the production environment? This may require techniques like batch processing, streaming, or distributed computation.</p></li>
+<li><p>Latency: How quickly does the model need to generate predictions in order to meet business requirements? This may require optimizations like model compression, quantization, or hardware acceleration.</p></li>
+<li><p>Monitoring: How will the model’s performance be monitored and maintained over time? This may involve tracking key metrics, detecting data drift, and periodically retraining the model on fresh data.</p></li>
+<li><p>Security: How will the model and its predictions be protected from abuse or unauthorized access? This may involve techniques like input validation, output filtering, or access controls.</p></li>
+</ul>
+<p>Deploying and maintaining machine learning models in production is a complex topic that requires close collaboration between data scientists, software engineers, and domain experts. It’s an active area of research and development, with new tools and best practices emerging regularly.</p>
+<p>To bring everything together, let’s return one last time to our housing price prediction example. After training and validating our regularized linear regression model, we can evaluate its performance on the test set:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, mean_absolute_error, r2_score</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate predictions on the test set</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> np.dot(X_test, w)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate evaluation metrics</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>mse <span class="op">=</span> mean_squared_error(y_test, y_pred)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>mae <span class="op">=</span> mean_absolute_error(y_test, y_pred)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>r2 <span class="op">=</span> r2_score(y_test, y_pred)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test MSE: </span><span class="sc">{</span>mse<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test MAE: </span><span class="sc">{</span>mae<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test R^2: </span><span class="sc">{</span>r2<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If we’re satisfied with the model’s performance, we can deploy it as part of a larger housing price estimation service. This might involve:</p>
+<ul>
+<li><p>Wrapping the trained model in a web service API that can accept new housing features and return price predictions.</p></li>
+<li><p>Integrating the API with a user-facing application that allows homeowners or real estate agents to input property information and receive estimates.</p></li>
+<li><p>Setting up a data pipeline to continuously collect new housing data and periodically retrain the model to capture changing market conditions.</p></li>
+<li><p>Defining monitoring dashboards and alerts to track the model’s performance over time and detect any anomalies or degradations.</p></li>
+<li><p>Establishing governance policies and processes for managing the lifecycle of the model, from development to retirement.</p></li>
+</ul>
+<p>Again, this is a simplified example, but it illustrates the end-to-end process of building a machine learning system, from data preparation to model development to deployment and maintenance.</p>
+</section>
+</section>
+<section id="the-ethics-and-governance-of-machine-learning" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="the-ethics-and-governance-of-machine-learning"><span class="header-section-number">6.5</span> The Ethics and Governance of Machine Learning</h2>
+<p>As machine learning systems become more prevalent and powerful, it’s crucial that we grapple with the ethical implications of their development and deployment. In this final section, we’ll explore some key ethical considerations and governance principles for responsible machine learning.</p>
+<section id="fairness-and-bias" class="level3" data-number="6.5.1">
+<h3 data-number="6.5.1" class="anchored" data-anchor-id="fairness-and-bias"><span class="header-section-number">6.5.1</span> Fairness and Bias</h3>
+<p>One of the most pressing ethical challenges in machine learning is ensuring that models are fair and unbiased. If the training data reflects historical biases or discrimination, the resulting model may perpetuate or even amplify those biases in its predictions.</p>
+<p>For example, consider a hiring model that is trained on past hiring decisions to predict the likelihood of a candidate being successful in a job. If the training data comes from a company with a history of discriminatory hiring practices, the model may learn to penalize candidates from underrepresented groups, even if those factors are not actually predictive of job performance.</p>
+<p>Detecting and mitigating bias in machine learning systems is an active area of research, with techniques like:</p>
+<ul>
+<li><p>Demographically balancing datasets to ensure equal representation of different groups</p></li>
+<li><p>Adversarial debiasing to remove sensitive information from model representations</p></li>
+<li><p>Regularization techniques to penalize models that exhibit disparate impact</p></li>
+<li><p>Post-processing methods to adjust model outputs to satisfy fairness constraints</p></li>
+</ul>
+<p>However, these techniques are not perfect, and there is often a tradeoff between fairness and accuracy. Moreover, fairness is not a purely technical issue, but a sociotechnical one that requires ongoing collaboration between machine learning practitioners, domain experts, policymakers, and affected communities.</p>
+</section>
+<section id="transparency-and-accountability" class="level3" data-number="6.5.2">
+<h3 data-number="6.5.2" class="anchored" data-anchor-id="transparency-and-accountability"><span class="header-section-number">6.5.2</span> Transparency and Accountability</h3>
+<p>Another key ethical principle for machine learning is transparency and accountability. As models become more complex and consequential, it becomes harder for humans to understand how they arrive at their predictions and to trace the provenance of their training data and design choices.</p>
+<p>This opacity can make it difficult to audit models for bias, safety, or compliance with regulations. It can also make it harder to challenge or appeal decisions made by machine learning systems, leading to a loss of human agency and recourse.</p>
+<p>Some techniques for promoting transparency and accountability in machine learning include:</p>
+<ul>
+<li><p>Model interpretability methods that provide human-understandable explanations of model predictions</p></li>
+<li><p>Provenance tracking to document the lineage of data, code, and models used in a system</p></li>
+<li><p>Audit trails and version control to enable reproducibility and historical analysis</p></li>
+<li><p>Participatory design processes that involve affected stakeholders in the development and governance of models</p></li>
+</ul>
+<p>However, like fairness, transparency is not purely a technical problem. It also requires institutional structures and processes for oversight, redress, and accountability. This might involve things like:</p>
+<ul>
+<li><p>Designating responsible individuals or teams for the ethical development and deployment of machine learning systems</p></li>
+<li><p>Establishing review boards or oversight committees to assess the social impact and governance of models</p></li>
+<li><p>Creating channels for affected individuals and communities to provide input and feedback on the use of machine learning in their lives</p></li>
+<li><p>Developing legal and regulatory frameworks to enforce transparency and accountability standards</p></li>
+</ul>
+</section>
+<section id="safety-and-robustness" class="level3" data-number="6.5.3">
+<h3 data-number="6.5.3" class="anchored" data-anchor-id="safety-and-robustness"><span class="header-section-number">6.5.3</span> Safety and Robustness</h3>
+<p>As machine learning systems are deployed in increasingly high-stakes domains, from healthcare to transportation to criminal justice, ensuring their safety and robustness becomes paramount. Models that are brittle, unreliable, or easily fooled can lead to serious harms if they are not carefully designed and tested.</p>
+<p>Some key challenges in machine learning safety and robustness include:</p>
+<ul>
+<li><p>Distributional shift, where models trained on one data distribution may fail unexpectedly when applied to a different distribution</p></li>
+<li><p>Adversarial attacks, where malicious actors can craft inputs that fool models into making egregious errors</p></li>
+<li><p>Reward hacking, where optimizing for the wrong objective function can lead models to behave in unintended and harmful ways</p></li>
+<li><p>Safe exploration, where models need to learn about their environment without taking catastrophic actions</p></li>
+</ul>
+<p>Techniques for improving the safety and robustness of machine learning systems include:</p>
+<ul>
+<li><p>Anomaly and out-of-distribution detection to flag inputs that are far from the training data</p></li>
+<li><p>Adversarial training and robustness regularization to make models more resilient to perturbations</p></li>
+<li><p>Constrained optimization and safe reinforcement learning to respect safety boundaries during learning</p></li>
+<li><p>Formal verification and testing to provide guarantees about model behavior under different conditions</p></li>
+</ul>
+<p>However, building truly safe and robust machine learning systems requires more than just technical solutions. It also requires:</p>
+<ul>
+<li><p>Rigorous safety culture and practices throughout the development and deployment lifecycle</p></li>
+<li><p>Close collaboration between machine learning practitioners, domain experts, and safety professionals</p></li>
+<li><p>Proactive engagement with policymakers and the public to align the development of machine learning with societal values and expectations</p></li>
+<li><p>Ongoing monitoring and adjustment of deployed systems to catch and correct errors and unintended consequences</p></li>
+</ul>
+</section>
+<section id="ethical-principles-and-governance-frameworks" class="level3" data-number="6.5.4">
+<h3 data-number="6.5.4" class="anchored" data-anchor-id="ethical-principles-and-governance-frameworks"><span class="header-section-number">6.5.4</span> Ethical Principles and Governance Frameworks</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/chapter10_responsibleai.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="img/chapter10_responsibleai.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></a></p>
+</figure>
+</div>
+<p>To navigate the complex ethical landscape of machine learning, we need clear principles and governance frameworks to guide responsible development and deployment. Some key principles that have been proposed include:</p>
+<ul>
+<li><p><strong>Transparency</strong>: Machine learning systems should be auditable and understandable by humans.</p></li>
+<li><p><strong>Accountability</strong>: There should be clear mechanisms for oversight, redress, and enforcement.</p></li>
+<li><p><strong>Fairness</strong>: Machine learning should treat all individuals equitably and avoid discriminatory impacts.</p></li>
+<li><p><strong>Safety</strong>: Machine learning systems should be reliable, robust, and safe throughout their lifecycle.</p></li>
+<li><p><strong>Privacy</strong>: The collection and use of data for machine learning should respect individual privacy rights and provide appropriate protections.</p></li>
+<li><p><strong>Human agency</strong>: Machine learning systems should respect human autonomy and dignity, and provide meaningful opportunities for human input and control.</p></li>
+<li><p><strong>Societal benefit</strong>: The development and deployment of machine learning should be guided by considerations of social good and collective wellbeing.</p></li>
+</ul>
+<p>Translating these high-level principles into practical governance frameworks is an ongoing challenge, but some key elements include:</p>
+<ul>
+<li><p>Ethical codes of conduct and professional standards for machine learning practitioners</p></li>
+<li><p>Impact assessment and risk management processes to identify and mitigate potential harms</p></li>
+<li><p>Stakeholder engagement and participatory design to ensure affected communities have a voice</p></li>
+<li><p>Regulatory sandboxes and policy experiments to test new governance approaches</p></li>
+<li><p>International standards and coordination to address the global nature of machine learning development</p></li>
+</ul>
+<p>Ultimately, the goal of machine learning governance should be to ensure that the technology is developed and deployed in a way that aligns with human values and enhances, rather than undermines, human flourishing. This is a complex and ongoing process that will require sustained collaboration across disciplines, sectors, and geographies.</p>
+</section>
+</section>
+<section id="conclusion" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">6.6</span> Conclusion</h2>
+<p>In this chapter, we’ve embarked on a comprehensive exploration of the foundations of machine learning, from its historical roots to its modern techniques to its future challenges. We’ve seen how the field has evolved from rule-based expert systems to data-driven statistical learning, powered by the explosion of big data and computing power. We’ve examined the fundamental components of machine learning systems - the data they learn from, the patterns they aim to extract, and the algorithms that power the learning process. We’ve discussed key concepts like inductive bias, generalization, overfitting, and regularization, and how they relate to the art of building effective models. We’ve walked through the practical steps of constructing a machine learning pipeline, from data preparation to model selection to deployment and monitoring. And we’ve grappled with some of the ethical challenges and governance principles that arise when building systems that can have significant impact on people’s lives.</p>
+<p>The field of machine learning is still rapidly evolving, with new breakthroughs and challenges emerging every year. As we look to the future, some of the key frontiers and open questions include:</p>
+<ul>
+<li><p><em>Continual and lifelong learning</em>: How can we build models that can learn continuously and adapt to new tasks and domains over time, without forgetting what they’ve learned before?</p></li>
+<li><p><em>Causality and interpretability</em>: How can we move beyond purely associational patterns to uncover causal relationships and build models that are more interpretable and explainable to humans?</p></li>
+<li><p><em>Robustness and safety</em>: How can we guarantee that machine learning systems will behave safely and reliably, even in the face of distributional shift, adversarial attacks, or unexpected situations?</p></li>
+<li><p><em>Human-AI collaboration</em>: How can we design machine learning systems that augment and empower human intelligence, rather than replacing or undermining it?</p></li>
+<li><p><em>Ethical alignment</em>: How can we ensure that the development and deployment of machine learning aligns with human values and promotes beneficial outcomes for society as a whole?</p></li>
+</ul>
+<p>Advancing machine learning requires collaboration across disciplines—from computer science and statistics to psychology, social science, philosophy, and ethics. It also demands engagement with policymakers, industry leaders, and the public to ensure responsible and inclusive development. The goal is to build systems that learn from experience to make decisions that benefit humanity, whether in healthcare, scientific discovery, or improving daily life.</p>
+<p>However, realizing this potential goes beyond technical progress; it requires addressing fairness, accountability, transparency, and safety while navigating ethical and governance challenges. Machine learning practitioners must not only push technological boundaries but also consider the broader impact of their work. By embracing diverse perspectives and collaborating beyond our field, we shape the future of AI. Staying curious, critical, and committed to responsible development will ensure machine learning serves society for generations to come.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../contents/core/5_efr32applications.html" class="pagination-link" aria-label="**Applications of EFR32 I/O**">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title"><strong>Applications of EFR32 I/O</strong></span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../contents/core/6_gesturerecog_realtime.html" class="pagination-link" aria-label="Real-Time Gesture Recognition">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Written by Masudul Imtiaz, PhD (Clarkson University)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/10_ml_foundations.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/10_ml_foundations.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>

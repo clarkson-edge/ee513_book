@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>8&nbsp; IMU Anomaly Detection Using Hierarchical Temporal Memory – Embedded Systems Design</title>
+<title>9&nbsp; IMU Anomaly Detection Using Hierarchical Temporal Memory – Embedded Systems Design</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -183,7 +183,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/8_anomalydetection_htm.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/8_anomalydetection_htm.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -261,26 +261,32 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../contents/core/10_ml_foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../contents/core/6_gesturerecog_realtime.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/7_gesturerecog_magicwand.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/8_anomalydetection_htm.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/9_audioml.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
   </div>
 </li>
       </ul>
@@ -295,19 +301,19 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#system-overview" id="toc-system-overview" class="nav-link active" data-scroll-target="#system-overview"><span class="header-section-number">8.1</span> System Overview</a></li>
-  <li><a href="#data-collection-and-preprocessing" id="toc-data-collection-and-preprocessing" class="nav-link" data-scroll-target="#data-collection-and-preprocessing"><span class="header-section-number">8.2</span> Data Collection and Preprocessing</a></li>
-  <li><a href="#htm-model-architecture" id="toc-htm-model-architecture" class="nav-link" data-scroll-target="#htm-model-architecture"><span class="header-section-number">8.3</span> HTM Model Architecture</a></li>
-  <li><a href="#visualization-and-real-time-monitoring" id="toc-visualization-and-real-time-monitoring" class="nav-link" data-scroll-target="#visualization-and-real-time-monitoring"><span class="header-section-number">8.4</span> Visualization and Real-Time Monitoring</a></li>
+  <li><a href="#system-overview" id="toc-system-overview" class="nav-link active" data-scroll-target="#system-overview"><span class="header-section-number">9.1</span> System Overview</a></li>
+  <li><a href="#data-collection-and-preprocessing" id="toc-data-collection-and-preprocessing" class="nav-link" data-scroll-target="#data-collection-and-preprocessing"><span class="header-section-number">9.2</span> Data Collection and Preprocessing</a></li>
+  <li><a href="#htm-model-architecture" id="toc-htm-model-architecture" class="nav-link" data-scroll-target="#htm-model-architecture"><span class="header-section-number">9.3</span> HTM Model Architecture</a></li>
+  <li><a href="#visualization-and-real-time-monitoring" id="toc-visualization-and-real-time-monitoring" class="nav-link" data-scroll-target="#visualization-and-real-time-monitoring"><span class="header-section-number">9.4</span> Visualization and Real-Time Monitoring</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/8_anomalydetection_htm.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/8_anomalydetection_htm.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/8_anomalydetection_htm.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/8_anomalydetection_htm.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></h1>
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></h1>
 </div>
 
 
@@ -327,12 +333,12 @@ window.Quarto = {
 <div class="chapterintro">
 <p>Analyzing sensor data to identify rare or suspicious events, items or observation that differ significantly from standard patterns. This process is called anomaly detection, which is highly important in product production. This chapter demonstrates the identification of anomalies in real-time accelerometer data using the Hierarchical Temporal Memory (HTM) algorithms. This project aims to show how edge computing can be used to provide sensitive anomaly detection for diverse applications such as machinery monitoring, motion analysis, and safety-critical systems. The project files are available at <a href="https://github.com/Ijnaka22len/imu_anomaly_detection"><code>github.com/Ijnaka22len/imu_anomaly_detection</code></a>, following the original implementation in <a href="https://github.com/SiliconLabs/machine_learning_applications/tree/main/application/imu/imu_anomaly_detection"><code>github.com/SiliconLabs/machine_learning_applications</code></a>.</p>
 </div>
-<section id="system-overview" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="system-overview"><span class="header-section-number">8.1</span> System Overview</h2>
+<section id="system-overview" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="system-overview"><span class="header-section-number">9.1</span> System Overview</h2>
 <p>Hierarchical Temporal Memory (HTM) is an algorithm that mimics the brain’s neocortical learning mechanisms and constantly learns time-based patterns in unlabeled data. Anomalies (suspicious data) are flagged when data (IMU data) deviate significantly from learned patterns. In addition to the firmware, a Python script (<code>display_serial.py</code>) is written to monitor patterns and deviations.</p>
 </section>
-<section id="data-collection-and-preprocessing" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="data-collection-and-preprocessing"><span class="header-section-number">8.2</span> Data Collection and Preprocessing</h2>
+<section id="data-collection-and-preprocessing" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="data-collection-and-preprocessing"><span class="header-section-number">9.2</span> Data Collection and Preprocessing</h2>
 <p>Like in Chapter&nbsp;7, the IMU captures accelerometer data in real-time at a frequency of <em>25Hz</em>. The previous and current readings are processed to normalize motion along the x, y, and z axes into a <span class="math inline">\([-1, 1]\)</span> range as shown below:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>imu_data_normalized<span class="op">.</span>x <span class="op">=</span> imu_data_current<span class="op">.</span>x <span class="op">-</span> imu_data_prev<span class="op">.</span>x<span class="op">;</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>imu_data_normalized<span class="op">.</span>y <span class="op">=</span> imu_data_current<span class="op">.</span>y <span class="op">-</span> imu_data_prev<span class="op">.</span>y<span class="op">;</span></span>
@@ -342,8 +348,8 @@ window.Quarto = {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>imu_data_normalized<span class="op">.</span>y <span class="op">/=</span> <span class="dv">4000</span><span class="op">;</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>imu_data_normalized<span class="op">.</span>z <span class="op">/=</span> <span class="dv">4000</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="htm-model-architecture" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="htm-model-architecture"><span class="header-section-number">8.3</span> HTM Model Architecture</h2>
+<section id="htm-model-architecture" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="htm-model-architecture"><span class="header-section-number">9.3</span> HTM Model Architecture</h2>
 <p>The IMU data is encoded into Sparse Distributed Representations (SDRs) to facilitate efficient anomaly detection.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -363,8 +369,8 @@ window.Quarto = {
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>sl_htm_sdr_insert<span class="op">(&amp;</span>input_sdr<span class="op">,</span> <span class="op">&amp;</span>sdr_y<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> SDR_WIDTH <span class="op">/</span> <span class="dv">3</span> <span class="op">*</span> <span class="dv">1</span><span class="op">);</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>sl_htm_sdr_insert<span class="op">(&amp;</span>input_sdr<span class="op">,</span> <span class="op">&amp;</span>sdr_z<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> SDR_WIDTH <span class="op">/</span> <span class="dv">3</span> <span class="op">*</span> <span class="dv">2</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="visualization-and-real-time-monitoring" class="level2" data-number="8.4">
-<h2 data-number="8.4" class="anchored" data-anchor-id="visualization-and-real-time-monitoring"><span class="header-section-number">8.4</span> Visualization and Real-Time Monitoring</h2>
+<section id="visualization-and-real-time-monitoring" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="visualization-and-real-time-monitoring"><span class="header-section-number">9.4</span> Visualization and Real-Time Monitoring</h2>
 <p>The Python script <code>display_serial.py</code> visualizes anomaly scores in real-time by reading from a serial port connected to the microcontroller at a <em>baudrate=115200</em>. The script maintains a rolling buffer of scores and updates a live plot. This script helps visualize identified anomalies, such as irregular vibrations or sudden movements.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> line<span class="op">.</span>startswith<span class="op">(</span><span class="st">"anom_score"</span><span class="op">):</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    line_info <span class="op">=</span> line<span class="op">.</span>split<span class="op">(</span><span class="st">":"</span><span class="op">)</span></span>
@@ -897,12 +903,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../../contents/core/7_gesturerecog_magicwand.html" class="pagination-link" aria-label="**Magic Wand via Gesture Recognition**">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../../contents/core/9_audioml.html" class="pagination-link" aria-label="**Audio ML for EFR32**">
-        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

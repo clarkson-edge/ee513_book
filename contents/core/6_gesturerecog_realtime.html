@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>6&nbsp; Real-Time Gesture Recognition – Embedded Systems Design</title>
+<title>7&nbsp; Real-Time Gesture Recognition – Embedded Systems Design</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
 <link href="../../contents/core/7_gesturerecog_magicwand.html" rel="next">
-<link href="../../contents/core/5_efr32applications.html" rel="prev">
+<link href="../../contents/core/10_ml_foundations.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -151,7 +151,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -229,26 +229,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../contents/core/10_ml_foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../contents/core/6_gesturerecog_realtime.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/7_gesturerecog_magicwand.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/8_anomalydetection_htm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/9_audioml.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
   </div>
 </li>
       </ul>
@@ -263,39 +269,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#introduction-to-edge-ai-in-embedded-systems" id="toc-introduction-to-edge-ai-in-embedded-systems" class="nav-link active" data-scroll-target="#introduction-to-edge-ai-in-embedded-systems"><span class="header-section-number">6.1</span> Introduction to Edge AI in Embedded Systems</a>
+  <li><a href="#introduction-to-edge-ai-in-embedded-systems" id="toc-introduction-to-edge-ai-in-embedded-systems" class="nav-link active" data-scroll-target="#introduction-to-edge-ai-in-embedded-systems"><span class="header-section-number">7.1</span> Introduction to Edge AI in Embedded Systems</a>
   <ul>
-  <li><a href="#advantages-of-edge-ai" id="toc-advantages-of-edge-ai" class="nav-link" data-scroll-target="#advantages-of-edge-ai"><span class="header-section-number">6.1.1</span> Advantages of Edge AI</a></li>
-  <li><a href="#why-efr32xg24-for-edge-ai" id="toc-why-efr32xg24-for-edge-ai" class="nav-link" data-scroll-target="#why-efr32xg24-for-edge-ai"><span class="header-section-number">6.1.2</span> Why EFR32XG24 for Edge AI?</a></li>
+  <li><a href="#advantages-of-edge-ai" id="toc-advantages-of-edge-ai" class="nav-link" data-scroll-target="#advantages-of-edge-ai"><span class="header-section-number">7.1.1</span> Advantages of Edge AI</a></li>
+  <li><a href="#why-efr32xg24-for-edge-ai" id="toc-why-efr32xg24-for-edge-ai" class="nav-link" data-scroll-target="#why-efr32xg24-for-edge-ai"><span class="header-section-number">7.1.2</span> Why EFR32XG24 for Edge AI?</a></li>
   </ul></li>
-  <li><a href="#gesture-recognition-system-overview" id="toc-gesture-recognition-system-overview" class="nav-link" data-scroll-target="#gesture-recognition-system-overview"><span class="header-section-number">6.2</span> Gesture Recognition System Overview</a>
+  <li><a href="#gesture-recognition-system-overview" id="toc-gesture-recognition-system-overview" class="nav-link" data-scroll-target="#gesture-recognition-system-overview"><span class="header-section-number">7.2</span> Gesture Recognition System Overview</a>
   <ul>
-  <li><a href="#system-components" id="toc-system-components" class="nav-link" data-scroll-target="#system-components"><span class="header-section-number">6.2.1</span> System Components</a></li>
-  <li><a href="#system-workflow" id="toc-system-workflow" class="nav-link" data-scroll-target="#system-workflow"><span class="header-section-number">6.2.2</span> System Workflow</a></li>
+  <li><a href="#system-components" id="toc-system-components" class="nav-link" data-scroll-target="#system-components"><span class="header-section-number">7.2.1</span> System Components</a></li>
+  <li><a href="#system-workflow" id="toc-system-workflow" class="nav-link" data-scroll-target="#system-workflow"><span class="header-section-number">7.2.2</span> System Workflow</a></li>
   </ul></li>
-  <li><a href="#ai-model-design-for-gesture-recognition" id="toc-ai-model-design-for-gesture-recognition" class="nav-link" data-scroll-target="#ai-model-design-for-gesture-recognition"><span class="header-section-number">6.3</span> AI Model Design for Gesture Recognition</a>
+  <li><a href="#ai-model-design-for-gesture-recognition" id="toc-ai-model-design-for-gesture-recognition" class="nav-link" data-scroll-target="#ai-model-design-for-gesture-recognition"><span class="header-section-number">7.3</span> AI Model Design for Gesture Recognition</a>
   <ul>
-  <li><a href="#model-architecture" id="toc-model-architecture" class="nav-link" data-scroll-target="#model-architecture"><span class="header-section-number">6.3.1</span> Model Architecture</a></li>
+  <li><a href="#model-architecture" id="toc-model-architecture" class="nav-link" data-scroll-target="#model-architecture"><span class="header-section-number">7.3.1</span> Model Architecture</a></li>
   </ul></li>
-  <li><a href="#sec:methodology" id="toc-sec:methodology" class="nav-link" data-scroll-target="#sec\:methodology"><span class="header-section-number">6.4</span> Methodology</a>
+  <li><a href="#sec:methodology" id="toc-sec:methodology" class="nav-link" data-scroll-target="#sec\:methodology"><span class="header-section-number">7.4</span> Methodology</a>
   <ul>
-  <li><a href="#data-acquisition" id="toc-data-acquisition" class="nav-link" data-scroll-target="#data-acquisition"><span class="header-section-number">6.4.1</span> Data Acquisition</a></li>
-  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link" data-scroll-target="#data-preprocessing"><span class="header-section-number">6.4.2</span> Data Preprocessing</a></li>
-  <li><a href="#ai-model-development" id="toc-ai-model-development" class="nav-link" data-scroll-target="#ai-model-development"><span class="header-section-number">6.4.3</span> AI Model Development</a></li>
-  <li><a href="#system-integration" id="toc-system-integration" class="nav-link" data-scroll-target="#system-integration"><span class="header-section-number">6.4.4</span> System Integration</a></li>
-  <li><a href="#evaluation-metrics" id="toc-evaluation-metrics" class="nav-link" data-scroll-target="#evaluation-metrics"><span class="header-section-number">6.4.5</span> Evaluation Metrics</a></li>
-  <li><a href="#hardware-and-software-tools" id="toc-hardware-and-software-tools" class="nav-link" data-scroll-target="#hardware-and-software-tools"><span class="header-section-number">6.4.6</span> Hardware and Software Tools</a></li>
+  <li><a href="#data-acquisition" id="toc-data-acquisition" class="nav-link" data-scroll-target="#data-acquisition"><span class="header-section-number">7.4.1</span> Data Acquisition</a></li>
+  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link" data-scroll-target="#data-preprocessing"><span class="header-section-number">7.4.2</span> Data Preprocessing</a></li>
+  <li><a href="#ai-model-development" id="toc-ai-model-development" class="nav-link" data-scroll-target="#ai-model-development"><span class="header-section-number">7.4.3</span> AI Model Development</a></li>
+  <li><a href="#system-integration" id="toc-system-integration" class="nav-link" data-scroll-target="#system-integration"><span class="header-section-number">7.4.4</span> System Integration</a></li>
+  <li><a href="#evaluation-metrics" id="toc-evaluation-metrics" class="nav-link" data-scroll-target="#evaluation-metrics"><span class="header-section-number">7.4.5</span> Evaluation Metrics</a></li>
+  <li><a href="#hardware-and-software-tools" id="toc-hardware-and-software-tools" class="nav-link" data-scroll-target="#hardware-and-software-tools"><span class="header-section-number">7.4.6</span> Hardware and Software Tools</a></li>
   </ul></li>
-  <li><a href="#sec:challenges" id="toc-sec:challenges" class="nav-link" data-scroll-target="#sec\:challenges"><span class="header-section-number">6.5</span> Challenges and Limitations</a></li>
+  <li><a href="#sec:challenges" id="toc-sec:challenges" class="nav-link" data-scroll-target="#sec\:challenges"><span class="header-section-number">7.5</span> Challenges and Limitations</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/6_gesturerecog_realtime.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/6_gesturerecog_realtime.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></h1>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></h1>
 </div>
 
 
@@ -315,8 +321,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="chapterintro">
 <p>Edge AI combines the power of artificial intelligence and edge computing to enable real-time decision-making directly on embedded devices. This chapter explores the implementation of Edge AI for gesture recognition using the EFR32XG24 microcontroller. By leveraging AI models optimized for resource-constrained environments, embedded systems can interpret gesture inputs with low latency and high accuracy, enhancing applications in fields such as human-computer interaction, rehabilitation, and IoT-based control systems.</p>
 </div>
-<section id="introduction-to-edge-ai-in-embedded-systems" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="introduction-to-edge-ai-in-embedded-systems"><span class="header-section-number">6.1</span> Introduction to Edge AI in Embedded Systems</h2>
+<section id="introduction-to-edge-ai-in-embedded-systems" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="introduction-to-edge-ai-in-embedded-systems"><span class="header-section-number">7.1</span> Introduction to Edge AI in Embedded Systems</h2>
 <p>Edge AI refers to deploying AI models on edge devices, such as microcontrollers, where data is processed locally instead of being sent to a centralized cloud server. This paradigm reduces latency, enhances data privacy, and ensures uninterrupted operation even in environments with limited connectivity.</p>
 <p>As embedded systems become more advanced, the need for efficient on-device data processing grows. Traditional systems rely heavily on cloud infrastructure, which can introduce latency, data privacy concerns, and increased operational costs. Edge AI addresses these issues by allowing computations to occur on the microcontroller itself, ensuring responsiveness and independence from network stability. With microcontrollers like the EFR32XG24, AI algorithms are executed efficiently despite hardware and memory constraints.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Example: Initialize Edge AI on EFR32XG24</span></span>
@@ -328,8 +334,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>initEdgeAI<span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="advantages-of-edge-ai" class="level3" data-number="6.1.1">
-<h3 data-number="6.1.1" class="anchored" data-anchor-id="advantages-of-edge-ai"><span class="header-section-number">6.1.1</span> Advantages of Edge AI</h3>
+<section id="advantages-of-edge-ai" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="advantages-of-edge-ai"><span class="header-section-number">7.1.1</span> Advantages of Edge AI</h3>
 <p>Edge AI offers several critical advantages that make it an essential technology for embedded systems:</p>
 <ul>
 <li><p><strong>Low Latency:</strong> Immediate processing without reliance on cloud servers.</p></li>
@@ -349,8 +355,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>optimizeAIModel<span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="why-efr32xg24-for-edge-ai" class="level3" data-number="6.1.2">
-<h3 data-number="6.1.2" class="anchored" data-anchor-id="why-efr32xg24-for-edge-ai"><span class="header-section-number">6.1.2</span> Why EFR32XG24 for Edge AI?</h3>
+<section id="why-efr32xg24-for-edge-ai" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="why-efr32xg24-for-edge-ai"><span class="header-section-number">7.1.2</span> Why EFR32XG24 for Edge AI?</h3>
 <p>The EFR32XG24 microcontroller, equipped with an ARM Cortex-M33 core and integrated BLE capabilities, provides an ideal platform for Edge AI applications. Its features include:</p>
 <ul>
 <li><p>Support for TinyML frameworks.</p></li>
@@ -372,11 +378,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Furthermore, the microcontroller’s native support for TensorFlow Lite for Microcontrollers (TFLM) allows seamless deployment of lightweight AI models. Its power efficiency ensures prolonged operational life.</p>
 </section>
 </section>
-<section id="gesture-recognition-system-overview" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="gesture-recognition-system-overview"><span class="header-section-number">6.2</span> Gesture Recognition System Overview</h2>
+<section id="gesture-recognition-system-overview" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="gesture-recognition-system-overview"><span class="header-section-number">7.2</span> Gesture Recognition System Overview</h2>
 <p>Gesture recognition systems are a subset of human-computer interaction technologies that allow users to control and interact with devices using physical gestures. In an embedded context, gesture recognition systems aim to interpret motion patterns captured by sensors like IMUs (Inertial Measurement Units). The EFR32XG24 microcontroller enables real-time gesture recognition while maintaining energy efficiency and responsiveness.</p>
-<section id="system-components" class="level3" data-number="6.2.1">
-<h3 data-number="6.2.1" class="anchored" data-anchor-id="system-components"><span class="header-section-number">6.2.1</span> System Components</h3>
+<section id="system-components" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="system-components"><span class="header-section-number">7.2.1</span> System Components</h3>
 <p>A gesture recognition system using the EFR32XG24 microcontroller involves several key components:</p>
 <ul>
 <li><p><strong>Sensors:</strong> Inertial Measurement Unit (IMU) for capturing motion data.</p></li>
@@ -394,8 +400,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>x <span class="op">+</span> y <span class="op">+</span> z<span class="op">)</span> <span class="op">/</span> <span class="dv">3</span><span class="op">;</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="system-workflow" class="level3" data-number="6.2.2">
-<h3 data-number="6.2.2" class="anchored" data-anchor-id="system-workflow"><span class="header-section-number">6.2.2</span> System Workflow</h3>
+<section id="system-workflow" class="level3" data-number="7.2.2">
+<h3 data-number="7.2.2" class="anchored" data-anchor-id="system-workflow"><span class="header-section-number">7.2.2</span> System Workflow</h3>
 <p>The overall workflow of a gesture recognition system includes the following stages:</p>
 <ol type="1">
 <li><p>Raw sensor data is captured using IMU sensors.</p></li>
@@ -407,11 +413,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 </section>
 </section>
-<section id="ai-model-design-for-gesture-recognition" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="ai-model-design-for-gesture-recognition"><span class="header-section-number">6.3</span> AI Model Design for Gesture Recognition</h2>
+<section id="ai-model-design-for-gesture-recognition" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="ai-model-design-for-gesture-recognition"><span class="header-section-number">7.3</span> AI Model Design for Gesture Recognition</h2>
 <p>The AI model for gesture recognition is implemented using a TinyML-compatible CNN architecture.</p>
-<section id="model-architecture" class="level3" data-number="6.3.1">
-<h3 data-number="6.3.1" class="anchored" data-anchor-id="model-architecture"><span class="header-section-number">6.3.1</span> Model Architecture</h3>
+<section id="model-architecture" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="model-architecture"><span class="header-section-number">7.3.1</span> Model Architecture</h3>
 <p>The CNN architecture is carefully designed to balance accuracy, memory consumption, and computational efficiency:</p>
 <ul>
 <li><p><strong>Input Layer:</strong> Processes time-series IMU data.</p></li>
@@ -476,11 +482,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </section>
 </section>
-<section id="sec:methodology" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="sec:methodology"><span class="header-section-number">6.4</span> Methodology</h2>
+<section id="sec:methodology" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="sec:methodology"><span class="header-section-number">7.4</span> Methodology</h2>
 <p>This section outlines the methodology used to design and implement an Edge AI-based gesture recognition system on the EFR32XG24 BLE microcontroller. The methodology consists of four main stages: Data Acquisition, Data Preprocessing, AI Model Development, and System Integration. Each stage is elaborated below.</p>
-<section id="data-acquisition" class="level3" data-number="6.4.1">
-<h3 data-number="6.4.1" class="anchored" data-anchor-id="data-acquisition"><span class="header-section-number">6.4.1</span> Data Acquisition</h3>
+<section id="data-acquisition" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="data-acquisition"><span class="header-section-number">7.4.1</span> Data Acquisition</h3>
 <p>The gesture recognition system utilizes an Inertial Measurement Unit (IMU) sensor to capture motion data. The IMU consists of accelerometers, gyroscopes, and magnetometers to measure linear acceleration, angular velocity, and orientation, respectively.</p>
 <p><strong>Sensor Configuration:</strong></p>
 <ul>
@@ -490,8 +496,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>The IMU sensor outputs raw motion data, which is collected in real-time and fed into the microcontroller for preprocessing.</p>
 </section>
-<section id="data-preprocessing" class="level3" data-number="6.4.2">
-<h3 data-number="6.4.2" class="anchored" data-anchor-id="data-preprocessing"><span class="header-section-number">6.4.2</span> Data Preprocessing</h3>
+<section id="data-preprocessing" class="level3" data-number="7.4.2">
+<h3 data-number="7.4.2" class="anchored" data-anchor-id="data-preprocessing"><span class="header-section-number">7.4.2</span> Data Preprocessing</h3>
 <p>Raw data from the IMU sensor is noisy and requires preprocessing before being fed into the AI model. The preprocessing pipeline includes the following steps:</p>
 <ol type="1">
 <li><p><strong>Noise Filtering:</strong> A low-pass filter is applied to remove high-frequency noise.</p></li>
@@ -500,8 +506,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <p>The preprocessed data ensures consistency and reduces variability, enabling robust AI model performance.</p>
 </section>
-<section id="ai-model-development" class="level3" data-number="6.4.3">
-<h3 data-number="6.4.3" class="anchored" data-anchor-id="ai-model-development"><span class="header-section-number">6.4.3</span> AI Model Development</h3>
+<section id="ai-model-development" class="level3" data-number="7.4.3">
+<h3 data-number="7.4.3" class="anchored" data-anchor-id="ai-model-development"><span class="header-section-number">7.4.3</span> AI Model Development</h3>
 <p>The AI model is implemented using a TinyML-compatible Convolutional Neural Network (CNN). The architecture is optimized for low memory and computational constraints typical of embedded devices.</p>
 <p><strong>Model Architecture:</strong></p>
 <ul>
@@ -520,8 +526,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>The model was trained offline on a high-performance server and deployed onto the EFR32XG24 microcontroller after optimization.</p>
 </section>
-<section id="system-integration" class="level3" data-number="6.4.4">
-<h3 data-number="6.4.4" class="anchored" data-anchor-id="system-integration"><span class="header-section-number">6.4.4</span> System Integration</h3>
+<section id="system-integration" class="level3" data-number="7.4.4">
+<h3 data-number="7.4.4" class="anchored" data-anchor-id="system-integration"><span class="header-section-number">7.4.4</span> System Integration</h3>
 <p>The final deployment involves integrating the AI model with the EFR32XG24 microcontroller and establishing BLE communication for data transfer and feedback display.</p>
 <p><strong>System Workflow:</strong></p>
 <ol type="1">
@@ -537,8 +543,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Low-power BLE mode is enabled for data transmission.</p></li>
 </ul>
 </section>
-<section id="evaluation-metrics" class="level3" data-number="6.4.5">
-<h3 data-number="6.4.5" class="anchored" data-anchor-id="evaluation-metrics"><span class="header-section-number">6.4.5</span> Evaluation Metrics</h3>
+<section id="evaluation-metrics" class="level3" data-number="7.4.5">
+<h3 data-number="7.4.5" class="anchored" data-anchor-id="evaluation-metrics"><span class="header-section-number">7.4.5</span> Evaluation Metrics</h3>
 <p>The system’s performance was evaluated using the following metrics:</p>
 <ul>
 <li><p><strong>Accuracy:</strong> Percentage of correct gesture classifications.</p></li>
@@ -546,8 +552,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><strong>Power Consumption:</strong> Average energy used per gesture recognition cycle.</p></li>
 </ul>
 </section>
-<section id="hardware-and-software-tools" class="level3" data-number="6.4.6">
-<h3 data-number="6.4.6" class="anchored" data-anchor-id="hardware-and-software-tools"><span class="header-section-number">6.4.6</span> Hardware and Software Tools</h3>
+<section id="hardware-and-software-tools" class="level3" data-number="7.4.6">
+<h3 data-number="7.4.6" class="anchored" data-anchor-id="hardware-and-software-tools"><span class="header-section-number">7.4.6</span> Hardware and Software Tools</h3>
 <ul>
 <li><p><strong>Hardware:</strong> EFR32XG24 BLE microcontroller, IMU sensor module.</p></li>
 <li><p><strong>Software:</strong> TensorFlow Lite for Microcontrollers, Embedded C, BLE SDK.</p></li>
@@ -555,8 +561,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The methodology ensures an efficient, real-time, and scalable gesture recognition system optimized for embedded hardware constraints.</p>
 </section>
 </section>
-<section id="sec:challenges" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="sec:challenges"><span class="header-section-number">6.5</span> Challenges and Limitations</h2>
+<section id="sec:challenges" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="sec:challenges"><span class="header-section-number">7.5</span> Challenges and Limitations</h2>
 <p>While implementing the Edge AI-based gesture recognition system on the EFR32XG24 microcontroller, several challenges and limitations were encountered. These are discussed below:</p>
 <ol type="1">
 <li><p><strong>Hardware Constraints:</strong> The limited computational power and memory resources of the microcontroller posed restrictions on the complexity and size of the AI model. Optimizing the AI model for memory efficiency while maintaining accuracy was a significant challenge.</p></li>
@@ -1088,13 +1094,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../contents/core/5_efr32applications.html" class="pagination-link" aria-label="**Applications of EFR32 I/O**">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title"><strong>Applications of EFR32 I/O</strong></span></span>
+      <a href="../../contents/core/10_ml_foundations.html" class="pagination-link" aria-label="The Art and Science of Machine Learning">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../../contents/core/7_gesturerecog_magicwand.html" class="pagination-link" aria-label="**Magic Wand via Gesture Recognition**">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

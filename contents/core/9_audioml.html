@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>9&nbsp; Audio ML for EFR32 – Embedded Systems Design</title>
+<title>10&nbsp; Audio ML for EFR32 – Embedded Systems Design</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -150,7 +150,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/9_audioml.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/9_audioml.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -228,26 +228,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../contents/core/10_ml_foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../contents/core/6_gesturerecog_realtime.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/7_gesturerecog_magicwand.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/8_anomalydetection_htm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/9_audioml.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
   </div>
 </li>
       </ul>
@@ -262,20 +268,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">9.1</span> Overview</a></li>
-  <li><a href="#training-the-model-in-tensorflow" id="toc-training-the-model-in-tensorflow" class="nav-link" data-scroll-target="#training-the-model-in-tensorflow"><span class="header-section-number">9.2</span> Training the Model in TensorFlow</a>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">10.1</span> Overview</a></li>
+  <li><a href="#training-the-model-in-tensorflow" id="toc-training-the-model-in-tensorflow" class="nav-link" data-scroll-target="#training-the-model-in-tensorflow"><span class="header-section-number">10.2</span> Training the Model in TensorFlow</a>
   <ul>
-  <li><a href="#preparing-the-data" id="toc-preparing-the-data" class="nav-link" data-scroll-target="#preparing-the-data"><span class="header-section-number">9.2.1</span> Preparing the Data</a></li>
-  <li><a href="#training-the-neural-network-model" id="toc-training-the-neural-network-model" class="nav-link" data-scroll-target="#training-the-neural-network-model"><span class="header-section-number">9.2.2</span> Training the Neural Network Model</a></li>
+  <li><a href="#preparing-the-data" id="toc-preparing-the-data" class="nav-link" data-scroll-target="#preparing-the-data"><span class="header-section-number">10.2.1</span> Preparing the Data</a></li>
+  <li><a href="#training-the-neural-network-model" id="toc-training-the-neural-network-model" class="nav-link" data-scroll-target="#training-the-neural-network-model"><span class="header-section-number">10.2.2</span> Training the Neural Network Model</a></li>
   </ul></li>
-  <li><a href="#converting-the-model-for-mcu-deployment" id="toc-converting-the-model-for-mcu-deployment" class="nav-link" data-scroll-target="#converting-the-model-for-mcu-deployment"><span class="header-section-number">9.3</span> Converting the Model for MCU Deployment</a></li>
-  <li><a href="#implementing-the-model-on-the-efr32xg24" id="toc-implementing-the-model-on-the-efr32xg24" class="nav-link" data-scroll-target="#implementing-the-model-on-the-efr32xg24"><span class="header-section-number">9.4</span> Implementing the Model on the EFR32xG24</a>
+  <li><a href="#converting-the-model-for-mcu-deployment" id="toc-converting-the-model-for-mcu-deployment" class="nav-link" data-scroll-target="#converting-the-model-for-mcu-deployment"><span class="header-section-number">10.3</span> Converting the Model for MCU Deployment</a></li>
+  <li><a href="#implementing-the-model-on-the-efr32xg24" id="toc-implementing-the-model-on-the-efr32xg24" class="nav-link" data-scroll-target="#implementing-the-model-on-the-efr32xg24"><span class="header-section-number">10.4</span> Implementing the Model on the EFR32xG24</a>
   <ul>
-  <li><a href="#setting-up-the-development-environment" id="toc-setting-up-the-development-environment" class="nav-link" data-scroll-target="#setting-up-the-development-environment"><span class="header-section-number">9.4.1</span> Setting Up the Development Environment</a></li>
-  <li><a href="#loading-the-model-and-running-inference" id="toc-loading-the-model-and-running-inference" class="nav-link" data-scroll-target="#loading-the-model-and-running-inference"><span class="header-section-number">9.4.2</span> Loading the Model and Running Inference</a></li>
-  <li><a href="#integrating-audio-capture" id="toc-integrating-audio-capture" class="nav-link" data-scroll-target="#integrating-audio-capture"><span class="header-section-number">9.4.3</span> Integrating Audio Capture</a></li>
-  <li><a href="#audio-preprocessing-and-classification" id="toc-audio-preprocessing-and-classification" class="nav-link" data-scroll-target="#audio-preprocessing-and-classification"><span class="header-section-number">9.4.4</span> Audio Preprocessing and Classification</a></li>
-  <li><a href="#considerations-for-optimization" id="toc-considerations-for-optimization" class="nav-link" data-scroll-target="#considerations-for-optimization"><span class="header-section-number">9.4.5</span> Considerations for Optimization</a></li>
+  <li><a href="#setting-up-the-development-environment" id="toc-setting-up-the-development-environment" class="nav-link" data-scroll-target="#setting-up-the-development-environment"><span class="header-section-number">10.4.1</span> Setting Up the Development Environment</a></li>
+  <li><a href="#loading-the-model-and-running-inference" id="toc-loading-the-model-and-running-inference" class="nav-link" data-scroll-target="#loading-the-model-and-running-inference"><span class="header-section-number">10.4.2</span> Loading the Model and Running Inference</a></li>
+  <li><a href="#integrating-audio-capture" id="toc-integrating-audio-capture" class="nav-link" data-scroll-target="#integrating-audio-capture"><span class="header-section-number">10.4.3</span> Integrating Audio Capture</a></li>
+  <li><a href="#audio-preprocessing-and-classification" id="toc-audio-preprocessing-and-classification" class="nav-link" data-scroll-target="#audio-preprocessing-and-classification"><span class="header-section-number">10.4.4</span> Audio Preprocessing and Classification</a></li>
+  <li><a href="#considerations-for-optimization" id="toc-considerations-for-optimization" class="nav-link" data-scroll-target="#considerations-for-optimization"><span class="header-section-number">10.4.5</span> Considerations for Optimization</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/9_audioml.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/9_audioml.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
@@ -283,9 +289,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/6_gesturerecog_realtime.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/9_audioml.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/9_audioml.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></h1>
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></h1>
 </div>
 
 
@@ -305,8 +311,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="chapterintro">
 <p>Implementing audio machine learning (ML) on microcontrollers has become increasingly common in recent years. Optimizing the model is crucial to achieve accurate results while maintaining energy efficiency, ensuring suitability for high-performance embedded systems. This chapter details the implementation of a basic <em>Yes/No</em> audio detection system using ML. Initially, a neural network is trained to classify two audio classes: <em>Yes</em> and <em>No</em>. The trained model is then deployed on the EFR32 Dev kit.</p>
 </div>
-<section id="overview" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">9.1</span> Overview</h2>
+<section id="overview" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">10.1</span> Overview</h2>
 <p>In the implementation below, the system processes raw audio input and categorizes it as either <em>Yes</em> or <em>No</em> using the trained ML model. The workflow includes three key stages:</p>
 <ul>
 <li><p>Training the ML model using TensorFlow.</p></li>
@@ -320,10 +326,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><strong>Edge ML:</strong> Optimization of ML models for performance and memory efficiency on embedded devices.</p></li>
 </ul>
 </section>
-<section id="training-the-model-in-tensorflow" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="training-the-model-in-tensorflow"><span class="header-section-number">9.2</span> Training the Model in TensorFlow</h2>
-<section id="preparing-the-data" class="level3" data-number="9.2.1">
-<h3 data-number="9.2.1" class="anchored" data-anchor-id="preparing-the-data"><span class="header-section-number">9.2.1</span> Preparing the Data</h3>
+<section id="training-the-model-in-tensorflow" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="training-the-model-in-tensorflow"><span class="header-section-number">10.2</span> Training the Model in TensorFlow</h2>
+<section id="preparing-the-data" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="preparing-the-data"><span class="header-section-number">10.2.1</span> Preparing the Data</h3>
 <p>Labeled audio clips containing the words <em>Yes</em> and <em>No</em> are required for training a model. A pre-recorded audio dataset, available in WAV format, will be used in this example. These audio files are first loaded, processed to extract MFCC features, and splitted into training and test sets.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>import tensorflow as tf</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>import librosa</span>
@@ -356,8 +362,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>from sklearn<span class="op">.</span>model_selection import train_test_split</span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>X_train<span class="op">,</span> X_test<span class="op">,</span> y_train<span class="op">,</span> y_test <span class="op">=</span> train_test_split<span class="op">(</span>X<span class="op">,</span> y<span class="op">,</span> test_size<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="training-the-neural-network-model" class="level3" data-number="9.2.2">
-<h3 data-number="9.2.2" class="anchored" data-anchor-id="training-the-neural-network-model"><span class="header-section-number">9.2.2</span> Training the Neural Network Model</h3>
+<section id="training-the-neural-network-model" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="training-the-neural-network-model"><span class="header-section-number">10.2.2</span> Training the Neural Network Model</h3>
 <p>A neural network is defined for binary classification of audio features.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf<span class="op">.</span>keras<span class="op">.</span>Sequential<span class="op">([</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    tf<span class="op">.</span>keras<span class="op">.</span>layers<span class="op">.</span>Dense<span class="op">(</span><span class="dv">64</span><span class="op">,</span> activation<span class="op">=</span><span class="ch">'r</span><span class="er">elu</span><span class="ch">'</span><span class="op">,</span> input_shape<span class="op">=(</span><span class="dv">13</span><span class="op">,)),</span>  # <span class="dv">13</span> MFCC features</span>
@@ -373,8 +379,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>model<span class="op">.</span>save<span class="op">(</span><span class="ch">'y</span><span class="er">es_no_model.h5</span><span class="ch">'</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="converting-the-model-for-mcu-deployment" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="converting-the-model-for-mcu-deployment"><span class="header-section-number">9.3</span> Converting the Model for MCU Deployment</h2>
+<section id="converting-the-model-for-mcu-deployment" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="converting-the-model-for-mcu-deployment"><span class="header-section-number">10.3</span> Converting the Model for MCU Deployment</h2>
 <p>The trained TensorFlow model is converted into TensorFlow Lite (TFLite) format for efficient deployment on resource-constrained devices.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf<span class="op">.</span>keras<span class="op">.</span>models<span class="op">.</span>load_model<span class="op">(</span><span class="ch">'y</span><span class="er">es_no_model.h5</span><span class="ch">'</span><span class="op">)</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> tf<span class="op">.</span>lite<span class="op">.</span>TFLiteConverter<span class="op">.</span>from_keras_model<span class="op">(</span>model<span class="op">)</span></span>
@@ -385,19 +391,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    f<span class="op">.</span>write<span class="op">(</span>tflite_model<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The conversion produces a ‘.tflite’ file suitable for embedded deployment.</p>
 </section>
-<section id="implementing-the-model-on-the-efr32xg24" class="level2" data-number="9.4">
-<h2 data-number="9.4" class="anchored" data-anchor-id="implementing-the-model-on-the-efr32xg24"><span class="header-section-number">9.4</span> Implementing the Model on the EFR32xG24</h2>
+<section id="implementing-the-model-on-the-efr32xg24" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="implementing-the-model-on-the-efr32xg24"><span class="header-section-number">10.4</span> Implementing the Model on the EFR32xG24</h2>
 <p>The TensorFlow Lite model is integrated into the EFR32xG24 environment using the appropriate software development kit (SDK) and TensorFlow Lite for Microcontrollers library.</p>
-<section id="setting-up-the-development-environment" class="level3" data-number="9.4.1">
-<h3 data-number="9.4.1" class="anchored" data-anchor-id="setting-up-the-development-environment"><span class="header-section-number">9.4.1</span> Setting Up the Development Environment</h3>
+<section id="setting-up-the-development-environment" class="level3" data-number="10.4.1">
+<h3 data-number="10.4.1" class="anchored" data-anchor-id="setting-up-the-development-environment"><span class="header-section-number">10.4.1</span> Setting Up the Development Environment</h3>
 <p>The following components are required for setting up the development environment:</p>
 <ul>
 <li><p><strong>EFR32xG24 SDK:</strong> The latest version of the Silicon Labs Gecko SDK must be installed.</p></li>
 <li><p><strong>TensorFlow Lite for Microcontrollers:</strong> This library should be set up within the development environment.</p></li>
 </ul>
 </section>
-<section id="loading-the-model-and-running-inference" class="level3" data-number="9.4.2">
-<h3 data-number="9.4.2" class="anchored" data-anchor-id="loading-the-model-and-running-inference"><span class="header-section-number">9.4.2</span> Loading the Model and Running Inference</h3>
+<section id="loading-the-model-and-running-inference" class="level3" data-number="10.4.2">
+<h3 data-number="10.4.2" class="anchored" data-anchor-id="loading-the-model-and-running-inference"><span class="header-section-number">10.4.2</span> Loading the Model and Running Inference</h3>
 <p>The TensorFlow Lite model is loaded onto the MCU, input data is prepared, and inference is performed.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/c/common.h"</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/micro/micro_interpreter.h"</span></span>
@@ -445,8 +451,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>0: Detected <em>No</em></p></li>
 </ul>
 </section>
-<section id="integrating-audio-capture" class="level3" data-number="9.4.3">
-<h3 data-number="9.4.3" class="anchored" data-anchor-id="integrating-audio-capture"><span class="header-section-number">9.4.3</span> Integrating Audio Capture</h3>
+<section id="integrating-audio-capture" class="level3" data-number="10.4.3">
+<h3 data-number="10.4.3" class="anchored" data-anchor-id="integrating-audio-capture"><span class="header-section-number">10.4.3</span> Integrating Audio Capture</h3>
 <p>An onboard microphone or an external microphone is often used to interface with the MCU to process real-time audio input. The EFR32xG24 does not include a dedicated audio processing block, requiring integration with a microphone module that outputs either analog signals (such as those from an electret microphone) or digital signals (like those from an I2S microphone). For simplicity, an analog microphone with an ADC on the MCU is employed here, with audio signals sampled, preprocessed, and then classified using the following steps:</p>
 <ol type="1">
 <li><p>Configure the ADC to sample audio signals.</p></li>
@@ -504,8 +510,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    ADC0<span class="op">-&gt;</span>CMD <span class="op">=</span> ADC_CMD_START<span class="op">;</span></span>
 <span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="audio-preprocessing-and-classification" class="level3" data-number="9.4.4">
-<h3 data-number="9.4.4" class="anchored" data-anchor-id="audio-preprocessing-and-classification"><span class="header-section-number">9.4.4</span> Audio Preprocessing and Classification</h3>
+<section id="audio-preprocessing-and-classification" class="level3" data-number="10.4.4">
+<h3 data-number="10.4.4" class="anchored" data-anchor-id="audio-preprocessing-and-classification"><span class="header-section-number">10.4.4</span> Audio Preprocessing and Classification</h3>
 <p>The audio data is stored in an array adc_buffer where the ADC samples are placed at regular intervals following these steps:</p>
 <ul>
 <li><p>ADC samples the microphone data at a fixed rate.</p></li>
@@ -550,8 +556,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="considerations-for-optimization" class="level3" data-number="9.4.5">
-<h3 data-number="9.4.5" class="anchored" data-anchor-id="considerations-for-optimization"><span class="header-section-number">9.4.5</span> Considerations for Optimization</h3>
+<section id="considerations-for-optimization" class="level3" data-number="10.4.5">
+<h3 data-number="10.4.5" class="anchored" data-anchor-id="considerations-for-optimization"><span class="header-section-number">10.4.5</span> Considerations for Optimization</h3>
 <ul>
 <li><p><strong>ADC Resolution:</strong> The ADC resolution and sampling rate must align with audio requirements.</p></li>
 <li><p><strong>MFCC Extraction:</strong> Complex preprocessing, such as Fourier Transform and MFCC extraction, may require optimizations.</p></li>
@@ -1079,7 +1085,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../../contents/core/8_anomalydetection_htm.html" class="pagination-link" aria-label="**IMU Anomaly Detection Using Hierarchical Temporal Memory**">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
