@@ -776,3 +776,196 @@ Process completed at 2025-01-23_13-26-55
 Starting publish at 2025-01-23_13-35-05
 Error: Not on dev branch.
 Starting publish at 2025-01-23_13-35-44
+[dev 1bccef5] Update content 2025-01-23
+ 4 files changed, 240 insertions(+), 61 deletions(-)
+To https://github.com/clarkson-edge/ee513_book.git
+   5819ec1..1bccef5  dev -> dev
+[1m[34m[ 1/10] index.qmd[39m[22m
+[1m[34m[ 2/10] contents/core/1_introduction.qmd[39m[22m
+[1m[34m[ 3/10] contents/core/2_programmingwithc.qmd[39m[22m
+[1m[34m[ 4/10] contents/core/3_devkitoverview.qmd[39m[22m
+[1m[34m[ 5/10] contents/core/4_efr32programming.qmd[39m[22m
+[1m[34m[ 6/10] contents/core/5_efr32applications.qmd[39m[22m
+[1m[34m[ 7/10] contents/core/6_gesturerecog_realtime.qmd[39m[22m
+[1m[34m[ 8/10] contents/core/7_gesturerecog_magicwand.qmd[39m[22m
+[1m[34m[ 9/10] contents/core/8_anomalydetection_htm.qmd[39m[22m
+[1m[34m[10/10] contents/core/9_audioml.qmd[39m[22m
+
+[1mpandoc [22m
+  to: latex
+  output-file: index.tex
+  standalone: true
+  toc: true
+  number-sections: true
+  top-level-division: chapter
+  pdf-engine: xelatex
+  variables:
+    graphics: true
+    tables: true
+  default-image-extension: pdf
+  toc-depth: 3
+  cite-method: citeproc
+  reference-location: margin
+  
+[1mmetadata[22m
+  crossref:
+    chapters: true
+    appendix-title: Appendix
+    appendix-delim: ':'
+    custom:
+      - kind: float
+        reference-prefix: Lab
+        key: labq
+        latex-env: lab
+      - kind: float
+        reference-prefix: Exercise
+        key: exr
+        latex-env: exr
+      - kind: float
+        reference-prefix: Video
+        key: vid
+        latex-env: vid
+  documentclass: scrbook
+  papersize: letter
+  block-headings: true
+  bibliography:
+    - contents/core/references.bib
+  citation: true
+  license: CC-BY-NC-SA
+  editor:
+    render-on-save: true
+  resources:
+    - CNAME
+  classoption:
+    - abstract
+    - titlepage
+  coverpage: true
+  coverpage-title: Embedded Systems Design
+  coverpage-subtitle: Utilizing the Silicon Labs EFR32XG24 BLE Microcontroller
+  coverpage-bg-image: cover-image-transparent.png
+  coverpage-author:
+    - Masudul
+    - Imtiaz
+  coverpage-theme:
+    page-text-align: center
+    bg-image-center: 0
+    bg-image-bottom: 7
+    bg-image-opacity: 1
+    bg-image-rotate: 0
+    title-fontsize: 38
+    title-left: 0.075\paperwidth
+    title-bottom: 0.375\paperwidth
+    title-width: 0.9\paperwidth
+    subtitle-fontsize: 30
+    subtitle-left: 0.075\paperwidth
+    subtitle-bottom: 0.45\paperwidth
+    subtitle-width: 0.9\paperwidth
+    subtitle-style: italic
+    author-style: plain
+    author-sep: newline
+    author-fontsize: 20
+    author-align: right
+    author-bottom: 0.15\paperwidth
+    author-left: 7in
+    author-width: 6in
+    footer-style: none
+    header-style: none
+    date-style: none
+  titlepage: true
+  titlepage-theme:
+    elements:
+      - \titleblock
+      - Masudul Imtiaz, PhD
+      - Sigmond Kukla
+      - Aaron Storey, MSAI
+      - '& TA''s of EE260'
+      - \vspace{0.75cm}
+      - Coulson School of Engineering and Applied Sciences
+      - Clarkson University
+      - \vfill
+    page-align: left
+    title-style: plain
+    title-fontstyle:
+      - huge
+      - bfseries
+    title-space-after: 4\baselineskip
+    title-subtitle-space-between: 0.05\textheight
+    subtitle-fontstyle:
+      - large
+      - textit
+    author-style: superscript-with-and
+    author-fontstyle: large
+    affiliation-style: numbered-list-with-correspondence
+    affiliation-fontstyle: large
+    affiliation-space-after: 0pt
+    footer-style: plain
+    footer-fontstyle: large
+    logo-size: 0.15\textheight
+    logo-space-after: 1\baselineskip
+    vrule-width: 2pt
+    vrule-align: left
+    vrule-color: black
+  lof: false
+  lot: false
+  latex-engine: xelatex
+  citation-package: natbib
+  link-citations: true
+  biblio-title: References
+  title-block-style: none
+  indent: 0px
+  fontsize: 9pt
+  colorlinks: true
+  citation-location: block
+  fig-caption: true
+  cap-location: bottom
+  fig-cap-location: bottom
+  tbl-cap-location: bottom
+  hyperrefoptions:
+    - linktoc=all
+    - pdfwindowui
+    - pdfpagemode=FullScreen
+    - pdfpagelayout=TwoPageRight
+  description-meta: |
+    This book is a comprehensive guide to embedded systems and machine learning with the Silicon Lab EFR32XG24 BLE Microcontroller. Designed for engineers and students, it combines hands-on examples and theoretical insights. You'll learn about programming microcontrollers, building applications, and integrating machine learning for real-world solutions. Each chapter builds on the last, guiding you through practical applications and advanced design concepts.
+  title: Embedded Systems Design
+  subtitle: Utilizing the Silicon Labs EFR32XG24 BLE Microcontroller
+  date: '2025-01-23T00:00:00-06:00'
+  date-format: long
+  
+[1m[34m
+Rendering PDF[39m[22m
+[1m[34mrunning xelatex - 1[39m[22m
+  This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022/Debian) (preloaded format=xelatex)
+   restricted \write18 enabled.
+  entering extended mode
+  
+[1m[34mrunning xelatex - 2[39m[22m
+  This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022/Debian) (preloaded format=xelatex)
+   restricted \write18 enabled.
+  entering extended mode
+  
+
+Output created: _book/index.html
+
+From https://github.com/clarkson-edge/ee513_book
+ * branch            gh-pages   -> FETCH_HEAD
+Preparing worktree (resetting branch 'gh-pages'; was at 55858ca)
+branch 'gh-pages' set up to track 'origin/gh-pages'.
+HEAD is now at 55858ca Built site for gh-pages
+[gh-pages 1a7532b] Built site for gh-pages
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+origin	https://github.com/clarkson-edge/ee513_book.git (fetch)
+origin	https://github.com/clarkson-edge/ee513_book.git (push)
+To https://github.com/clarkson-edge/ee513_book.git
+   55858ca..1a7532b  HEAD -> gh-pages
+
+[33mNOTE: GitHub Pages sites use caching so you might need to click the refresh
+button within your web browser to see changes after deployment.
+[39m
+[✓] Published to https://
+
+[33mNOTE: GitHub Pages deployments normally take a few minutes (your site updates
+will be visible once the deploy completes)
+[39m
+Process completed at 2025-01-23_13-36-17
+Starting publish at 2025-02-04_14-04-42

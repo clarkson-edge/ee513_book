@@ -88,6 +88,7 @@ book:
     # Part 2: Embedded Machine Learning
   - part: "Embedded Machine Learning"
     chapters:
+    - contents/core/10_ml_foundations.qmd
     - contents/core/6_gesturerecog_realtime.qmd
     - contents/core/7_gesturerecog_magicwand.qmd
     - contents/core/8_anomalydetection_htm.qmd
@@ -229,12 +230,15 @@ format:
         
     titlepage: true
     titlepage-theme:
-      elements: [ "\\titleblock", 
+      elements: [ "\\titleblock",
                   "Masudul Imtiaz, PhD",
+                  "\\vspace{0.35cm}",
                   "Sigmond Kukla",
+                  "\\vspace{0.35cm}",
                   "Aaron Storey, MSAI",
+                  "\\vspace{0.35cm}",
                   "& TA's of EE260",
-                  "\\vspace{0.75cm}",
+                  "\\vspace{1.25cm}",
                   "Coulson School of Engineering and Applied Sciences", 
                   "Clarkson University",  
                   "\\vfill"]
