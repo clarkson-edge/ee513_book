@@ -1,0 +1,686 @@
+# Building a TinyML Application
+
+In the previous chapter, we trained a neural network model to predict sine wave values and prepared it for deployment on an EFR32MG24 microcontroller. Now we'll build a complete application around this model and deploy it to the hardware. This chapter focuses on the practical aspects of implementing TinyML using Silicon Labs' Gecko SDK and Simplicity Studio rather than the traditional TensorFlow Lite for Microcontrollers approach.
+
+## Understanding the Gecko SDK Approach to TinyML
+
+The Gecko SDK provides a structured approach to embedded development specifically optimized for Silicon Labs' microcontrollers. This offers several advantages over the more generic TinyML implementations:
+
+1. **Pre-integrated Components**: The SDK includes optimized TensorFlow Lite Micro components already configured for EFR32 devices
+2. **Hardware Abstraction Layer**: Direct integration with EFR32 peripherals through a consistent API
+3. **Project Templates**: Simplicity Studio provides starting points for TinyML applications
+4. **Advanced Tooling**: Debugging, energy profiling, and configuration tools are built into the development environment
+
+## Setting Up Your Development Environment
+
+Before we begin building our application, ensure you have the following tools installed:
+
+1. **Simplicity Studio 5**: Download and install from [Silicon Labs' website](https://www.silabs.com/developers/simplicity-studio)
+2. **Gecko SDK**: The latest version will be installed through Simplicity Studio
+3. **J-Link Drivers**: These should be installed with Simplicity Studio
+4. **EFR32MG24 Development Board**: Connect this to your computer via USB
+
+## Creating a New Project in Simplicity Studio
+
+Let's start by creating a TinyML project in Simplicity Studio:
+
+1. Launch Simplicity Studio 5
+2. In the Launcher perspective, click on your connected EFR32MG24 device
+3. Click "Create New Project" in the "Overview" tab
+4. Select "Silicon Labs Project Wizard" and click "NEXT"
+5. In the SDK Selection dialog, ensure the latest Gecko SDK is selected and click "NEXT"
+6. In the Project Generation dialog:
+   - Filter for "example" in the search box
+   - Select "TensorFlow Lite Micro Example" 
+   - Click "NEXT"
+7. Configure your project:
+   - Name: `sine_wave_predictor`
+   - Keep the default location
+   - Click "FINISH"
+
+Simplicity Studio will generate a project with the necessary components for a TinyML application. Let's explore the project structure before making our modifications.
+
+## Exploring the Project Structure
+
+The generated project includes several important directories and files:
+
+- **config/**: Contains hardware configuration files for your specific board
+- **gecko_sdk/**: The Gecko SDK source code, including TensorFlow Lite Micro
+- **autogen/**: Auto-generated initialization code for the device
+- **app.c**: Your application's main source file
+- **app.h**: Header file for your application
+
+The TensorFlow Lite Micro example comes with a sample model that classifies motion patterns. We'll replace this with our sine wave model.
+
+## Importing the Sine Wave Model
+
+First, let's import the sine model data that we generated in the previous chapter:
+
+1. Right-click on the project in the "Project Explorer" view
+2. Select "Import" → "General" → "File System"
+3. Browse to the location where you saved `sine_model_data.h`
+4. Select the file and click "Finish"
+
+The model data will be added to your project. Now let's modify the application code to use our sine wave model.
+
+## Implementing the Application
+
+Let's replace the content of `app.c` with our sine wave prediction application code. Open `app.c` and replace its contents with the following:
+
+```c
+/***************************************************************************//**
+ * @file app.c
+ * @brief TinyML Sine Wave Predictor application
+ *******************************************************************************
+ * # License
+ * <b>Copyright 2023 Silicon Laboratories Inc. www.silabs.com</b>
+ *******************************************************************************
+ *
+ * SPDX-License-Identifier: Zlib
+ *
+ * The licensor of this software is Silicon Laboratories Inc.
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ *
+ ******************************************************************************/
+#include "sl_component_catalog.h"
+#include "sl_system_init.h"
+#include "app.h"
+#if defined(SL_CATALOG_POWER_MANAGER_PRESENT)
+#include "sl_power_manager.h"
+#endif
+#include "sl_system_process_action.h"
+
+/* Additional includes for our application */
+#include <stdio.h>
+#include <math.h>
+
+/* Include TensorFlow Lite components */
+#include "tensorflow/lite/micro/all_ops_resolver.h"
+#include "tensorflow/lite/micro/micro_error_reporter.h"
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "tensorflow/lite/schema/schema_generated.h"
+#include "tensorflow/lite/version.h"
+
+/* Include our model data */
+#include "sine_model_data.h"
+
+/* Include hardware control components */
+#include "sl_led.h"
+#include "sl_simple_led_instances.h"
+#include "sl_sleeptimer.h"
+
+/* Constants for sine wave demonstration */
+#define INFERENCES_PER_CYCLE  32
+#define X_RANGE               (2.0f * 3.14159265359f)  /* 2π radians */
+#define INFERENCE_INTERVAL_MS 50
+
+/* Global variables for TensorFlow Lite model */
+static tflite::MicroErrorReporter micro_error_reporter;
+static tflite::ErrorReporter* error_reporter = &micro_error_reporter;
+/* We'll use the C version of TensorFlow Lite Micro API */
+static tflite::MicroInterpreter* interpreter = nullptr;
+static TfLiteTensor* input = nullptr;
+static TfLiteTensor* output = nullptr;
+
+/* Create an area of memory for input, output, and intermediate arrays */
+#define TENSOR_ARENA_SIZE (10 * 1024)
+static uint8_t tensor_arena[TENSOR_ARENA_SIZE];
+
+/* Application state variables */
+static int inference_count = 0;
+
+/***************************************************************************//**
+ * Initialize application.
+ ******************************************************************************/
+void app_init(void)
+{
+  /* Map the model into a usable data structure */
+  model = tflite::GetModel(g_sine_model_data);
+  if (model->version() != TFLITE_SCHEMA_VERSION) {
+    error_reporter->Report(
+        "Model provided is schema version %d not equal "
+        "to supported version %d.\n",
+        model->version(), TFLITE_SCHEMA_VERSION);
+    return;
+  }
+
+  /* This pulls in all the operation implementations we need */
+  static tflite::AllOpsResolver resolver;
+
+  /* Build an interpreter to run the model with */
+  static tflite::MicroInterpreter static_interpreter(
+      model, resolver, tensor_arena, TENSOR_ARENA_SIZE, error_reporter);
+  interpreter = &static_interpreter;
+
+  /* Allocate memory from the tensor_arena for the model's tensors */
+  TfLiteStatus allocate_status = interpreter->AllocateTensors();
+  if (allocate_status != kTfLiteOk) {
+    error_reporter->Report("AllocateTensors() failed");
+    return;
+  }
+
+  /* Obtain pointers to the model's input and output tensors */
+  input = interpreter->input(0);
+  output = interpreter->output(0);
+
+  /* Check that input tensor dimensions are as expected */
+  if (input->dims->size != 2 || input->dims->data[0] != 1 || 
+      input->dims->data[1] != 1 || input->type != kTfLiteFloat32) {
+    error_reporter->Report("Unexpected input tensor dimensions or type");
+    return;
+  }
+
+  /* Initialize LED */
+  sl_led_init(SL_SIMPLE_LED_INSTANCE(0));
+  
+  /* Print initialization message */
+  printf("Sine Wave Predictor initialized successfully!\n");
+  printf("Model input dims: %d x %d, type: %d\n", 
+         input->dims->data[0], input->dims->data[1], input->type);
+}
+
+/***************************************************************************//**
+ * App ticking function.
+ ******************************************************************************/
+void app_process_action(void)
+{
+  /* Calculate an x value to feed into the model based on current inference count */
+  float position = (float)(inference_count) / (float)(INFERENCES_PER_CYCLE);
+  float x_val = position * X_RANGE;
+  
+  /* Set the input tensor with our calculated x value */
+  input->data.f[0] = x_val;
+  
+  /* Run inference, and report any error */
+  TfLiteStatus invoke_status = TF_MicroInterpreter_Invoke(interpreter);
+  if (invoke_status != kTfLiteOk) {
+    printf("Invoke failed on x_val: %f\n", (double)x_val);
+    return;
+  }
+  
+  /* Read the predicted y value from the model's output tensor */
+  float y_val = output->data.f[0];
+  
+  /* Map the sine output (-1 to 1) to LED brightness 
+   * For simplicity, we'll just turn the LED on when the value is positive
+   * and off when it's negative. For PWM control, you would need to 
+   * configure a PWM peripheral. */
+  if (y_val > 0) {
+    sl_led_turn_on(SL_SIMPLE_LED_INSTANCE(0));
+  } else {
+    sl_led_turn_off(SL_SIMPLE_LED_INSTANCE(0));
+  }
+  
+  /* Log every 4th inference to avoid flooding the console */
+  if (inference_count % 4 == 0) {
+    printf("x_value: %f, predicted_sine: %f\n", (double)x_val, (double)y_val);
+  }
+  
+  /* Increment the inference_count, and reset it if we have reached
+   * the total number per cycle */
+  inference_count += 1;
+  if (inference_count >= INFERENCES_PER_CYCLE) inference_count = 0;
+  
+  /* Add a delay between inferences */
+  sl_sleeptimer_delay_millisecond(INFERENCE_INTERVAL_MS);
+}
+```
+
+This application will:
+1. Initialize the TensorFlow Lite Micro interpreter with our sine model
+2. Set up an LED for output
+3. In each loop iteration:
+   - Calculate an x value within our 0 to 2π range
+   - Run inference to get the predicted sine value
+   - Toggle the LED based on whether the sine value is positive or negative
+   - Log the values to the console
+   - Increment the inference counter
+
+## Enhancing Output with PWM Control
+
+The basic application just toggles an LED, but we can create a more interesting visualization by controlling LED brightness with PWM. Let's create a PWM component for our project:
+
+1. Right-click on your project in the Project Explorer
+2. Select "Configure Project"
+3. Click on "SOFTWARE COMPONENTS"
+4. In the search box, type "PWM"
+5. Find "PWM Driver" → "Simple PWM" and click "Install"
+6. Click "Force Install" if prompted
+7. Click "DONE" to save the configuration
+
+Now, modify the application code to use PWM for LED brightness control. Replace the LED control section in `app_process_action()` with:
+
+```c
+/* Map the sine output (-1 to 1) to PWM duty cycle (0 to 100%) */
+uint8_t duty_cycle = (uint8_t)((y_val + 1.0f) * 50.0f);
+  
+/* Set LED brightness using PWM */
+sl_pwm_set_duty_cycle(SL_PWM_INSTANCE(0), duty_cycle);
+```
+
+Also, add the PWM initialization in the `app_init()` function after the LED initialization:
+
+```c
+/* Initialize PWM for LED brightness control */
+sl_pwm_config_t pwm_config = {
+  .frequency = 10000,  /* 10 kHz PWM frequency */
+  .polarity = SL_PWM_ACTIVE_HIGH
+};
+sl_pwm_init(SL_PWM_INSTANCE(0), &pwm_config);
+```
+
+Don't forget to include the PWM header at the top of the file:
+
+```c
+#include "sl_pwm.h"
+#include "sl_simple_pwm_instances.h"
+```
+
+## Building and Flashing the Application
+
+Now let's build and flash our application to the EFR32MG24 board:
+
+1. Right-click on your project in the Project Explorer
+2. Select "Build Project"
+3. Once the build completes successfully, right-click again on the project
+4. Select "Run As" → "Silicon Labs ARM Program"
+
+Simplicity Studio will compile your code, flash it to the device, and start execution.
+
+## Debugging and Monitoring
+
+To monitor the output of your application:
+
+1. In Simplicity Studio, go to the "Debug Adapters" view
+2. Right-click on your connected device and select "Launch Console"
+3. In the console dialog, select "Serial 1" and click "OK"
+
+You should now see the application's output messages showing x values and predicted sine values.
+
+## Optimizing TinyML Performance
+
+### Memory Optimization
+
+TinyML applications on microcontrollers must be memory-efficient. Let's look at ways to optimize memory usage:
+
+1. **Tensor Arena Size**: Reduce the `TENSOR_ARENA_SIZE` to the minimum required. Try starting with 10KB and reducing it incrementally:
+
+```c
+#define TENSOR_ARENA_SIZE (10 * 1024)  /* Start with 10KB */
+```
+
+You can determine the minimum required size by adding debug output:
+
+```c
+/* Add this after interpreter->AllocateTensors() in app_init() */
+size_t used_bytes = interpreter->arena_used_bytes();
+printf("Model uses %d bytes of tensor arena\n", (int)used_bytes);
+```
+
+2. **Selective Op Resolution**: Instead of using `AllOpsResolver`, create a custom resolver with only the operations needed:
+
+```c
+/* Replace AllOpsResolver with this */
+static tflite::MicroMutableOpResolver<4> resolver;
+resolver.AddFullyConnected();
+resolver.AddRelu();
+resolver.AddAdd();
+resolver.AddMul();
+```
+
+### Power Optimization
+
+For battery-powered applications, power efficiency is critical:
+
+1. **Sleep Between Inferences**: Replace the simple delay with a power-efficient sleep:
+
+```c
+/* Replace sl_sleeptimer_delay_millisecond() with: */
+#if defined(SL_CATALOG_POWER_MANAGER_PRESENT)
+  /* Schedule next wakeup */
+  sl_sleeptimer_tick_t ticks = sl_sleeptimer_ms_to_tick(INFERENCE_INTERVAL_MS);
+  sl_power_manager_schedule_wakeup(ticks, NULL, NULL);
+  
+  /* Enter sleep mode */
+  sl_power_manager_sleep();
+#else
+  /* Fall back to delay if power manager isn't available */
+  sl_sleeptimer_delay_millisecond(INFERENCE_INTERVAL_MS);
+#endif
+```
+
+2. **Measurement with Energy Profiler**: Simplicity Studio includes an Energy Profiler tool to measure power consumption:
+   - Connect your board with the Advanced Energy Monitor (AEM)
+   - In Simplicity Studio, go to Tools → Energy Profiler
+   - Start a capture while your application is running
+   - Analyze current consumption during inference and sleep periods
+
+### Timing Performance
+
+To measure inference time:
+
+```c
+/* Add these includes */
+#include "em_cmu.h"
+#include "em_timer.h"
+
+/* Initialize timer in app_init() */
+CMU_ClockEnable(cmuClock_TIMER0, true);
+TIMER_Init_TypeDef timerInit = TIMER_INIT_DEFAULT;
+TIMER_Init(TIMER0, &timerInit);
+
+/* In app_process_action(), surround the inference with timing code */
+/* Reset and start timer */
+TIMER_CounterSet(TIMER0, 0);
+TIMER_Enable(TIMER0, true);
+
+/* Run inference */
+TfLiteStatus invoke_status = interpreter->Invoke();
+
+/* Stop timer and read counter */
+TIMER_Enable(TIMER0, false);
+uint32_t ticks = TIMER_CounterGet(TIMER0);
+
+/* Convert ticks to microseconds */
+uint32_t us = ticks / (CMU_ClockFreqGet(cmuClock_TIMER0) / 1000000);
+
+/* Log timing information */
+if (inference_count % 10 == 0) {
+  printf("Inference took %lu microseconds\n", us);
+}
+```
+
+## Adding User Interaction with Buttons
+
+We can make our application more interactive by using buttons to control its behavior:
+
+1. Add a button component to your project:
+   - Right-click on your project and select "Configure Project"
+   - Go to "SOFTWARE COMPONENTS"
+   - Search for "button" and install "Simple Button" components
+
+2. Modify your code to handle button presses:
+
+```c
+/* Include button headers */
+#include "sl_button.h"
+#include "sl_simple_button_instances.h"
+
+/* In app_init() */
+/* Initialize buttons */
+sl_button_init(SL_SIMPLE_BUTTON_INSTANCE(0));
+
+/* In app_process_action(), check for button press */
+if (sl_button_get_state(SL_SIMPLE_BUTTON_INSTANCE(0)) == SL_SIMPLE_BUTTON_PRESSED) {
+  /* Toggle between normal speed and double speed */
+  static bool fast_mode = false;
+  fast_mode = !fast_mode;
+  
+  /* Update the inference interval */
+  inference_interval_ms = fast_mode ? 25 : 50;
+  
+  printf("Speed set to %s\n", fast_mode ? "FAST" : "NORMAL");
+}
+```
+
+## Enhanced Visualization with LCD (if available)
+
+If your development board has an LCD display, you can create more sophisticated visualizations:
+
+1. Add the LCD components to your project:
+   - In the "Configure Project" dialog, search for "lcd"
+   - Install the "GLIB Graphics Library" and "Simple LCD"
+
+2. Modify your code to display the sine wave on the LCD:
+
+```c
+/* Include LCD headers */
+#include "sl_glib.h"
+#include "sl_simple_lcd.h"
+
+/* In app_init() */
+/* Initialize LCD */
+sl_simple_lcd_init();
+sl_glib_initialize();
+
+/* Define a buffer to store recent sine wave values */
+#define HISTORY_SIZE 128
+static float sine_history[HISTORY_SIZE];
+static int history_index = 0;
+
+/* Initialize history buffer */
+for (int i = 0; i < HISTORY_SIZE; i++) {
+  sine_history[i] = 0.0f;
+}
+
+/* In app_process_action(), after getting the prediction */
+/* Store the prediction in the history buffer */
+sine_history[history_index] = y_val;
+history_index = (history_index + 1) % HISTORY_SIZE;
+
+/* Every 8th inference, update the LCD */
+if (inference_count % 8 == 0) {
+  GLIB_Context_t context;
+  sl_glib_get_context(&context);
+  
+  /* Clear the display */
+  GLIB_clear(&context);
+  
+  /* Draw axes */
+  int mid_y = context.height / 2;
+  GLIB_drawLineH(&context, 0, context.width - 1, mid_y);
+  
+  /* Draw the sine wave */
+  for (int i = 0; i < HISTORY_SIZE - 1; i++) {
+    int x1 = i;
+    int y1 = mid_y - (int)(sine_history[(history_index + i) % HISTORY_SIZE] * mid_y * 0.8f);
+    int x2 = i + 1;
+    int y2 = mid_y - (int)(sine_history[(history_index + i + 1) % HISTORY_SIZE] * mid_y * 0.8f);
+    
+    GLIB_drawLine(&context, x1, y1, x2, y2);
+  }
+  
+  /* Update the display */
+  GLIB_drawString(&context, "Sine Wave Predictor", 0, 0, GLIB_ALIGN_CENTER, 0);
+  GLIB_update(&context);
+}
+```
+
+## Creating a Custom Component for TinyML
+
+To make your TinyML code more reusable, consider creating a custom Gecko SDK component. Here's a simple approach:
+
+1. Create a header file `sl_tflite_sine_predictor.h`:
+
+```c
+#ifndef SL_TFLITE_SINE_PREDICTOR_H
+#define SL_TFLITE_SINE_PREDICTOR_H
+
+#include "sl_status.h"
+#include <stdint.h>
+
+#ifdef __cplusplus
+#ifdef __cplusplus
+extern "C" {
+#endif
+#endif
+
+/**
+ * @brief Initialize the TinyML sine predictor
+ *
+ * @return sl_status_t SL_STATUS_OK on success
+ */
+sl_status_t sl_tflite_sine_predictor_init(void);
+
+/**
+ * @brief Run inference with a given x value
+ *
+ * @param x_val Input value in range [0, 2π]
+ * @param y_val Pointer to store the predicted sine value
+ * @return sl_status_t SL_STATUS_OK on success
+ */
+sl_status_t sl_tflite_sine_predictor_predict(float x_val, float* y_val);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* SL_TFLITE_SINE_PREDICTOR_H */
+```
+
+2. Create an implementation file `sl_tflite_sine_predictor.c`:
+
+```c
+#include "sl_tflite_sine_predictor.h"
+#include "sine_model_data.h"
+#include <string.h>
+
+/* TensorFlow Lite components */
+#include "third_party/tflite-micro/tensorflow/lite/micro/kernels/micro_ops.h"
+#include "third_party/tflite-micro/tensorflow/lite/micro/micro_error_reporter.h"
+#include "third_party/tflite-micro/tensorflow/lite/micro/micro_interpreter.h"
+#include "third_party/tflite-micro/tensorflow/lite/micro/micro_mutable_op_resolver.h"
+#include "third_party/tflite-micro/tensorflow/lite/schema/schema_generated.h"
+#include "third_party/tflite-micro/tensorflow/lite/version.h"
+
+/* Static variables for TensorFlow Lite model - C compatible structure */
+static TF_MicroErrorReporter micro_error_reporter;
+static TF_MicroInterpreter* interpreter = NULL;
+static TfLiteTensor* input = NULL;
+static TfLiteTensor* output = NULL;
+
+/* Create an area of memory for input, output, and intermediate arrays */
+#define TENSOR_ARENA_SIZE (10 * 1024)
+static uint8_t tensor_arena[TENSOR_ARENA_SIZE];
+
+/* C implementation for initialization */
+sl_status_t sl_tflite_sine_predictor_init(void)
+{
+  /* Map the model into a usable data structure */
+  const TfLiteModel* model = TfLiteModelCreate(g_sine_model_data, g_sine_model_data_len);
+  if (model == NULL) {
+    return SL_STATUS_FAIL;
+  }
+
+  /* Initialize error reporter */
+  TF_MicroErrorReporter_Init(&micro_error_reporter);
+
+  /* Create an operation resolver with the operations we need */
+  static TfLiteMicroMutableOpResolver op_resolver;
+  TfLiteMicroMutableOpResolver_Init(&op_resolver);
+  
+  /* Add the operations needed for our model */
+  TfLiteMicroMutableOpResolver_AddFullyConnected(&op_resolver);
+  TfLiteMicroMutableOpResolver_AddRelu(&op_resolver);
+  TfLiteMicroMutableOpResolver_AddMul(&op_resolver);
+  TfLiteMicroMutableOpResolver_AddAdd(&op_resolver);
+
+  /* Build an interpreter to run the model */
+  static TF_MicroInterpreter static_interpreter;
+  TF_MicroInterpreter_Init(
+      &static_interpreter, model, &op_resolver, tensor_arena, 
+      TENSOR_ARENA_SIZE, &micro_error_reporter);
+  interpreter = &static_interpreter;
+
+  /* Allocate memory from the tensor_arena for the model's tensors */
+  TfLiteStatus allocate_status = TF_MicroInterpreter_AllocateTensors(interpreter);
+  if (allocate_status != kTfLiteOk) {
+    return SL_STATUS_ALLOCATION_FAILED;
+  }
+
+  /* Obtain pointers to the model's input and output tensors */
+  input = TF_MicroInterpreter_GetInputTensor(interpreter, 0);
+  output = TF_MicroInterpreter_GetOutputTensor(interpreter, 0);
+  
+  if (input == NULL || output == NULL) {
+    return SL_STATUS_FAIL;
+  }
+
+  return SL_STATUS_OK;
+}
+
+/* C implementation for prediction */
+sl_status_t sl_tflite_sine_predictor_predict(float x_val, float* y_val)
+{
+  if (interpreter == NULL || input == NULL || output == NULL || y_val == NULL) {
+    return SL_STATUS_INVALID_STATE;
+  }
+
+  /* Set the input tensor data */
+  input->data.f[0] = x_val;
+
+  /* Run inference */
+  TfLiteStatus invoke_status = TF_MicroInterpreter_Invoke(interpreter);
+  if (invoke_status != kTfLiteOk) {
+    return SL_STATUS_FAIL;
+  }
+
+  /* Get the output value */
+  *y_val = output->data.f[0];
+  
+  return SL_STATUS_OK;
+}
+```
+
+3. Modify your `app.c` to use this component:
+
+```c
+#include "sl_tflite_sine_predictor.h"
+
+/* In app_init() */
+sl_status_t status = sl_tflite_sine_predictor_init();
+if (status != SL_STATUS_OK) {
+  printf("Failed to initialize TinyML model: %d\n", (int)status);
+  return;
+}
+
+/* In app_process_action() */
+float x_val = position * X_RANGE;
+float y_val = 0.0f;
+
+/* Run inference */
+status = sl_tflite_sine_predictor_predict(x_val, &y_val);
+if (status != SL_STATUS_OK) {
+  printf("Inference failed: %d\n", (int)status);
+  return;
+}
+```
+
+This approach encapsulates the TensorFlow Lite components behind a C API, making it easier to use throughout your application.
+
+## Conclusion
+
+In this chapter, we've built a complete TinyML application for the EFR32MG24 using the Gecko SDK and Simplicity Studio. This approach simplifies deployment by leveraging the hardware abstraction layer and pre-integrated components of the SDK.
+
+Key takeaways from this implementation include:
+
+1. Using Simplicity Studio's project templates to quickly set up a TinyML environment
+2. Integrating a pre-trained TensorFlow Lite model with the application
+3. Visualizing model predictions through LED brightness or LCD displays
+4. Applying memory and power optimizations
+5. Measuring and improving performance
+6. Creating a reusable component for TinyML functionality
+
+This "Hello World" example serves as a foundation for more complex TinyML applications on the EFR32 platform. From here, you can experiment with:
+
+- More sophisticated models like keyword spotting, gesture recognition, or anomaly detection
+- Sensor integration for real-time data collection
+- Custom hardware interfaces for different output methods
+- Multi-model systems that combine different ML capabilities
+
+The Gecko SDK approach makes these extensions more accessible by providing a structured and optimized framework specifically designed for Silicon Labs devices.

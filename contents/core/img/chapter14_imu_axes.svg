@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400">
+  <!-- Background -->
+  <rect width="500" height="400" fill="#f8f9fa" rx="10" ry="10" />
+  
+  <!-- Title -->
+  <text x="250" y="40" font-family="Arial" font-size="20" text-anchor="middle" font-weight="bold">IMU Sensor Axes Orientation</text>
+  
+  <!-- IMU Chip Outline -->
+  <rect x="175" y="150" width="150" height="150" fill="#e6e6e6" stroke="#666" stroke-width="2" rx="5" ry="5" />
+  <rect x="195" y="170" width="110" height="110" fill="#ccc" stroke="#666" stroke-width="1" />
+  <text x="250" y="220" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">ICM-20689</text>
+  <text x="250" y="240" font-family="Arial" font-size="12" text-anchor="middle">IMU SENSOR</text>
+  
+  <!-- Coordinate System -->
+  <!-- X Axis -->
+  <line x1="250" y1="225" x2="350" y2="225" stroke="#e74c3c" stroke-width="3" />
+  <polygon points="350,225 340,220 340,230" fill="#e74c3c" />
+  <text x="360" y="230" font-family="Arial" font-size="16" fill="#e74c3c" font-weight="bold">X</text>
+  
+  <!-- Y Axis -->
+  <line x1="250" y1="225" x2="250" y2="125" stroke="#27ae60" stroke-width="3" />
+  <polygon points="250,125 245,135 255,135" fill="#27ae60" />
+  <text x="245" y="115" font-family="Arial" font-size="16" fill="#27ae60" font-weight="bold">Y</text>
+  
+  <!-- Z Axis (coming out of the page) -->
+  <line x1="250" y1="225" x2="200" y2="275" stroke="#3498db" stroke-width="3" />
+  <polygon points="200,275 210,270 205,265" fill="#3498db" />
+  <text x="185" y="285" font-family="Arial" font-size="16" fill="#3498db" font-weight="bold">Z</text>
+  
+  <!-- Legend -->
+  <rect x="50" y="320" width="400" height="60" fill="#f8f9fa" stroke="#ddd" stroke-width="1" rx="5" ry="5" />
+  
+  <!-- Accelerometer -->
+  <rect x="70" y="335" width="15" height="15" fill="#e74c3c" />
+  <text x="95" y="347" font-family="Arial" font-size="14" text-anchor="start">X-axis: Left(-)/Right(+)</text>
+  
+  <!-- Gyroscope -->
+  <rect x="70" y="355" width="15" height="15" fill="#27ae60" />
+  <text x="95" y="367" font-family="Arial" font-size="14" text-anchor="start">Y-axis: Down(-)/Up(+)</text>
+  
+  <!-- Magnetometer -->
+  <rect x="270" y="335" width="15" height="15" fill="#3498db" />
+  <text x="295" y="347" font-family="Arial" font-size="14" text-anchor="start">Z-axis: Back(-)/Front(+)</text>
+  
+  <!-- Sensor Data -->
+  <rect x="270" y="355" width="15" height="15" fill="#9b59b6" />
+  <text x="295" y="367" font-family="Arial" font-size="14" text-anchor="start">± 2g, ± 250°/sec</text>
+</svg>

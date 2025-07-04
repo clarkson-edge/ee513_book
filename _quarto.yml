@@ -75,24 +75,16 @@ book:
     # - contents/frontmatter/about/about.qmd
     # - contents/frontmatter/acknowledgements.qmd
   - index.qmd
-      # Part 1: Embedded Systems Design
-  - part: "Embedded Systems Design"
-    chapters:
-    - contents/core/1_introduction.qmd
-    - contents/core/2_programmingwithc.qmd
-    - contents/core/3_devkitoverview.qmd
-    - contents/core/4_efr32programming.qmd
-    - contents/core/5_efr32applications.qmd
-    
-
-    # Part 2: Embedded Machine Learning
+      # Part 1: Embedded Machine Learning
   - part: "Embedded Machine Learning"
     chapters:
+    - contents/core/1_introduction.qmd
     - contents/core/10_ml_foundations.qmd
-    - contents/core/6_gesturerecog_realtime.qmd
-    - contents/core/7_gesturerecog_magicwand.qmd
-    - contents/core/8_anomalydetection_htm.qmd
-    - contents/core/9_audioml.qmd
+    - contents/core/11_ml_helloworld.qmd
+    - contents/core/12_ml_helloworld2.qmd
+    - contents/core/13_handwritten_recognition.qmd
+    - contents/core/14_imu_gesture.qmd
+    - contents/core/15_posture_detection.qmd
 
     # Appendix
     appendices:
@@ -233,9 +225,9 @@ format:
       elements: [ "\\titleblock",
                   "Masudul Imtiaz, PhD",
                   "\\vspace{0.35cm}",
-                  "Sigmond Kukla",
-                  "\\vspace{0.35cm}",
                   "Aaron Storey, MSAI",
+                  "\\vspace{0.35cm}",
+                  "Sigmond Kukla",
                   "\\vspace{0.35cm}",
                   "& TA's of EE260",
                   "\\vspace{1.25cm}",

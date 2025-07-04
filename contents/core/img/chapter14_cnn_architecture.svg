@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <!-- Background -->
+  <rect width="800" height="400" fill="#f8f9fa" rx="10" ry="10" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial" font-size="22" text-anchor="middle" font-weight="bold">CNN Architecture for Gesture Recognition</text>
+  
+  <!-- Input Layer -->
+  <rect x="50" y="100" width="100" height="200" fill="#bde9ba" stroke="#27ae60" stroke-width="2" rx="5" ry="5" />
+  <text x="100" y="160" font-family="Arial" font-size="14" text-anchor="middle" transform="rotate(-90 100,160)">Input (80, 3, 1)</text>
+  <text x="100" y="320" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">80 time steps</text>
+  <text x="100" y="340" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">3 acc axes</text>
+  
+  <!-- Conv2D Layer 1 -->
+  <rect x="180" y="110" width="90" height="180" fill="#aed6f1" stroke="#3498db" stroke-width="2" rx="5" ry="5" />
+  <text x="225" y="160" font-family="Arial" font-size="14" text-anchor="middle" transform="rotate(-90 225,160)">Conv2D (8 filters)</text>
+  <text x="225" y="310" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">4x1 kernel</text>
+  <text x="225" y="330" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">ReLU</text>
+  
+  <!-- MaxPool Layer 1 -->
+  <rect x="300" y="120" width="80" height="160" fill="#f9e79f" stroke="#f1c40f" stroke-width="2" rx="5" ry="5" />
+  <text x="340" y="180" font-family="Arial" font-size="14" text-anchor="middle" transform="rotate(-90 340,180)">MaxPool2D</text>
+  <text x="340" y="300" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">3x1 pool</text>
+  
+  <!-- Conv2D Layer 2 -->
+  <rect x="410" y="130" width="90" height="140" fill="#aed6f1" stroke="#3498db" stroke-width="2" rx="5" ry="5" />
+  <text x="455" y="180" font-family="Arial" font-size="14" text-anchor="middle" transform="rotate(-90 455,180)">Conv2D (16 filters)</text>
+  <text x="455" y="290" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">4x1 kernel</text>
+  <text x="455" y="310" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">ReLU</text>
+  
+  <!-- MaxPool Layer 2 -->
+  <rect x="530" y="140" width="80" height="120" fill="#f9e79f" stroke="#f1c40f" stroke-width="2" rx="5" ry="5" />
+  <text x="570" y="190" font-family="Arial" font-size="14" text-anchor="middle" transform="rotate(-90 570,190)">MaxPool2D</text>
+  <text x="570" y="280" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">3x1 pool</text>
+  
+  <!-- Flatten Layer -->
+  <rect x="640" y="150" width="30" height="100" fill="#fadbd8" stroke="#e74c3c" stroke-width="2" rx="5" ry="5" />
+  <text x="655" y="190" font-family="Arial" font-size="14" text-anchor="middle" transform="rotate(-90 655,190)">Flatten</text>
+  
+  <!-- Dense Layer -->
+  <circle cx="700" cy="200" r="30" fill="#d2b4de" stroke="#8e44ad" stroke-width="2" />
+  <text x="700" y="204" font-family="Arial" font-size="14" text-anchor="middle">Dense</text>
+  <text x="700" y="240" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">32 neurons</text>
+  <text x="700" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">ReLU</text>
+  
+  <!-- Output Layer -->
+  <circle cx="760" cy="200" r="30" fill="#f5b7b1" stroke="#c0392b" stroke-width="2" />
+  <text x="760" y="204" font-family="Arial" font-size="14" text-anchor="middle">Output</text>
+  <text x="760" y="240" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">5 classes</text>
+  <text x="760" y="260" font-family="Arial" font-size="12" text-anchor="middle" fill="#444">Softmax</text>
+  
+  <!-- Connecting Arrows -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2c3e50" />
+    </marker>
+  </defs>
+  
+  <line x1="150" y1="200" x2="180" y2="200" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)" />
+  <line x1="270" y1="200" x2="300" y2="200" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)" />
+  <line x1="380" y1="200" x2="410" y2="200" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)" />
+  <line x1="500" y1="200" x2="530" y2="200" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)" />
+  <line x1="610" y1="200" x2="640" y2="200" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)" />
+  <line x1="670" y1="200" x2="670" y2="200" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)" />
+  <line x1="670" y1="200" x2="670" y2="200" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)" />
+  <line x1="670" y1="200" x2="670" y2="200" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)" />
+  
+  <line x1="670" y1="200" x2="670" y2="200" stroke="#2c3e50" stroke-width="2" />
+  <line x1="670" y1="200" x2="670" y2="200" stroke="#2c3e50" stroke-width="2" />
+  
+  <path d="M670,200 C675,200 675,200 680,200" stroke="#2c3e50" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+  <path d="M730,200 C735,200 735,200 740,200" stroke="#2c3e50" stroke-width="2" fill="none" marker-end="url(#arrowhead)" />
+</svg>

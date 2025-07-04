@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <!-- Background -->
+  <rect width="800" height="450" fill="#f8f9fa" rx="10" ry="10" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial" font-size="24" text-anchor="middle" font-weight="bold">Recognized Gesture Patterns</text>
+  
+  <!-- Grid -->
+  <line x1="50" y1="400" x2="750" y2="400" stroke="#ccc" stroke-width="1" />
+  <line x1="50" y1="350" x2="750" y2="350" stroke="#ccc" stroke-width="1" />
+  <line x1="50" y1="300" x2="750" y2="300" stroke="#ccc" stroke-width="1" />
+  <line x1="50" y1="250" x2="750" y2="250" stroke="#ccc" stroke-width="1" />
+  <line x1="50" y1="200" x2="750" y2="200" stroke="#ccc" stroke-width="1" />
+  <line x1="50" y1="150" x2="750" y2="150" stroke="#ccc" stroke-width="1" />
+  <line x1="50" y1="100" x2="750" y2="100" stroke="#ccc" stroke-width="1" />
+  
+  <!-- Left-Right Axis Labels -->
+  <text x="50" y="420" font-family="Arial" font-size="12" text-anchor="middle">0</text>
+  <text x="400" y="420" font-family="Arial" font-size="12" text-anchor="middle">Time (samples)</text>
+  <text x="750" y="420" font-family="Arial" font-size="12" text-anchor="middle">80</text>
+  
+  <!-- Up-Down Axis Labels -->
+  <text x="40" y="400" font-family="Arial" font-size="12" text-anchor="end">-2g</text>
+  <text x="40" y="250" font-family="Arial" font-size="12" text-anchor="end">0g</text>
+  <text x="40" y="100" font-family="Arial" font-size="12" text-anchor="end">+2g</text>
+  <text x="30" y="250" font-family="Arial" font-size="12" text-anchor="middle" transform="rotate(-90 30,250)">Acceleration</text>
+  
+  <!-- Label Boxes -->
+  <!-- Up -->
+  <rect x="80" y="70" width="100" height="30" fill="#e74c3c" fill-opacity="0.2" stroke="#e74c3c" stroke-width="2" rx="5" ry="5" />
+  <text x="130" y="90" font-family="Arial" font-size="16" text-anchor="middle">UP</text>
+  
+  <!-- Down -->
+  <rect x="230" y="70" width="100" height="30" fill="#3498db" fill-opacity="0.2" stroke="#3498db" stroke-width="2" rx="5" ry="5" />
+  <text x="280" y="90" font-family="Arial" font-size="16" text-anchor="middle">DOWN</text>
+  
+  <!-- Left -->
+  <rect x="380" y="70" width="100" height="30" fill="#27ae60" fill-opacity="0.2" stroke="#27ae60" stroke-width="2" rx="5" ry="5" />
+  <text x="430" y="90" font-family="Arial" font-size="16" text-anchor="middle">LEFT</text>
+  
+  <!-- Right -->
+  <rect x="530" y="70" width="100" height="30" fill="#9b59b6" fill-opacity="0.2" stroke="#9b59b6" stroke-width="2" rx="5" ry="5" />
+  <text x="580" y="90" font-family="Arial" font-size="16" text-anchor="middle">RIGHT</text>
+  
+  <!-- None -->
+  <rect x="680" y="70" width="100" height="30" fill="#34495e" fill-opacity="0.2" stroke="#34495e" stroke-width="2" rx="5" ry="5" />
+  <text x="730" y="90" font-family="Arial" font-size="16" text-anchor="middle">NONE</text>
+  
+  <!-- Acceleration Patterns -->
+  <!-- UP: Y-axis shows strong upward pattern -->
+  <path d="M50,250 Q90,250 120,250 T160,250 T200,100 T240,250 T280,250 T320,250 T350,250" 
+        fill="none" stroke="#e74c3c" stroke-width="3" stroke-linecap="round" />
+  <text x="130" y="220" font-family="Arial" font-size="14" text-anchor="middle" fill="#e74c3c">Y-axis</text>
+  
+  <!-- DOWN: Y-axis shows strong downward pattern -->
+  <path d="M50,250 Q90,250 120,250 T160,250 T200,400 T240,250 T280,250 T320,250 T350,250" 
+        fill="none" stroke="#3498db" stroke-width="3" stroke-linecap="round" />
+  <text x="280" y="370" font-family="Arial" font-size="14" text-anchor="middle" fill="#3498db">Y-axis</text>
+  
+  <!-- LEFT: X-axis shows strong leftward pattern -->
+  <path d="M400,250 Q430,250 450,250 T480,250 T520,400 T550,250 T580,250 T610,250 T630,250" 
+        fill="none" stroke="#27ae60" stroke-width="3" stroke-linecap="round" />
+  <text x="520" y="370" font-family="Arial" font-size="14" text-anchor="middle" fill="#27ae60">X-axis</text>
+  
+  <!-- RIGHT: X-axis shows strong rightward pattern -->
+  <path d="M400,250 Q430,250 450,250 T480,250 T520,100 T550,250 T580,250 T610,250 T630,250" 
+        fill="none" stroke="#9b59b6" stroke-width="3" stroke-linecap="round" />
+  <text x="520" y="120" font-family="Arial" font-size="14" text-anchor="middle" fill="#9b59b6">X-axis</text>
+  
+  <!-- NONE: All axes relatively flat -->
+  <path d="M650,250 Q670,250 690,260 T710,240 T730,260 T750,240 T770,250 T790,255 T810,245" 
+        fill="none" stroke="#34495e" stroke-width="3" stroke-linecap="round" />
+  <text x="730" y="235" font-family="Arial" font-size="14" text-anchor="middle" fill="#34495e">All axes</text>
+  
+  <!-- Legend -->
+  <rect x="50" y="440" width="15" height="15" fill="none" stroke="#e74c3c" stroke-width="2" />
+  <text x="75" y="452" font-family="Arial" font-size="14" fill="#444">X-axis</text>
+  
+  <rect x="150" y="440" width="15" height="15" fill="none" stroke="#3498db" stroke-width="2" />
+  <text x="175" y="452" font-family="Arial" font-size="14" fill="#444">Y-axis</text>
+  
+  <rect x="250" y="440" width="15" height="15" fill="none" stroke="#27ae60" stroke-width="2" />
+  <text x="275" y="452" font-family="Arial" font-size="14" fill="#444">Z-axis</text>
+</svg>

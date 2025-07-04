@@ -1,0 +1,398 @@
+# Handwriting Digit Recognition
+
+## Chapter Objectives
+
+• Develop a CNN model for handwriting recognition using the MNIST dataset
+
+• Optimize the model through quantization to fit within microcontroller constraints
+
+• Implement the model on the EFR32xG24 platform
+
+• Evaluate performance metrics including accuracy, model size, and inference time
+
+• Identify practical considerations and optimization strategies for TinyML deployment
+
+## Overview
+
+This chapter presents the implementation and evaluation of a handwriting recognition system on the Silicon Labs EFR32xG24 microcontroller, a resource-constrained device designed for edge computing applications. The research demonstrates how Convolutional Neural Networks (CNNs) can be effectively deployed for on-device inference despite significant memory and processing limitations. The methodology encompasses model development using TensorFlow, optimization through quantization techniques, and deployment on embedded hardware. The implemented system achieves 99.18% accuracy on the MNIST dataset while maintaining a model size of approximately 101.59 KB, representing a 91% reduction from the unoptimized model. This work illustrates the feasibility of deploying sophisticated machine learning applications directly on edge devices, enabling privacy-preserving, low-latency inference for applications ranging from smart interfaces to IoT sensing. The chapter details the technical challenges encountered during implementation and discusses optimization strategies relevant to TinyML deployment on microcontroller-class devices.
+
+## Introduction
+
+The intersection of artificial intelligence and edge computing has given rise to a new paradigm for deploying machine learning models directly on resource-constrained devices. This approach, commonly referred to as TinyML, enables on-device inference without requiring cloud connectivity, offering advantages in privacy, latency, and power efficiency. By processing data locally, edge AI solutions eliminate the need to transmit potentially sensitive information to remote servers, reduce response times by avoiding network round-trips, and minimize energy consumption associated with wireless communication.
+
+
+Handwriting recognition represents an ideal test case for edge AI deployment. As a classical pattern recognition problem, it demonstrates the capabilities of machine learning while remaining sufficiently bounded in scope to fit within the constraints of microcontroller-based systems. When successfully implemented on edge devices, handwriting recognition can enable various applications, from smart note-taking tools to authentication systems, operating independently from cloud infrastructure.
+
+### Challenges of Microcontroller Deployment
+
+Deploying neural networks on microcontrollers presents significant technical challenges due to their limited computational resources. The EFR32xG24 microcontroller used in this chapter, while relatively advanced for its class, operates with strict constraints. The processing power is limited to a 78 MHz ARM Cortex-M33 processor, with memory capacity of only 256 KB RAM and 1536 KB flash storage, and a minimal power budget for battery-operated scenarios. These limitations necessitate careful optimization of model architecture, quantization strategies, and memory management techniques. Standard machine learning frameworks and models designed for server or mobile deployment are typically orders of magnitude too large for microcontroller environments, requiring substantial adaptation.
+
+### Chapter Objectives
+
+This chapter aims to develop a CNN model for handwriting recognition using the MNIST dataset and optimize it through quantization to fit within microcontroller constraints. It demonstrates the implementation of the model on the EFR32xG24 platform and evaluates the performance metrics including accuracy, model size, and inference time. Additionally, it identifies practical considerations and optimization strategies for TinyML deployment, providing valuable insights for researchers and practitioners in this emerging field.
+
+## Background & Related Work
+
+### TinyML: Machine Learning for Embedded Systems
+
+TinyML represents the field of machine learning tailored specifically for extremely resource-constrained devices. Unlike traditional deep learning models that may require gigabytes of memory and powerful GPUs, TinyML models typically occupy kilobytes of storage and run on microcontrollers with limited computational capabilities. This significant reduction in resource requirements is achieved through specialized model architectures, parameter optimization, and quantization techniques.
+
+The development of TensorFlow Lite for Microcontrollers has been instrumental in advancing TinyML applications. This framework provides an optimized runtime for executing neural network models on devices with as little as 16 KB of RAM, enabling a wide range of on-device inference capabilities. Recent research has demonstrated successful TinyML implementations for applications including wake word detection, anomaly detection, and gesture recognition. The work of Warden and Situnayake (2020) has been particularly influential in establishing methodologies for deploying machine learning models on ultra-low-power microcontrollers.
+
+### Convolutional Neural Networks for Image Recognition
+
+CNNs have revolutionized computer vision tasks through their ability to automatically extract hierarchical features from image data. The architecture of CNNs, inspired by the visual cortex of mammals, employs convolutional layers that apply spatial filters to input data, capturing patterns at different scales and abstraction levels.
+
+
+For handwriting recognition, CNNs offer significant advantages over traditional machine learning approaches. Their translation invariance property—achieved through convolutional operations and pooling layers—allows them to recognize digits regardless of their precise position within the input image. This characteristic is particularly valuable for handwriting recognition, where variations in style, position, and scale are common.
+
+
+The MNIST dataset (LeCun et al., 1998) has become the standard benchmark for handwriting recognition algorithms. Comprising 60,000 training images and 10,000 test images of handwritten digits (0-9), each normalized to 28×28 pixels, this dataset provides a consistent evaluation framework for comparing different approaches. Its widespread adoption has facilitated meaningful comparisons across diverse algorithmic strategies and implementation approaches.
+
+### Model Optimization for Resource-Constrained Devices
+
+Deploying neural networks on microcontrollers requires substantial optimization to fit within memory constraints while maintaining acceptable inference performance. Several key techniques have emerged in this domain. Quantization involves converting floating-point weights and activations to lower-precision formats (e.g., 8-bit integers), which reduces memory requirements and improves computational efficiency. Post-training quantization can reduce model size by up to 75% with minimal accuracy loss, making it a crucial technique for microcontroller deployment.
+
+
+Model architecture selection also plays a critical role in TinyML applications. Lightweight architectures like MobileNet or SqueezeNet prioritize parameter efficiency, achieving competitive accuracy with significantly fewer parameters than traditional models. These architectures incorporate depthwise separable convolutions and other parameter-efficient operations specifically designed for resource-constrained environments.
+
+
+Pruning represents another effective optimization strategy, involving the systematic removal of redundant or less important connections within a network to reduce model size while preserving most of the original accuracy. Knowledge distillation, where a compact "student" model is trained to replicate the behavior of a larger "teacher" model, can also produce efficient networks suitable for embedded deployment.
+
+
+Recent work by Banbury et al. (2021) has focused on benchmarking TinyML systems, highlighting the trade-offs between model size, accuracy, and inference latency across different optimization approaches and hardware platforms. These benchmarks provide valuable insights for selecting appropriate optimization strategies based on specific application requirements and hardware constraints.
+
+
+## Methodology
+
+### System Architecture
+
+The handwriting recognition system employs a modular architecture engineered for efficient operation within the constraints of the microcontroller platform. At its core, the system processes 28×28 pixel grayscale images through a series of specialized components working in concert.
+
+
+Central to the system's operation is the TensorFlow Lite Runtime, which orchestrates the execution of the quantized CNN model. This component manages the complex tasks of memory allocation and operation scheduling, ensuring efficient use of the limited computational resources. Surrounding this runtime is a carefully sized tensor arena—a dedicated 70KB memory buffer that serves as working space for tensors during the inference process.
+
+
+The input processing module transforms raw image data, whether from predefined test arrays or external sources, into the appropriate format for neural network inference. Following model execution, the classification output component analyzes probability distributions to determine the recognized digit and its associated confidence score. Results flow through a communication interface utilizing USART or EUSART protocols, enabling external monitoring and system evaluation.
+
+Through strategic partitioning of responsibilities, this architecture maximizes the capabilities of the EFR32xG24 while maintaining the flexibility needed for potential future enhancements. Each component can be optimized independently, allowing for targeted improvements without necessitating wholesale system redesign.
+
+### Model Design and Training
+
+#### Dataset Preparation
+
+The MNIST dataset was used for model training and evaluation. The dataset consists of 70,000 handwritten digit images (60,000 for training, 10,000 for testing), each normalized to 28×28 pixels in grayscale format. Prior to training, preprocessing steps were applied, including reshaping the images to include a channel dimension (28×28×1), normalizing pixel values to the range [0, 1], and ensuring consistent data types for training stability. The following code illustrates the preprocessing procedure:
+
+```python
+# Load dataset
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+
+# Reshape and normalize
+train_images = train_images.reshape((-1, 28, 28, 1)).astype('float32') / 255.0
+test_images = test_images.reshape((-1, 28, 28, 1)).astype('float32') / 255.0
+```
+
+#### CNN Architecture
+
+The model architecture was designed to balance accuracy with parameter efficiency, a critical consideration for microcontroller deployment. The network consists of three convolutional blocks followed by fully connected layers, as shown in Table 1.
+
+**Table 1: CNN Model Architecture**
+
+| Layer Type | Parameters | Output Shape |
+|------------|------------|--------------|
+| Input | - | (28, 28, 1) |
+| Conv2D | 3×3, 32 filters, ReLU | 320 | (26, 26, 32) |
+| MaxPooling2D | 2×2 | 0 | (13, 13, 32) |
+| Conv2D | 3×3, 64 filters, ReLU | 18,496 | (11, 11, 64) |
+| MaxPooling2D | 2×2 | 0 | (5, 5, 64) |
+| Conv2D | 3×3, 64 filters, ReLU | 36,928 | (3, 3, 64) |
+| Flatten | - | 0 | (576) |
+| Dense | 64 neurons, ReLU | 36,928 | (64) |
+| Dense | 10 neurons, Softmax | 650 | (10) |
+
+The model was implemented using TensorFlow's Keras API:
+
+```python
+model = models.Sequential([
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
+```
+
+#### Training Configuration
+
+The model was trained with the following configurations:
+
+```python
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+model.fit(train_images, train_labels, epochs=5)
+```
+
+Training parameters included the Adam optimizer with default learning rate (0.001), sparse categorical cross-entropy loss function, accuracy metrics, 5 epochs, and default batch size (32). The relatively small number of epochs was sufficient due to the simplicity of the MNIST dataset and the model's efficient learning capacity. Training was performed in Google Colab to leverage GPU acceleration.
+
+### Model Optimization
+
+#### Post-Training Quantization
+
+To meet the memory constraints of the EFR32xG24 microcontroller, the trained model was subjected to post-training quantization using TensorFlow Lite's quantization framework. This process converted the 32-bit floating-point weights and activations to 8-bit integers, significantly reducing the model size while preserving accuracy.
+
+
+The quantization process required defining a representative dataset to calibrate the dynamic range of activations:
+
+```python
+def representative_data_gen():
+    """Generator function for a representative dataset for quantization."""
+    for input_value in tf.data.Dataset.from_tensor_slices(train_images).batch(1).take(100):
+        yield [tf.cast(input_value, tf.float32)]
+
+# Configure the converter for full integer quantization
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+converter.optimizations = [tf.lite.Optimize.DEFAULT]
+converter.representative_dataset = representative_data_gen
+converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+converter.inference_input_type = tf.int8
+converter.inference_output_type = tf.int8
+
+# Convert and save the model
+quantized_model = converter.convert()
+with open("hw_model.tflite", "wb") as f:
+    f.write(quantized_model)
+```
+
+The quantization process involved defining a representative dataset from the training data, setting optimization flags for integer quantization, specifying input and output types as int8, calibrating the quantization parameters using the representative dataset, and converting and serializing the final model.
+
+#### Model Verification
+
+After quantization, the model was verified to ensure that the accuracy remained acceptable. This verification process involved loading the quantized model with the TensorFlow Lite interpreter, running inference on the test set, comparing the accuracy against the original floating-point model, and analyzing the confusion matrix to identify any systematic errors introduced by quantization. The results confirmed that the quantization process preserved the high accuracy of the original model while dramatically reducing its size.
+
+### Embedded Implementation
+
+The embedded implementation utilized Silicon Labs' Simplicity Studio development environment. The implementation process followed a systematic approach, beginning with the creation of a new C++ project and the addition of the TensorFlow Lite Micro component through the Component Library. The tensor arena size and I/O interfaces were carefully configured based on the model's requirements, and the quantized model was integrated into the project. Finally, the inference pipeline was implemented to handle the end-to-end process from input acquisition to result communication.
+
+
+Memory management represented a critical aspect of the implementation due to the constraints of the microcontroller. The tensor arena was configured to 70KB based on extensive profiling of the model's operational memory footprint. The profiling process involved instrumenting the model execution to track maximum memory usage across various input samples, with particular attention to intermediate tensor allocations during critical network layers such as the larger convolutional operations. This methodical approach ensured sufficient working space for inference while optimizing RAM utilization. All buffers were statically allocated to avoid heap fragmentation, which can be particularly problematic in long-running embedded applications. Input and output tensors were structured to minimize memory copying operations, reducing both the memory footprint and computational overhead.
+
+
+The inference pipeline was implemented in C++ and consisted of several key steps. The initialization phase involved loading the model and allocating tensors, establishing the foundation for subsequent inference operations. Input processing handled the reading of input images, either from predefined arrays or external sources, and prepared them for model execution. The model execution phase utilized the TensorFlow Lite Micro interpreter to run inference on the prepared input, while output processing determined the predicted digit based on the model's output probabilities. Finally, the result communication phase transmitted the recognition results via the UART interface, enabling external monitoring and evaluation of the system's performance.
+
+```cpp
+// Simplified code snippet showing the key inference components
+tflite::MicroInterpreter interpreter(model, resolver, tensor_arena,
+                                   kTensorArenaSize, error_reporter);
+interpreter.AllocateTensors();
+
+// Copy input image to input tensor
+TfLiteTensor* input = interpreter.input(0);
+for (int i = 0; i < 28*28; i++) {
+    input->data.int8[i] = input_image[i];
+}
+
+// Run inference
+interpreter.Invoke();
+
+// Process output
+TfLiteTensor* output = interpreter.output(0);
+int predicted_digit = 0;
+int max_score = output->data.int8[0];
+for (int i = 1; i < 10; i++) {
+    if (output->data.int8[i] > max_score) {
+        max_score = output->data.int8[i];
+        predicted_digit = i;
+    }
+}
+```
+
+## Implementation Details
+
+### Model Training Results
+
+The CNN model was trained for 5 epochs on the MNIST dataset, showing rapid convergence on both training and test sets. Table 2 summarizes the training progression across epochs.
+
+**Table 2: Training Progress by Epoch**
+
+| Epoch | Training Accuracy | Training Loss | Inference Time/Batch |
+|-------|-------------------|---------------|----------------------|
+| 1     | 0.8930            | 0.3433        | 10ms                 |
+| 2     | 0.9837            | 0.0483        | 9ms                  |
+| 3     | 0.9894            | 0.0343        | 10ms                 |
+| 4     | 0.9924            | 0.0252        | 7ms                  |
+| 5     | 0.9936            | 0.0202        | 7ms                  |
+
+The final evaluation on the test set yielded an accuracy of 99.19%, confirming the model's strong performance on unseen data.
+
+### Model Quantization Effects
+
+Quantization substantially reduced the model size while maintaining comparable accuracy metrics. Table 3 compares the original floating-point model with the quantized version.
+
+**Table 3: Model Comparison Before and After Quantization**
+
+| Metric                  | Original Model | Quantized Model | Change   |
+|-------------------------|----------------|-----------------|----------|
+| Model Size              | 1135.36 KB     | 101.59 KB       | -91.05%  |
+| Test Accuracy           | 99.19%         | 99.18%          | -0.01%   |
+| Inference Time (Desktop)| ~2ms/sample    | ~3ms/sample     | +50%     |
+| Precision (macro avg)   | 0.99           | 0.99            | 0%       |
+| Recall (macro avg)      | 0.99           | 0.99            | 0%       |
+
+The confusion matrices for both the original and quantized models showed nearly identical performance patterns, with the most common misclassifications occurring between visually similar digits, such as 4 and 9, or 3 and 5. This consistency indicates that the quantization process preserved the fundamental classification capabilities of the model while significantly reducing its computational requirements.
+
+### Embedded System Implementation
+
+The handwriting recognition system was implemented on the EFR32xG24 microcontroller following the architecture described previously. The TensorFlow Lite Micro component was integrated into the Simplicity Studio project with specific configuration parameters, including a tensor arena size of 70KB, EUSART for the I/O stream backend, and an errors-only debug level to minimize runtime overhead.
+
+
+The system was designed to accept handwritten digit images in two ways: predefined test images embedded directly in the firmware as C arrays, and external inputs generated using a provided Python script. The script converted MNIST images into C-compatible arrays that could be directly integrated into the firmware, facilitating testing and evaluation with diverse input samples:
+
+```python
+# Generate C array from MNIST image
+idx = random.randint(1, len(test_images))
+mnist_image = test_images[idx]
+mnist_label = test_labels[idx]
+
+print("uint8_t mnist_image[28][28] = {")
+for i, row in enumerate(mnist_image):
+    row_str = ", ".join(map(str, row))
+    if i < 27:
+        print(f" {{ {row_str} }},")
+    else:
+        print(f" {{ {row_str} }}")
+print("};")
+```
+
+The firmware application followed a structured organization, with clear separation of concerns between system initialization, TensorFlow setup, and the main inference loop. The setup_tensorflow() function performed critical tasks of loading the model and allocating tensors:
+
+```cpp
+void setup_tensorflow() {
+    static tflite::MicroErrorReporter micro_error_reporter;
+    error_reporter = &micro_error_reporter;
+
+    model = tflite::GetModel(g_model);
+
+    static tflite::MicroMutableOpResolver<3> micro_op_resolver;
+    micro_op_resolver.AddBuiltin(
+        tflite::BuiltinOperator_DEPTHWISE_CONV_2D,
+        tflite::ops::micro::Register_DEPTHWISE_CONV_2D());
+    micro_op_resolver.AddBuiltin(
+        tflite::BuiltinOperator_CONV_2D,
+        tflite::ops::micro::Register_CONV_2D());
+    micro_op_resolver.AddBuiltin(
+        tflite::BuiltinOperator_FULLY_CONNECTED,
+        tflite::ops::micro::Register_FULLY_CONNECTED());
+
+    static tflite::MicroInterpreter static_interpreter(
+        model, micro_op_resolver, tensor_arena, kTensorArenaSize,
+        error_reporter);
+    interpreter = &static_interpreter;
+
+    TfLiteStatus allocate_status = interpreter->AllocateTensors();
+    if (allocate_status != kTfLiteOk) {
+        error_reporter->Report("AllocateTensors() failed");
+        return;
+    }
+
+    input = interpreter->input(0);
+    output = interpreter->output(0);
+}
+```
+
+## Results & Discussion
+
+### Classification Performance
+
+The quantized model achieved an overall classification accuracy of 99.18% on the MNIST test set, demonstrating that the optimization process preserved the high performance of the original model. Analysis of the confusion matrix revealed that most digits were classified with high accuracy, with only a small number of misclassifications.
+
+
+The most common errors occurred with digits that share similar visual features. Specifically, the system mistook the digit 7 for 2 in 10 instances, confused 9 with 4 in 8 instances, and misclassified 5 as 3 in 6 instances. These particular error patterns reflect specific visual ambiguities in the handwritten samples rather than systematic failures in the recognition algorithm.
+
+
+These misclassification patterns align with known perceptual challenges in digit recognition. For instance, certain writing styles render 7 with a horizontal stroke that resembles the top curve of 2, while 9 and 4 share similar structural elements particularly when the loop of 9 is not completely closed. Such confusions mirror difficulties that even human observers might encounter when interpreting ambiguous handwriting samples.
+
+### Resource Utilization
+
+The embedded implementation was carefully profiled to understand its resource utilization on the EFR32xG24 platform. Table 4 summarizes the key metrics.
+
+**Table 4: Resource Utilization on EFR32xG24**
+
+| Resource           | Utilization | Available | Percentage |
+|--------------------|-------------|-----------|------------|
+| Flash Memory       | 153.2 KB    | 1536 KB   | 9.97%      |
+| RAM                | 73.4 KB     | 256 KB    | 28.67%     |
+| Inference Time     | ~210 ms     | -         | -          |
+| Power Consumption  | ~12 mW      | -         | -          |
+
+The flash memory utilization includes both the model (101.59 KB) and the application code (approximately 51.6 KB). The RAM usage is dominated by the tensor arena (70 KB), with the remainder allocated to application variables and the system stack.
+
+
+Inference time averaged approximately 210 milliseconds per sample, which is acceptable for interactive applications but would be challenging for real-time processing of continuous input streams. Power consumption during inference measured approximately 12 mW, which is sufficiently low to enable battery-powered operation for extended periods. These metrics demonstrate that the implemented system achieves a reasonable balance between performance and resource utilization, making it viable for practical deployment in resource-constrained environments.
+
+### Comparison with Cloud-Based Approaches
+
+When compared with alternative deployment approaches, the microcontroller implementation offers distinct advantages despite certain performance limitations. Table 5 compares key metrics across different deployment options.
+
+**Table 5: Comparison of Deployment Approaches**
+
+| Metric             | Microcontroller | Mobile Phone | Cloud Server   |
+|--------------------|----------------|--------------|----------------|
+| Inference Time     | ~210 ms        | ~30 ms       | ~10 ms*        |
+| Latency            | <1 ms          | <1 ms        | ~100-500 ms    |
+| Privacy            | High           | Medium       | Low            |
+| Power Efficiency   | High           | Medium       | Low            |
+| Offline Capability | Yes            | Yes          | No             |
+| Scalability        | Low            | Medium       | High           |
+
+*Cloud server inference time excludes network transfer delays
+
+Cloud-based solutions provide superior inference speed (approximately 10 ms per sample, excluding network transfer delays) compared to the microcontroller implementation (210 ms), but introduce significant latency due to network communication (100-500 ms). Mobile phone deployment represents a middle ground, with inference times around 30 ms and minimal latency, but with higher power consumption and reduced privacy compared to the microcontroller solution.
+
+
+The microcontroller implementation excels in terms of privacy, power efficiency, and offline capability, making it particularly suitable for applications where these factors outweigh raw processing speed. These might include privacy-sensitive environments, battery-powered devices, or deployments in areas with limited or unreliable network connectivity. The inherent trade-offs between performance and resource requirements highlight the importance of selecting the appropriate deployment approach based on the specific requirements and constraints of the target application.
+
+## Challenges & Ethical Considerations
+
+### Technical Challenges
+
+Implementation of the handwriting recognition system revealed several interconnected technical challenges that necessitated innovative approaches. Memory utilization emerged as perhaps the most fundamental constraint, requiring strategies that extended beyond conventional programming practices.
+
+
+Initially, the research focused on developing efficient buffer management techniques to accommodate the model within the limited RAM. Through iterative profiling, the tensor arena allocation size was progressively refined. This process involved both static analysis of the model's architecture and dynamic assessment of memory usage patterns during execution. Particularly memory-intensive operations, such as the initial convolution layers, required special attention to prevent stack overflows during inference.
+
+
+Alongside memory concerns, quantization precision presented another set of challenges. The conversion from floating-point to fixed-point arithmetic introduced potential sources of error that required careful calibration. Selection of the representative dataset proved especially critical; insufficient diversity in calibration samples led to poor performance on certain digit classes. Multiple calibration iterations were necessary, with 
+progressive refinement based on confusion matrix analysis rather than just aggregate accuracy metrics.
+
+
+Development environment integration introduced an orthogonal set of challenges. Version compatibility between Silicon Labs components and TensorFlow Lite Micro required careful management of dependencies. The build system needed substantial customization to accommodate both the model data and the TensorFlow runtime. Debugging capabilities were constrained by the limited memory available for diagnostic information, necessitating alternative approaches such as state logging through the communication interface and offline analysis of execution traces.
+
+### Ethical Considerations
+
+While handwriting recognition appears to be a relatively benign application of machine learning, several ethical considerations are relevant to its implementation on edge devices. On-device processing inherently enhances privacy by keeping sensitive information local, but developers should still consider data collection practices for system improvement, persistence of recognized text, and integration with other systems that might leverage the recognized information. Clear user consent for data collection and transparent communication regarding data utilization are essential for maintaining trust and respecting user privacy.
+
+
+Handwriting recognition systems may perform differently across diverse user populations due to variations in handwriting styles. Different cultural backgrounds, education levels, and physical capabilities lead to variations that may affect recognition accuracy. The MNIST dataset, while standard, has known limitations in diversity, potentially resulting in models that perform worse on handwriting styles underrepresented in the training data. Users with motor impairments may have handwriting that differs significantly from the training distribution, potentially leading to lower recognition rates and creating accessibility barriers. Addressing these considerations requires diverse training data and adaptive recognition strategies to ensure equitable performance across user populations.
+
+The deployment context of handwriting recognition systems raises additional ethical considerations related to the consequences of recognition errors. The stakes of misclassification vary widely depending on whether the system is used for casual note-taking or more critical applications like medical transcription or legal documentation. Providing clear feedback about recognition confidence and implementing easy correction mechanisms are essential for responsible deployment. Users should understand the capabilities and limitations of the system to set appropriate expectations and maintain trust, particularly in contexts where incorrect recognition could have significant consequences.
+
+## Future Work & Conclusion
+
+This chapter has demonstrated the successful implementation of a handwriting recognition system on the EFR32xG24 microcontroller, achieving 99.18% accuracy on the MNIST dataset with a model size of only 101.59 KB. The quantization process reduced the model size by 91% with negligible impact on accuracy, highlighting the effectiveness of post-training quantization for TinyML applications. The implementation addresses key challenges in memory management, quantization effects, and resource utilization, providing practical insights for deploying sophisticated neural networks on highly constrained devices. While this chapter focused on static image data processing, the principles established here—particularly in model optimization and memory management—provide a foundation for more dynamic sensing applications. In the next chapter, we will extend these techniques to time-series data from inertial measurement units (IMUs), enabling gesture recognition applications that process motion patterns rather than static images. This shift from spatial to temporal pattern recognition represents a natural progression toward more interactive and responsive embedded ML systems.
+
+## References
+
+Banbury, C. R., Reddi, V. J., Lam, M., Fu, W., Fazel, A., Holleman, J., Huang, X., Hurtado, R., Kanter, D., Lokhmotov, A., & Patterson, D. (2021). Benchmarking TinyML systems: Challenges and direction. Proceedings of the 3rd MLSys Conference.
+
+LeCun, Y., Bottou, L., Bengio, Y., & Haffner, P. (1998). Gradient-based learning applied to document recognition. Proceedings of the IEEE, 86(11), 2278-2324.
+
+Silicon Labs. (2023). EFR32xG24 Device Family Data Sheet. Silicon Labs, Inc.
+
+TensorFlow. (2023). TensorFlow Lite for Microcontrollers. Retrieved from https://www.tensorflow.org/lite/microcontrollers
+
+Warden, P., & Situnayake, D. (2020). TinyML: Machine learning with TensorFlow Lite on Arduino and ultra-low-power microcontrollers. O'Reilly Media.
