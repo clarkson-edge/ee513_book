@@ -1342,3 +1342,8 @@ button within your web browser to see changes after deployment.
 will be visible once the deploy completes)
 [39m
 Process completed at 2025-02-04_14-06-34
+Starting publish workflow at 2025-07-04_14-57-09
+Working directory: /home/aaron/github/clarkson/clarkson_edge/ee513_book
+[0;32m[INFO][0m Checking required commands...
+[1;33m[WARN][0m Uncommitted changes detected
+[0;32m[INFO][0m Performing git operations...

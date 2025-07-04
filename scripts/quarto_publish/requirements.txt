@@ -1,3 +1,9 @@
+# Python dependencies for Quarto publishing scripts
 # conda-forge::python-ghostscript for conda
+
+# For PDF compression via gs_compress_pdf.py
 ghostscript
 absl-py
+
+# For ePub image compression (optional)
+Pillow>=9.0.0

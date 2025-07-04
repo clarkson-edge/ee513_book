@@ -1,1 +1,7 @@
 Starting publish at 2025-07-04_14-48-25
+[dev bc6ee9d] Update content 2025-07-04
+ 1 file changed, 1 insertion(+)
+ create mode 100644 scripts/quarto_publish/publish_log.txt
+To https://github.com/clarkson-edge/ee513_book.git
+   d48fa1b..bc6ee9d  dev -> dev
+python3: can't open file '/home/aaron/github/clarkson/clarkson_edge/ee513_book/scripts/quarto_publish/scripts/quarto_publish/gs_compress_pdf.py': [Errno 2] No such file or directory
