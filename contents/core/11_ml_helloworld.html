@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; The “Hello World” of TinyML – Embedded Systems Design</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../contents/core/12_ml_helloworld2.html" rel="next">
+<link href="../../contents/core/10_ml_foundations.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de84f8d6bb715db06a919283c2d1e787.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-9a023c9ade86a60361e96e3e3f11bc54.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-4ad2cf0c28f2a60df2ec31094e236ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-92d51d81327e8e79bdb8c3bc0cdd12ec.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "~",
+    "/"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Embedded Systems Design</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-wide tools-end">
+    <a href="https://github.com/clarkson-edge/ee513_book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../../Embedded-Systems-Design.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/11_ml_helloworld.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The “Hello World” of TinyML</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Embedded Machine Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/1_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Embedded Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/10_ml_foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/11_ml_helloworld.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The “Hello World” of TinyML</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/12_ml_helloworld2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Building a TinyML Application</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/13_handwritten_recognition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Handwriting Digit Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/14_imu_gesture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">IMU-Based Gesture Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/15_posture_detection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Posture Detection Using Neural Networks</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-to-microcontroller-based-machine-learning" id="toc-introduction-to-microcontroller-based-machine-learning" class="nav-link active" data-scroll-target="#introduction-to-microcontroller-based-machine-learning"><span class="header-section-number">3.1</span> Introduction to Microcontroller-Based Machine Learning</a></li>
+  <li><a href="#theoretical-foundations-of-tinyml-for-microcontrollers" id="toc-theoretical-foundations-of-tinyml-for-microcontrollers" class="nav-link" data-scroll-target="#theoretical-foundations-of-tinyml-for-microcontrollers"><span class="header-section-number">3.2</span> Theoretical Foundations of TinyML for Microcontrollers</a>
+  <ul>
+  <li><a href="#the-computational-constraints-paradigm" id="toc-the-computational-constraints-paradigm" class="nav-link" data-scroll-target="#the-computational-constraints-paradigm"><span class="header-section-number">3.2.1</span> The Computational Constraints Paradigm</a></li>
+  <li><a href="#model-compression-and-quantization" id="toc-model-compression-and-quantization" class="nav-link" data-scroll-target="#model-compression-and-quantization"><span class="header-section-number">3.2.2</span> Model Compression and Quantization</a></li>
+  </ul></li>
+  <li><a href="#building-our-sine-wave-model-in-google-colab" id="toc-building-our-sine-wave-model-in-google-colab" class="nav-link" data-scroll-target="#building-our-sine-wave-model-in-google-colab"><span class="header-section-number">3.3</span> Building Our Sine Wave Model in Google Colab</a>
+  <ul>
+  <li><a href="#generating-and-processing-the-dataset" id="toc-generating-and-processing-the-dataset" class="nav-link" data-scroll-target="#generating-and-processing-the-dataset"><span class="header-section-number">3.3.1</span> Generating and Processing the Dataset</a></li>
+  <li><a href="#constructing-and-training-the-neural-network-model" id="toc-constructing-and-training-the-neural-network-model" class="nav-link" data-scroll-target="#constructing-and-training-the-neural-network-model"><span class="header-section-number">3.3.2</span> Constructing and Training the Neural Network Model</a></li>
+  </ul></li>
+  <li><a href="#optimizing-for-microcontroller-deployment" id="toc-optimizing-for-microcontroller-deployment" class="nav-link" data-scroll-target="#optimizing-for-microcontroller-deployment"><span class="header-section-number">3.4</span> Optimizing for Microcontroller Deployment</a>
+  <ul>
+  <li><a href="#model-conversion-and-quantization-for-tensorflow-lite" id="toc-model-conversion-and-quantization-for-tensorflow-lite" class="nav-link" data-scroll-target="#model-conversion-and-quantization-for-tensorflow-lite"><span class="header-section-number">3.4.1</span> Model Conversion and Quantization for TensorFlow Lite</a></li>
+  <li><a href="#converting-to-c-code-for-embedded-systems" id="toc-converting-to-c-code-for-embedded-systems" class="nav-link" data-scroll-target="#converting-to-c-code-for-embedded-systems"><span class="header-section-number">3.4.2</span> Converting to C Code for Embedded Systems</a></li>
+  </ul></li>
+  <li><a href="#deploying-with-simplicity-studio-and-gecko-sdk" id="toc-deploying-with-simplicity-studio-and-gecko-sdk" class="nav-link" data-scroll-target="#deploying-with-simplicity-studio-and-gecko-sdk"><span class="header-section-number">3.5</span> Deploying with Simplicity Studio and Gecko SDK</a>
+  <ul>
+  <li><a href="#creating-a-new-project-in-simplicity-studio" id="toc-creating-a-new-project-in-simplicity-studio" class="nav-link" data-scroll-target="#creating-a-new-project-in-simplicity-studio"><span class="header-section-number">3.5.1</span> Creating a New Project in Simplicity Studio</a></li>
+  <li><a href="#project-structure-and-important-files" id="toc-project-structure-and-important-files" class="nav-link" data-scroll-target="#project-structure-and-important-files"><span class="header-section-number">3.5.2</span> Project Structure and Important Files</a></li>
+  <li><a href="#adding-our-trained-model" id="toc-adding-our-trained-model" class="nav-link" data-scroll-target="#adding-our-trained-model"><span class="header-section-number">3.5.3</span> Adding Our Trained Model</a></li>
+  <li><a href="#implementing-the-application-logic" id="toc-implementing-the-application-logic" class="nav-link" data-scroll-target="#implementing-the-application-logic"><span class="header-section-number">3.5.4</span> Implementing the Application Logic</a></li>
+  <li><a href="#creating-the-model-integration-file" id="toc-creating-the-model-integration-file" class="nav-link" data-scroll-target="#creating-the-model-integration-file"><span class="header-section-number">3.5.5</span> Creating the Model Integration File</a></li>
+  <li><a href="#building-and-flashing-the-application" id="toc-building-and-flashing-the-application" class="nav-link" data-scroll-target="#building-and-flashing-the-application"><span class="header-section-number">3.5.6</span> Building and Flashing the Application</a></li>
+  <li><a href="#observing-the-results" id="toc-observing-the-results" class="nav-link" data-scroll-target="#observing-the-results"><span class="header-section-number">3.5.7</span> Observing the Results</a></li>
+  </ul></li>
+  <li><a href="#how-it-works-understanding-the-implementation" id="toc-how-it-works-understanding-the-implementation" class="nav-link" data-scroll-target="#how-it-works-understanding-the-implementation"><span class="header-section-number">3.6</span> How it Works: Understanding the Implementation</a></li>
+  <li><a href="#extending-the-tinyml-application" id="toc-extending-the-tinyml-application" class="nav-link" data-scroll-target="#extending-the-tinyml-application"><span class="header-section-number">3.7</span> Extending the TinyML Application</a>
+  <ul>
+  <li><a href="#adding-multiple-led-support" id="toc-adding-multiple-led-support" class="nav-link" data-scroll-target="#adding-multiple-led-support"><span class="header-section-number">3.7.1</span> 1. Adding Multiple LED Support</a></li>
+  <li><a href="#adding-lcd-display-support" id="toc-adding-lcd-display-support" class="nav-link" data-scroll-target="#adding-lcd-display-support"><span class="header-section-number">3.7.2</span> 2. Adding LCD Display Support</a></li>
+  <li><a href="#implementing-power-optimization" id="toc-implementing-power-optimization" class="nav-link" data-scroll-target="#implementing-power-optimization"><span class="header-section-number">3.7.3</span> 3. Implementing Power Optimization</a></li>
+  <li><a href="#enhanced-user-interface-with-buttons" id="toc-enhanced-user-interface-with-buttons" class="nav-link" data-scroll-target="#enhanced-user-interface-with-buttons"><span class="header-section-number">3.7.4</span> 4. Enhanced User Interface with Buttons</a></li>
+  <li><a href="#performance-profiling-and-optimization" id="toc-performance-profiling-and-optimization" class="nav-link" data-scroll-target="#performance-profiling-and-optimization"><span class="header-section-number">3.7.5</span> 5. Performance Profiling and Optimization</a></li>
+  </ul></li>
+  <li><a href="#building-tinyml-applications-with-the-gecko-sdk" id="toc-building-tinyml-applications-with-the-gecko-sdk" class="nav-link" data-scroll-target="#building-tinyml-applications-with-the-gecko-sdk"><span class="header-section-number">3.8</span> Building TinyML Applications with the Gecko SDK</a>
+  <ul>
+  <li><a href="#simplified-project-setup" id="toc-simplified-project-setup" class="nav-link" data-scroll-target="#simplified-project-setup"><span class="header-section-number">3.8.1</span> Simplified Project Setup</a></li>
+  <li><a href="#streamlined-development-workflow" id="toc-streamlined-development-workflow" class="nav-link" data-scroll-target="#streamlined-development-workflow"><span class="header-section-number">3.8.2</span> Streamlined Development Workflow</a></li>
+  <li><a href="#hardware-specific-optimizations" id="toc-hardware-specific-optimizations" class="nav-link" data-scroll-target="#hardware-specific-optimizations"><span class="header-section-number">3.8.3</span> Hardware-Specific Optimizations</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">3.9</span> Conclusion</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/11_ml_helloworld.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/11_ml_helloworld.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/11_ml_helloworld.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The “Hello World” of TinyML</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The “Hello World” of TinyML</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction-to-microcontroller-based-machine-learning" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="introduction-to-microcontroller-based-machine-learning"><span class="header-section-number">3.1</span> Introduction to Microcontroller-Based Machine Learning</h2>
+<p>Machine learning at the edge represents a significant paradigm shift in computational intelligence, enabling sophisticated inferencing capabilities on resource-constrained embedded systems such as the EFR32MG24 Wireless Gecko microcontroller. This chapter explores the theoretical foundations and practical implementations of TinyML specifically tailored for microcontroller deployment, with particular focus on the sine wave prediction model as the canonical “Hello World” example of TinyML.</p>
+<p>The concept of a “Hello World” example has long been a tradition in programming, where new technologies are introduced with simple code that demonstrates basic functionality. In the domain of TinyML, our sine wave prediction serves as an elegant introduction to the end-to-end process of building, training, and deploying models to microcontrollers.</p>
+</section>
+<section id="theoretical-foundations-of-tinyml-for-microcontrollers" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="theoretical-foundations-of-tinyml-for-microcontrollers"><span class="header-section-number">3.2</span> Theoretical Foundations of TinyML for Microcontrollers</h2>
+<section id="the-computational-constraints-paradigm" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="the-computational-constraints-paradigm"><span class="header-section-number">3.2.1</span> The Computational Constraints Paradigm</h3>
+<p>Traditional machine learning systems operate under the assumption of abundant computational resources, where model complexity and size are secondary concerns to performance metrics. TinyML, however, inverts this paradigm, placing primary emphasis on resource efficiency while maintaining acceptable inferencing quality.</p>
+<p>For the EFR32MG24 platform, with its ARM Cortex-M33 core, limited memory footprint (1536KB flash and 256KB RAM), and power-sensitive applications, we must consider:</p>
+<ol type="1">
+<li><strong>Memory-Constrained Learning</strong>: Operating within a 256KB RAM budget necessitates models with minimal memory footprints</li>
+<li><strong>Computation-Constrained Inference</strong>: The 78MHz Cortex-M33 processor requires algorithmic optimizations to achieve real-time performance</li>
+<li><strong>Energy-Constrained Execution</strong>: Battery-powered applications demand power-aware ML implementations</li>
+</ol>
+<p>These constraints fundamentally reshape our approach to machine learning model design, training methodologies, and deployment strategies.</p>
+</section>
+<section id="model-compression-and-quantization" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="model-compression-and-quantization"><span class="header-section-number">3.2.2</span> Model Compression and Quantization</h3>
+<p>Central to TinyML is the concept of model compression, which can be formalized as an optimization problem:</p>
+<p><span class="math display">\[\min_{\theta'} \mathcal{L}(f_{\theta'}(X), Y) \quad \text{s.t.} \quad |\theta'| \ll |\theta|\]</span></p>
+<p>Where <span class="math inline">\(\theta\)</span> represents the parameters of the original model, <span class="math inline">\(\theta'\)</span> the compressed model parameters, <span class="math inline">\(\mathcal{L}\)</span> the loss function, and <span class="math inline">\(f_{\theta'}(X)\)</span> the model predictions on input <span class="math inline">\(X\)</span> compared against ground truth <span class="math inline">\(Y\)</span>.</p>
+<p>Quantization—a key technique in this domain—transforms floating-point weights and activations to reduced-precision integers:</p>
+<p><span class="math display">\[Q(w) = \text{round}\left(\frac{w}{\Delta}\right) \cdot \Delta\]</span></p>
+<p>Where <span class="math inline">\(\Delta\)</span> represents the quantization step size. This transformation reduces both memory requirements and computational complexity at the cost of some precision.</p>
+</section>
+</section>
+<section id="building-our-sine-wave-model-in-google-colab" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="building-our-sine-wave-model-in-google-colab"><span class="header-section-number">3.3</span> Building Our Sine Wave Model in Google Colab</h2>
+<section id="generating-and-processing-the-dataset" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="generating-and-processing-the-dataset"><span class="header-section-number">3.3.1</span> Generating and Processing the Dataset</h3>
+<p>For our introductory TinyML example, we’ll create a sine wave predictor that learns to approximate the sine function. This represents an ideal starting point for several reasons:</p>
+<ol type="1">
+<li>The sine function is mathematically well-defined and bounded</li>
+<li>The input-output relationship exhibits nonlinearity that requires proper model architecture</li>
+<li>The implementation can produce visually verifiable results on a microcontroller</li>
+</ol>
+<p>Let’s begin by creating a Google Colab notebook to build and train our model. Open a new notebook and start with the following code to generate our training data:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras <span class="im">import</span> layers</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a uniformly distributed set of random numbers in the range from</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 0 to 2π, which covers a complete sine wave oscillation</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>SAMPLES <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">1337</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>x_values <span class="op">=</span> np.random.uniform(low<span class="op">=</span><span class="dv">0</span>, high<span class="op">=</span><span class="dv">2</span><span class="op">*</span>math.pi, size<span class="op">=</span>SAMPLES)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Shuffle the values to guarantee they're not in order</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>np.random.shuffle(x_values)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the corresponding sine values</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>y_values <span class="op">=</span> np.sin(x_values)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a small random number to each y value to simulate noise</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>y_values <span class="op">+=</span> <span class="fl">0.1</span> <span class="op">*</span> np.random.randn(<span class="op">*</span>y_values.shape)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Split into train/validation/test sets</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>TRAIN_SPLIT <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.6</span> <span class="op">*</span> SAMPLES)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>TEST_SPLIT <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.2</span> <span class="op">*</span> SAMPLES <span class="op">+</span> TRAIN_SPLIT)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>x_train, x_validate, x_test <span class="op">=</span> np.split(x_values, [TRAIN_SPLIT, TEST_SPLIT])</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>y_train, y_validate, y_test <span class="op">=</span> np.split(y_values, [TRAIN_SPLIT, TEST_SPLIT])</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot our data points</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>plt.scatter(x_train, y_train, label<span class="op">=</span><span class="st">'Training data'</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>plt.scatter(x_validate, y_validate, label<span class="op">=</span><span class="st">'Validation data'</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>plt.scatter(x_test, y_test, label<span class="op">=</span><span class="st">'Test data'</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Sine Wave with Random Noise'</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'x values'</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'y values (sine of x + noise)'</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="constructing-and-training-the-neural-network-model" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="constructing-and-training-the-neural-network-model"><span class="header-section-number">3.3.2</span> Constructing and Training the Neural Network Model</h3>
+<p>Now we’ll construct a simple neural network to learn the sine function:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a model with 2 layers of 16 neurons each</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.Sequential()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># First layer takes a scalar input and feeds it through 16 "neurons"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>model.add(layers.Dense(<span class="dv">16</span>, activation<span class="op">=</span><span class="st">'relu'</span>, input_shape<span class="op">=</span>(<span class="dv">1</span>,)))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Second layer with 16 neurons to capture non-linear relationships</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>model.add(layers.Dense(<span class="dv">16</span>, activation<span class="op">=</span><span class="st">'relu'</span>))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Final layer is a single neuron for our output value</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>model.add(layers.Dense(<span class="dv">1</span>))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compile the model using a standard optimizer and loss function for regression</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(optimizer<span class="op">=</span><span class="st">'rmsprop'</span>, loss<span class="op">=</span><span class="st">'mse'</span>, metrics<span class="op">=</span>[<span class="st">'mae'</span>])</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Display model summary to understand its structure</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>model.summary()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model on our data</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>history <span class="op">=</span> model.fit(x_train, y_train, </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                    epochs<span class="op">=</span><span class="dv">500</span>, </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                    batch_size<span class="op">=</span><span class="dv">16</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                    validation_data<span class="op">=</span>(x_validate, y_validate),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                    verbose<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the training and validation loss</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>plt.plot(history.history[<span class="st">'loss'</span>], label<span class="op">=</span><span class="st">'Loss'</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>plt.plot(history.history[<span class="st">'val_loss'</span>], label<span class="op">=</span><span class="st">'Validation Loss'</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Training and Validation Loss'</span>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Epoch'</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Loss'</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the training and validation mean absolute error</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>plt.plot(history.history[<span class="st">'mae'</span>], label<span class="op">=</span><span class="st">'MAE'</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>plt.plot(history.history[<span class="st">'val_mae'</span>], label<span class="op">=</span><span class="st">'Validation MAE'</span>)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Training and Validation Mean Absolute Error'</span>)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Epoch'</span>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'MAE'</span>)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model on our test data</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>test_loss, test_mae <span class="op">=</span> model.evaluate(x_test, y_test)</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Test Loss: </span><span class="sc">{</span>test_loss<span class="sc">:.4f}</span><span class="ss">'</span>)</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Test MAE: </span><span class="sc">{</span>test_mae<span class="sc">:.4f}</span><span class="ss">'</span>)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate predictions across the full range for visualization</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>x_dense <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span><span class="op">*</span>math.pi, <span class="dv">200</span>)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>y_dense_true <span class="op">=</span> np.sin(x_dense)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>y_dense_pred <span class="op">=</span> model.predict(x_dense)</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the true sine curve against our model's predictions</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>plt.plot(x_dense, y_dense_true, <span class="st">'b-'</span>, label<span class="op">=</span><span class="st">'True Sine'</span>)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>plt.plot(x_dense, y_dense_pred, <span class="st">'r-'</span>, label<span class="op">=</span><span class="st">'Model Prediction'</span>)</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>plt.scatter(x_test, y_test, alpha<span class="op">=</span><span class="fl">0.3</span>, label<span class="op">=</span><span class="st">'Test Data'</span>)</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Sine Wave Prediction'</span>)</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'x'</span>)</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'sin(x)'</span>)</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This architecture, though simple, is carefully designed to capture the nonlinear relationship of the sine function. The ReLU (Rectified Linear Unit) activation function is particularly important as it introduces nonlinearity:</p>
+<p><span class="math display">\[\text{ReLU}(x) = \max(0, x)\]</span></p>
+<p>We train the model using the mean squared error loss function, which for a regression problem is defined as:</p>
+<p><span class="math display">\[\text{MSE} = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2\]</span></p>
+<p>Where <span class="math inline">\(y_i\)</span> represents the actual sine value and <span class="math inline">\(\hat{y}_i\)</span> represents our model’s prediction.</p>
+</section>
+</section>
+<section id="optimizing-for-microcontroller-deployment" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="optimizing-for-microcontroller-deployment"><span class="header-section-number">3.4</span> Optimizing for Microcontroller Deployment</h2>
+<section id="model-conversion-and-quantization-for-tensorflow-lite" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="model-conversion-and-quantization-for-tensorflow-lite"><span class="header-section-number">3.4.1</span> Model Conversion and Quantization for TensorFlow Lite</h3>
+<p>To deploy our trained model to the EFR32MG24 microcontroller, we must convert it into a format suitable for resource-constrained devices:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the model to the TensorFlow Lite format without quantization</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> tf.lite.TFLiteConverter.from_keras_model(model)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>tflite_model <span class="op">=</span> converter.convert()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the model to disk</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"sine_model.tflite"</span>, <span class="st">"wb"</span>) <span class="im">as</span> f:</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    f.write(tflite_model)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert with quantization for further optimization</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> tf.lite.TFLiteConverter.from_keras_model(model)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>converter.optimizations <span class="op">=</span> [tf.lite.Optimize.DEFAULT]</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a generator function that provides our test data's x values</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># as a representative dataset</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> representative_dataset_generator():</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> value <span class="kw">in</span> x_test:</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span> [np.array(value, dtype<span class="op">=</span>np.float32, ndmin<span class="op">=</span><span class="dv">2</span>)]</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>converter.representative_dataset <span class="op">=</span> representative_dataset_generator</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>tflite_model_quantized <span class="op">=</span> converter.convert()</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the quantized model to disk</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"sine_model_quantized.tflite"</span>, <span class="st">"wb"</span>) <span class="im">as</span> f:</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    f.write(tflite_model_quantized)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the size reduction achieved through quantization</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Original model size: </span><span class="sc">{</span><span class="bu">len</span>(tflite_model)<span class="sc">}</span><span class="ss"> bytes"</span>)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Quantized model size: </span><span class="sc">{</span><span class="bu">len</span>(tflite_model_quantized)<span class="sc">}</span><span class="ss"> bytes"</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Size reduction: </span><span class="sc">{</span>(<span class="dv">1</span> <span class="op">-</span> <span class="bu">len</span>(tflite_model_quantized) <span class="op">/</span> <span class="bu">len</span>(tflite_model)) <span class="op">*</span> <span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="converting-to-c-code-for-embedded-systems" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="converting-to-c-code-for-embedded-systems"><span class="header-section-number">3.4.2</span> Converting to C Code for Embedded Systems</h3>
+<p>For deployment on microcontrollers like the EFR32MG24, we need to convert our quantized model into a C header file that can be directly included in our firmware:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to convert the model to a C array</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> convert_tflite_to_c_array(tflite_model, array_name):</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    hex_data <span class="op">=</span> [<span class="st">"0x</span><span class="sc">{:02x}</span><span class="st">"</span>.<span class="bu">format</span>(byte) <span class="cf">for</span> byte <span class="kw">in</span> tflite_model]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    c_array <span class="op">=</span> <span class="ss">f"const unsigned char </span><span class="sc">{</span>array_name<span class="sc">}</span><span class="ss">[] = </span><span class="ch">{{\n</span><span class="ss">"</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Format the hex data into rows</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    chunk_size <span class="op">=</span> <span class="dv">12</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(hex_data), chunk_size):</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        c_array <span class="op">+=</span> <span class="st">"  "</span> <span class="op">+</span> <span class="st">", "</span>.join(hex_data[i:i<span class="op">+</span>chunk_size]) <span class="op">+</span> <span class="st">",</span><span class="ch">\n</span><span class="st">"</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    c_array <span class="op">=</span> c_array[:<span class="op">-</span><span class="dv">2</span>] <span class="op">+</span> <span class="st">"</span><span class="ch">\n</span><span class="st">};</span><span class="ch">\n</span><span class="st">"</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    c_array <span class="op">+=</span> <span class="ss">f"const unsigned int </span><span class="sc">{</span>array_name<span class="sc">}</span><span class="ss">_len = </span><span class="sc">{</span><span class="bu">len</span>(tflite_model)<span class="sc">}</span><span class="ss">;</span><span class="ch">\n</span><span class="ss">"</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> c_array</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the C array for our model</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>c_array <span class="op">=</span> convert_tflite_to_c_array(tflite_model_quantized, <span class="st">"g_sine_model_data"</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Save to a header file</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"sine_model_data.h"</span>, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    f.write(<span class="st">"#ifndef SINE_MODEL_DATA_H_</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    f.write(<span class="st">"#define SINE_MODEL_DATA_H_</span><span class="ch">\n\n</span><span class="st">"</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    f.write(<span class="st">"#include &lt;stdint.h&gt;</span><span class="ch">\n\n</span><span class="st">"</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    f.write(c_array)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    f.write(<span class="st">"</span><span class="ch">\n</span><span class="st">#endif  // SINE_MODEL_DATA_H_</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"C header file generated: sine_model_data.h"</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the files</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> google.colab <span class="im">import</span> files</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>files.download(<span class="st">"sine_model.tflite"</span>)</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>files.download(<span class="st">"sine_model_quantized.tflite"</span>)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>files.download(<span class="st">"sine_model_data.h"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="deploying-with-simplicity-studio-and-gecko-sdk" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="deploying-with-simplicity-studio-and-gecko-sdk"><span class="header-section-number">3.5</span> Deploying with Simplicity Studio and Gecko SDK</h2>
+<p>Now that we have our trained model in a format suitable for microcontrollers, we’ll implement the TinyML application using Simplicity Studio and the Gecko SDK. This approach simplifies development by providing a structured framework for EFR32 devices.</p>
+<section id="creating-a-new-project-in-simplicity-studio" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="creating-a-new-project-in-simplicity-studio"><span class="header-section-number">3.5.1</span> Creating a New Project in Simplicity Studio</h3>
+<ol type="1">
+<li>Launch Simplicity Studio and connect your EFR32MG24 development board</li>
+<li>Select your device in the “Debug Adapters” view</li>
+<li>Click on “Create New Project” in the Launcher perspective</li>
+<li>Select “Silicon Labs Project Wizard” and click “Next”</li>
+<li>Choose “Gecko SDK” as the project type</li>
+<li>Filter for “example” and select “TensorFlow Lite Micro Example” template</li>
+<li>Configure project settings:
+<ul>
+<li>Name: <code>sine_wave_predictor</code></li>
+<li>SDK version: Latest version</li>
+<li>Click “Next” and then “Finish”</li>
+</ul></li>
+</ol>
+</section>
+<section id="project-structure-and-important-files" class="level3" data-number="3.5.2">
+<h3 data-number="3.5.2" class="anchored" data-anchor-id="project-structure-and-important-files"><span class="header-section-number">3.5.2</span> Project Structure and Important Files</h3>
+<p>Simplicity Studio creates a project with the following important files:</p>
+<ul>
+<li><strong>app.c</strong>: Main application entry point</li>
+<li><strong>sl_tflite_micro_model.{h,c}</strong>: TensorFlow Lite Micro integration</li>
+<li><strong>sl_pwm.{h,c}</strong>: PWM control for LED output</li>
+<li><strong>sine_model_data.h</strong>: Our model data (to be replaced with our trained model)</li>
+</ul>
+</section>
+<section id="adding-our-trained-model" class="level3" data-number="3.5.3">
+<h3 data-number="3.5.3" class="anchored" data-anchor-id="adding-our-trained-model"><span class="header-section-number">3.5.3</span> Adding Our Trained Model</h3>
+<ol type="1">
+<li>In Simplicity Studio, locate the project’s <code>inc</code> folder</li>
+<li>Right-click and select “Import” → “General” → “File System”</li>
+<li>Browse to the location where you saved <code>sine_model_data.h</code></li>
+<li>Select the file and click “Finish”</li>
+</ol>
+</section>
+<section id="implementing-the-application-logic" class="level3" data-number="3.5.4">
+<h3 data-number="3.5.4" class="anchored" data-anchor-id="implementing-the-application-logic"><span class="header-section-number">3.5.4</span> Implementing the Application Logic</h3>
+<p>Now we’ll modify the application code to use our sine wave model. Open <code>app.c</code> and replace its contents with the following:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">/***************************************************************************//**</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@file</span><span class="co"> </span><span class="cv">app.c</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@brief</span><span class="co"> TinyML Sine Wave Predictor application</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"> *******************************************************************************</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"> * # License</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="kw">&lt;b&gt;</span><span class="co">Copyright 2023 Silicon Laboratories Inc. www.silabs.com</span><span class="kw">&lt;/b&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"> *******************************************************************************</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"> *</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">SPDX-License-Identifier:</span><span class="co"> Zlib</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"> *</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"> * The licensor of this software is Silicon Laboratories Inc.</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"> *</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"> * This software is provided 'as-is', without any express or implied</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"> * warranty. In no event will the authors be held liable for any damages</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"> * arising from the use of this software.</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"> *</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"> * Permission is granted to anyone to use this software for any purpose,</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"> * including commercial applications, and to alter it and redistribute it</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"> * freely, subject to the following restrictions:</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"> *</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"> * 1. The origin of this software must not be misrepresented; you must not</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co"> *    claim that you wrote the original software. If you use this software</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co"> *    in a product, an acknowledgment in the product documentation would be</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co"> *    appreciated but is not required.</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co"> * 2. Altered source versions must be plainly marked as such, and must not be</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co"> *    misrepresented as being the original software.</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co"> * 3. This notice may not be removed or altered from any source distribution.</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co"> *</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co"> ******************************************************************************/</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_component_catalog.h"</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_system_init.h"</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"app.h"</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="pp">#if defined(SL_CATALOG_POWER_MANAGER_PRESENT)</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_power_manager.h"</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_system_process_action.h"</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;math.h&gt;</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_tflite_micro_model.h"</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_led.h"</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_pwm.h"</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_sleeptimer.h"</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="co">// Constants for sine wave demonstration</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="pp">#define INFERENCES_PER_CYCLE  </span><span class="dv">32</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="pp">#define X_RANGE               </span><span class="op">(</span><span class="fl">2.0</span><span class="bu">f</span><span class="pp"> </span><span class="op">*</span><span class="pp"> </span><span class="fl">3.14159265359</span><span class="bu">f</span><span class="op">)</span><span class="pp">  </span><span class="co">// 2π radians</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="pp">#define PWM_FREQUENCY_HZ      </span><span class="dv">10000</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="pp">#define INFERENCE_INTERVAL_MS </span><span class="dv">50</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="co">// Global variables</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">int</span> inference_count <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> app_init<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Initialize TFLite model</span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>  sl_status_t status <span class="op">=</span> sl_tflite_micro_init<span class="op">();</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>status <span class="op">!=</span> SL_STATUS_OK<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Failed to initialize TensorFlow Lite Micro</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Initialize PWM for LED control</span></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>  sl_pwm_config_t pwm_config <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>frequency <span class="op">=</span> PWM_FREQUENCY_HZ<span class="op">,</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>polarity <span class="op">=</span> SL_PWM_ACTIVE_HIGH</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  <span class="op">};</span></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>  sl_pwm_init<span class="op">(</span>SL_PWM_LED0<span class="op">,</span> <span class="op">&amp;</span>pwm_config<span class="op">);</span></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">"Sine Wave Predictor initialized</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> app_process_action<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Calculate x value based on our position in the cycle</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> position <span class="op">=</span> <span class="op">(</span><span class="dt">float</span><span class="op">)</span>inference_count <span class="op">/</span> <span class="op">(</span><span class="dt">float</span><span class="op">)</span>INFERENCES_PER_CYCLE<span class="op">;</span></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> x_val <span class="op">=</span> position <span class="op">*</span> X_RANGE<span class="op">;</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Prepare the input tensor with our x value</span></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> input_data<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span> x_val <span class="op">};</span></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>  sl_tflite_micro_tensor_t input_tensor<span class="op">;</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>  sl_status_t status <span class="op">=</span> sl_tflite_micro_get_input_tensor<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="op">&amp;</span>input_tensor<span class="op">);</span></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>status <span class="op">!=</span> SL_STATUS_OK<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Failed to get input tensor</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Copy our input data to the input tensor</span></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>  status <span class="op">=</span> sl_tflite_micro_set_tensor_data<span class="op">(&amp;</span>input_tensor<span class="op">,</span> input_data<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span>input_data<span class="op">));</span></span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>status <span class="op">!=</span> SL_STATUS_OK<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Failed to set input tensor data</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Run inference</span></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>  status <span class="op">=</span> sl_tflite_micro_invoke<span class="op">();</span></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>status <span class="op">!=</span> SL_STATUS_OK<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Inference failed</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Get the output tensor</span></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>  sl_tflite_micro_tensor_t output_tensor<span class="op">;</span></span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>  status <span class="op">=</span> sl_tflite_micro_get_output_tensor<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="op">&amp;</span>output_tensor<span class="op">);</span></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>status <span class="op">!=</span> SL_STATUS_OK<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Failed to get output tensor</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Get the predicted sine value</span></span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> predicted_sine <span class="op">=</span> <span class="fl">0.0</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>  status <span class="op">=</span> sl_tflite_micro_get_tensor_data<span class="op">(&amp;</span>output_tensor<span class="op">,</span> <span class="op">&amp;</span>predicted_sine<span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span>predicted_sine<span class="op">));</span></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>status <span class="op">!=</span> SL_STATUS_OK<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Failed to get output tensor data</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Map the sine value (-1 to 1) to PWM duty cycle (0 to 100%)</span></span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a>  <span class="dt">uint8_t</span> duty_cycle <span class="op">=</span> <span class="op">(</span><span class="dt">uint8_t</span><span class="op">)((</span>predicted_sine <span class="op">+</span> <span class="fl">1.0</span><span class="bu">f</span><span class="op">)</span> <span class="op">*</span> <span class="fl">50.0</span><span class="bu">f</span><span class="op">);</span></span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Set LED brightness using PWM</span></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>  sl_pwm_set_duty_cycle<span class="op">(</span>SL_PWM_LED0<span class="op">,</span> duty_cycle<span class="op">);</span></span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Log the values (only every 8th inference to reduce console traffic)</span></span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>inference_count <span class="op">%</span> <span class="dv">8</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"x: </span><span class="sc">%.3f</span><span class="st">, predicted sine: </span><span class="sc">%.3f</span><span class="st">, duty cycle: </span><span class="sc">%d%%\n</span><span class="st">"</span><span class="op">,</span> </span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>           x_val<span class="op">,</span> predicted_sine<span class="op">,</span> duty_cycle<span class="op">);</span></span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Increment the inference counter</span></span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>  inference_count<span class="op">++;</span></span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>inference_count <span class="op">&gt;=</span> INFERENCES_PER_CYCLE<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>    inference_count <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Add a delay before the next inference</span></span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>  sl_sleeptimer_delay_millisecond<span class="op">(</span>INFERENCE_INTERVAL_MS<span class="op">);</span></span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="creating-the-model-integration-file" class="level3" data-number="3.5.5">
+<h3 data-number="3.5.5" class="anchored" data-anchor-id="creating-the-model-integration-file"><span class="header-section-number">3.5.5</span> Creating the Model Integration File</h3>
+<p>Create a new file called <code>sl_tflite_micro_model.c</code> in the <code>src</code> folder with the following content:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_tflite_micro_model.h"</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sine_model_data.h"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">// TensorFlow Lite for Microcontrollers components</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/micro/all_ops_resolver.h"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/micro/micro_error_reporter.h"</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/micro/micro_interpreter.h"</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/schema/schema_generated.h"</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"tensorflow/lite/version.h"</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">// Global variables</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> tflite<span class="op">::</span>MicroErrorReporter micro_error_reporter<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> tflite<span class="op">::</span>ErrorReporter<span class="op">*</span> error_reporter <span class="op">=</span> <span class="op">&amp;</span>micro_error_reporter<span class="op">;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">const</span> tflite<span class="op">::</span>Model<span class="op">*</span> model <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> tflite<span class="op">::</span>MicroInterpreter<span class="op">*</span> interpreter <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> TfLiteTensor<span class="op">*</span> input_tensor <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> TfLiteTensor<span class="op">*</span> output_tensor <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">// Create an area of memory for input, output, and intermediate arrays</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="kw">constexpr</span> <span class="dt">int</span> kTensorArenaSize <span class="op">=</span> <span class="dv">8</span> <span class="op">*</span> <span class="dv">1024</span><span class="op">;</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">uint8_t</span> tensor_arena<span class="op">[</span>kTensorArenaSize<span class="op">];</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_init<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Map the model into a usable data structure</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  model <span class="op">=</span> tflite<span class="op">::</span>GetModel<span class="op">(</span>g_sine_model_data<span class="op">);</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>model<span class="op">-&gt;</span>version<span class="op">()</span> <span class="op">!=</span> TFLITE_SCHEMA_VERSION<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Model version mismatch: </span><span class="sc">%d</span><span class="st"> vs </span><span class="sc">%d\n</span><span class="st">"</span><span class="op">,</span> model<span class="op">-&gt;</span>version<span class="op">(),</span> TFLITE_SCHEMA_VERSION<span class="op">);</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_FAIL<span class="op">;</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Create an all operations resolver</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  <span class="dt">static</span> tflite<span class="op">::</span>AllOpsResolver resolver<span class="op">;</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Build an interpreter to run the model</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  <span class="dt">static</span> tflite<span class="op">::</span>MicroInterpreter static_interpreter<span class="op">(</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    model<span class="op">,</span> resolver<span class="op">,</span> tensor_arena<span class="op">,</span> kTensorArenaSize<span class="op">,</span> error_reporter<span class="op">);</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>  interpreter <span class="op">=</span> <span class="op">&amp;</span>static_interpreter<span class="op">;</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Allocate memory for all tensors</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>  TfLiteStatus allocate_status <span class="op">=</span> interpreter<span class="op">-&gt;</span>AllocateTensors<span class="op">();</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>allocate_status <span class="op">!=</span> kTfLiteOk<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"AllocateTensors() failed</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_ALLOCATION_FAILED<span class="op">;</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Get pointers to the model's input and output tensors</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>  input_tensor <span class="op">=</span> interpreter<span class="op">-&gt;</span>input<span class="op">(</span><span class="dv">0</span><span class="op">);</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>  output_tensor <span class="op">=</span> interpreter<span class="op">-&gt;</span>output<span class="op">(</span><span class="dv">0</span><span class="op">);</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Check that input and output tensors are the expected size and type</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>input_tensor<span class="op">-&gt;</span>dims<span class="op">-&gt;</span>size <span class="op">!=</span> <span class="dv">2</span> <span class="op">||</span> input_tensor<span class="op">-&gt;</span>dims<span class="op">-&gt;</span>data<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">!=</span> <span class="dv">1</span> <span class="op">||</span> </span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>      input_tensor<span class="op">-&gt;</span>dims<span class="op">-&gt;</span>data<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">!=</span> <span class="dv">1</span> <span class="op">||</span> input_tensor<span class="op">-&gt;</span>type <span class="op">!=</span> kTfLiteFloat32<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Unexpected input tensor format</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_INVALID_PARAMETER<span class="op">;</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>output_tensor<span class="op">-&gt;</span>dims<span class="op">-&gt;</span>size <span class="op">!=</span> <span class="dv">2</span> <span class="op">||</span> output_tensor<span class="op">-&gt;</span>dims<span class="op">-&gt;</span>data<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">!=</span> <span class="dv">1</span> <span class="op">||</span> </span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>      output_tensor<span class="op">-&gt;</span>dims<span class="op">-&gt;</span>data<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">!=</span> <span class="dv">1</span> <span class="op">||</span> output_tensor<span class="op">-&gt;</span>type <span class="op">!=</span> kTfLiteFloat32<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">"Unexpected output tensor format</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_INVALID_PARAMETER<span class="op">;</span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">"TensorFlow Lite Micro initialized successfully</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> SL_STATUS_OK<span class="op">;</span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_get_input_tensor<span class="op">(</span><span class="dt">uint8_t</span> index<span class="op">,</span> sl_tflite_micro_tensor_t<span class="op">*</span> tensor<span class="op">)</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>interpreter <span class="op">==</span> <span class="kw">nullptr</span> <span class="op">||</span> index <span class="op">&gt;=</span> interpreter<span class="op">-&gt;</span>inputs_size<span class="op">())</span> <span class="op">{</span></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_INVALID_PARAMETER<span class="op">;</span></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>  tensor<span class="op">-&gt;</span>tensor <span class="op">=</span> interpreter<span class="op">-&gt;</span>input<span class="op">(</span>index<span class="op">);</span></span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> SL_STATUS_OK<span class="op">;</span></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_get_output_tensor<span class="op">(</span><span class="dt">uint8_t</span> index<span class="op">,</span> sl_tflite_micro_tensor_t<span class="op">*</span> tensor<span class="op">)</span></span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>interpreter <span class="op">==</span> <span class="kw">nullptr</span> <span class="op">||</span> index <span class="op">&gt;=</span> interpreter<span class="op">-&gt;</span>outputs_size<span class="op">())</span> <span class="op">{</span></span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_INVALID_PARAMETER<span class="op">;</span></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>  tensor<span class="op">-&gt;</span>tensor <span class="op">=</span> interpreter<span class="op">-&gt;</span>output<span class="op">(</span>index<span class="op">);</span></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> SL_STATUS_OK<span class="op">;</span></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_set_tensor_data<span class="op">(</span>sl_tflite_micro_tensor_t<span class="op">*</span> tensor<span class="op">,</span> </span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>                                            <span class="dt">const</span> <span class="dt">void</span><span class="op">*</span> data<span class="op">,</span> </span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>                                            <span class="dt">size_t</span> size<span class="op">)</span></span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>tensor <span class="op">==</span> <span class="kw">nullptr</span> <span class="op">||</span> tensor<span class="op">-&gt;</span>tensor <span class="op">==</span> <span class="kw">nullptr</span> <span class="op">||</span> data <span class="op">==</span> <span class="kw">nullptr</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_NULL_POINTER<span class="op">;</span></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Size check based on tensor type and dims</span></span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>  <span class="dt">size_t</span> tensor_size <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>dims<span class="op">-&gt;</span>size<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>    tensor_size <span class="op">*=</span> tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>dims<span class="op">-&gt;</span>data<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>type <span class="op">==</span> kTfLiteFloat32<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>    tensor_size <span class="op">*=</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">);</span></span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>type <span class="op">==</span> kTfLiteInt8<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>    tensor_size <span class="op">*=</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">int8_t</span><span class="op">);</span></span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>type <span class="op">==</span> kTfLiteUInt8<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>    tensor_size <span class="op">*=</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">uint8_t</span><span class="op">);</span></span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_NOT_SUPPORTED<span class="op">;</span></span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>size <span class="op">&gt;</span> tensor_size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_WOULD_OVERFLOW<span class="op">;</span></span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Copy the data to the tensor</span></span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>  memcpy<span class="op">(</span>tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>data<span class="op">.</span>raw<span class="op">,</span> data<span class="op">,</span> size<span class="op">);</span></span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> SL_STATUS_OK<span class="op">;</span></span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_get_tensor_data<span class="op">(</span>sl_tflite_micro_tensor_t<span class="op">*</span> tensor<span class="op">,</span> </span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>                                            <span class="dt">void</span><span class="op">*</span> data<span class="op">,</span> </span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>                                            <span class="dt">size_t</span> size<span class="op">)</span></span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>tensor <span class="op">==</span> <span class="kw">nullptr</span> <span class="op">||</span> tensor<span class="op">-&gt;</span>tensor <span class="op">==</span> <span class="kw">nullptr</span> <span class="op">||</span> data <span class="op">==</span> <span class="kw">nullptr</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_NULL_POINTER<span class="op">;</span></span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Size check based on tensor type and dims</span></span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a>  <span class="dt">size_t</span> tensor_size <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>dims<span class="op">-&gt;</span>size<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a>    tensor_size <span class="op">*=</span> tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>dims<span class="op">-&gt;</span>data<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>type <span class="op">==</span> kTfLiteFloat32<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>    tensor_size <span class="op">*=</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">float</span><span class="op">);</span></span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>type <span class="op">==</span> kTfLiteInt8<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>    tensor_size <span class="op">*=</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">int8_t</span><span class="op">);</span></span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>type <span class="op">==</span> kTfLiteUInt8<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>    tensor_size <span class="op">*=</span> <span class="kw">sizeof</span><span class="op">(</span><span class="dt">uint8_t</span><span class="op">);</span></span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_NOT_SUPPORTED<span class="op">;</span></span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>size <span class="op">&gt;</span> tensor_size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_WOULD_OVERFLOW<span class="op">;</span></span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Copy the data from the tensor</span></span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>  memcpy<span class="op">(</span>data<span class="op">,</span> tensor<span class="op">-&gt;</span>tensor<span class="op">-&gt;</span>data<span class="op">.</span>raw<span class="op">,</span> size<span class="op">);</span></span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> SL_STATUS_OK<span class="op">;</span></span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_invoke<span class="op">(</span><span class="dt">void</span><span class="op">)</span></span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>interpreter <span class="op">==</span> <span class="kw">nullptr</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_NOT_INITIALIZED<span class="op">;</span></span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>  TfLiteStatus status <span class="op">=</span> interpreter<span class="op">-&gt;</span>Invoke<span class="op">();</span></span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>status <span class="op">!=</span> kTfLiteOk<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SL_STATUS_FAIL<span class="op">;</span></span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> SL_STATUS_OK<span class="op">;</span></span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now, create the header file <code>sl_tflite_micro_model.h</code> in the <code>inc</code> folder:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#ifndef SL_TFLITE_MICRO_MODEL_H</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define SL_TFLITE_MICRO_MODEL_H</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_status.h"</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdint.h&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stddef.h&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="pp">#ifdef __cplusplus</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">extern</span> <span class="st">"C"</span> <span class="op">{</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">// Forward declarations from TensorFlow Lite</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="pp">#ifdef __cplusplus</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>namespace tflite <span class="op">{</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> TfLiteTensor<span class="op">;</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>  <span class="co">// namespace tflite</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> tflite<span class="op">::</span>TfLiteTensor TfLiteTensor<span class="op">;</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="pp">#else</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> TfLiteTensor TfLiteTensor<span class="op">;</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">// Tensor structure</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  TfLiteTensor<span class="op">*</span> tensor<span class="op">;</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> sl_tflite_micro_tensor_t<span class="op">;</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@brief</span><span class="co"> Initialize TensorFlow Lite Micro with the sine model</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@return</span><span class="co"> sl_status_t SL_STATUS_OK if successful</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_init<span class="op">(</span><span class="dt">void</span><span class="op">);</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@brief</span><span class="co"> Get an input tensor by index</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">index</span><span class="co"> Index of the input tensor</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">tensor</span><span class="co"> Pointer to the tensor structure to fill</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@return</span><span class="co"> sl_status_t SL_STATUS_OK if successful</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_get_input_tensor<span class="op">(</span><span class="dt">uint8_t</span> index<span class="op">,</span> sl_tflite_micro_tensor_t<span class="op">*</span> tensor<span class="op">);</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@brief</span><span class="co"> Get an output tensor by index</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">index</span><span class="co"> Index of the output tensor</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">tensor</span><span class="co"> Pointer to the tensor structure to fill</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@return</span><span class="co"> sl_status_t SL_STATUS_OK if successful</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_get_output_tensor<span class="op">(</span><span class="dt">uint8_t</span> index<span class="op">,</span> sl_tflite_micro_tensor_t<span class="op">*</span> tensor<span class="op">);</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@brief</span><span class="co"> Set data to a tensor</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">tensor</span><span class="co"> Pointer to the tensor</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">data</span><span class="co"> Pointer to the data to copy</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">size</span><span class="co"> Size of the data in bytes</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@return</span><span class="co"> sl_status_t SL_STATUS_OK if successful</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_set_tensor_data<span class="op">(</span>sl_tflite_micro_tensor_t<span class="op">*</span> tensor<span class="op">,</span> </span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>                                          <span class="dt">const</span> <span class="dt">void</span><span class="op">*</span> data<span class="op">,</span> </span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>                                          <span class="dt">size_t</span> size<span class="op">);</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@brief</span><span class="co"> Get data from a tensor</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">tensor</span><span class="co"> Pointer to the tensor</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">data</span><span class="co"> Pointer to the buffer to receive the data</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@param</span><span class="co"> </span><span class="cv">size</span><span class="co"> Size of the buffer in bytes</span></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@return</span><span class="co"> sl_status_t SL_STATUS_OK if successful</span></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_get_tensor_data<span class="op">(</span>sl_tflite_micro_tensor_t<span class="op">*</span> tensor<span class="op">,</span> </span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>                                          <span class="dt">void</span><span class="op">*</span> data<span class="op">,</span> </span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>                                          <span class="dt">size_t</span> size<span class="op">);</span></span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@brief</span><span class="co"> Run inference using the TensorFlow Lite model</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span></span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a><span class="co"> * </span><span class="an">@return</span><span class="co"> sl_status_t SL_STATUS_OK if successful</span></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a><span class="co"> */</span></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>sl_status_t sl_tflite_micro_invoke<span class="op">(</span><span class="dt">void</span><span class="op">);</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a><span class="pp">#ifdef __cplusplus</span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif </span><span class="co">// SL_TFLITE_MICRO_MODEL_H</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="building-and-flashing-the-application" class="level3" data-number="3.5.6">
+<h3 data-number="3.5.6" class="anchored" data-anchor-id="building-and-flashing-the-application"><span class="header-section-number">3.5.6</span> Building and Flashing the Application</h3>
+<ol type="1">
+<li>In Simplicity Studio, right-click on the project and select “Build Project”</li>
+<li>After successful compilation, right-click again and select “Run As” → “Silicon Labs ARM Program”</li>
+<li>The application will be flashed to your EFR32MG24 device and start running</li>
+</ol>
+</section>
+<section id="observing-the-results" class="level3" data-number="3.5.7">
+<h3 data-number="3.5.7" class="anchored" data-anchor-id="observing-the-results"><span class="header-section-number">3.5.7</span> Observing the Results</h3>
+<p>Once your application is running on the EFR32MG24 device:</p>
+<ol type="1">
+<li>The LED will pulse with brightness that follows the sine wave pattern</li>
+<li>Open the Serial Console in Simplicity Studio to view debug output</li>
+<li>You’ll see logs showing the input value, predicted sine value, and the corresponding LED duty cycle</li>
+</ol>
+</section>
+</section>
+<section id="how-it-works-understanding-the-implementation" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="how-it-works-understanding-the-implementation"><span class="header-section-number">3.6</span> How it Works: Understanding the Implementation</h2>
+<p>Our TinyML sine wave predictor consists of several key components:</p>
+<ol type="1">
+<li><p><strong>Model Training and Conversion</strong>: Using Google Colab, we trained a small neural network to approximate the sine function and converted it to TF Lite format, then to a C array.</p></li>
+<li><p><strong>TensorFlow Lite Micro Integration</strong>: We’ve implemented a simple wrapper around TF Lite Micro’s C++ API, providing a clean C interface for our application.</p></li>
+<li><p><strong>Application Logic</strong>: The main application loop:</p>
+<ul>
+<li>Calculates an x value based on where we are in the cycle</li>
+<li>Feeds this value into the model</li>
+<li>Retrieves the predicted sine value</li>
+<li>Maps the prediction to LED brightness via PWM</li>
+</ul></li>
+<li><p><strong>Visual Output</strong>: The LED brightness follows a sine wave pattern, providing visual confirmation that our model is working correctly.</p></li>
+</ol>
+</section>
+<section id="extending-the-tinyml-application" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="extending-the-tinyml-application"><span class="header-section-number">3.7</span> Extending the TinyML Application</h2>
+<p>Now that we have our basic “Hello World” TinyML application running, there are several ways we can extend and enhance it:</p>
+<section id="adding-multiple-led-support" class="level3" data-number="3.7.1">
+<h3 data-number="3.7.1" class="anchored" data-anchor-id="adding-multiple-led-support"><span class="header-section-number">3.7.1</span> 1. Adding Multiple LED Support</h3>
+<p>For devices with multiple LEDs, we can create more interesting visual patterns by controlling multiple LEDs based on different phases of the sine wave:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// In app.c, add phase offsets for each LED</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define LED_COUNT </span><span class="dv">4</span><span class="pp">  </span><span class="co">// Assuming 4 available LEDs</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="dt">const</span> <span class="dt">float</span> phase_offsets<span class="op">[</span>LED_COUNT<span class="op">]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.0</span><span class="bu">f</span><span class="op">,</span>                  <span class="co">// LED0: No phase offset</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.5</span><span class="bu">f</span> <span class="op">*</span> X_RANGE <span class="op">/</span> <span class="fl">4.0</span><span class="bu">f</span><span class="op">,</span> <span class="co">// LED1: 45 degrees offset</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  X_RANGE <span class="op">/</span> <span class="fl">4.0</span><span class="bu">f</span><span class="op">,</span>        <span class="co">// LED2: 90 degrees offset</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.5</span><span class="bu">f</span> <span class="op">*</span> X_RANGE <span class="op">/</span> <span class="fl">4.0</span><span class="bu">f</span>  <span class="co">// LED3: 135 degrees offset</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">// Then in app_process_action(), add a loop to control all LEDs</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> LED_COUNT<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Calculate offset x value for this LED</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> led_x_val <span class="op">=</span> x_val <span class="op">+</span> phase_offsets<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>led_x_val <span class="op">&gt;=</span> X_RANGE<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    led_x_val <span class="op">-=</span> X_RANGE<span class="op">;</span>  <span class="co">// Wrap around to stay in range</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Prepare input tensor with our x value</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">float</span> input_data<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span> led_x_val <span class="op">};</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  sl_tflite_micro_tensor_t input_tensor<span class="op">;</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  status <span class="op">=</span> sl_tflite_micro_get_input_tensor<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="op">&amp;</span>input_tensor<span class="op">);</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>status <span class="op">!=</span> SL_STATUS_OK<span class="op">)</span> <span class="cf">continue</span><span class="op">;</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Set tensor data, invoke model, and get output as before...</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Set corresponding LED brightness</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="dt">uint8_t</span> duty_cycle <span class="op">=</span> <span class="op">(</span><span class="dt">uint8_t</span><span class="op">)((</span>predicted_sine <span class="op">+</span> <span class="fl">1.0</span><span class="bu">f</span><span class="op">)</span> <span class="op">*</span> <span class="fl">50.0</span><span class="bu">f</span><span class="op">);</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  sl_pwm_set_duty_cycle<span class="op">(</span>i<span class="op">,</span> duty_cycle<span class="op">);</span>  <span class="co">// Assuming LED PWM instances are indexed</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="adding-lcd-display-support" class="level3" data-number="3.7.2">
+<h3 data-number="3.7.2" class="anchored" data-anchor-id="adding-lcd-display-support"><span class="header-section-number">3.7.2</span> 2. Adding LCD Display Support</h3>
+<p>If your EFR32MG24 development board includes an LCD display, you can visualize the sine wave more directly:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// In app.c, add LCD-related includes</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_glib.h"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_simple_lcd.h"</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Add LCD dimensions and buffers</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="pp">#define LCD_WIDTH  </span><span class="dv">128</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="pp">#define LCD_HEIGHT </span><span class="dv">64</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="pp">#define HISTORY_LENGTH </span>LCD_WIDTH</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">float</span> sine_history<span class="op">[</span>HISTORY_LENGTH<span class="op">];</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">int</span> history_index <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">// Initialize the LCD in app_init()</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>sl_simple_lcd_init<span class="op">();</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>sl_glib_init<span class="op">();</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">// Clear history buffer</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> HISTORY_LENGTH<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  sine_history<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="fl">0.0</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">// In app_process_action(), after getting the predicted sine:</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">// Store in history buffer</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>sine_history<span class="op">[</span>history_index<span class="op">]</span> <span class="op">=</span> predicted_sine<span class="op">;</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>history_index <span class="op">=</span> <span class="op">(</span>history_index <span class="op">+</span> <span class="dv">1</span><span class="op">)</span> <span class="op">%</span> HISTORY_LENGTH<span class="op">;</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">// Every few inferences, update the display</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>inference_count <span class="op">%</span> <span class="dv">4</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  GLIB_Context_t context<span class="op">;</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  sl_glib_get_context<span class="op">(&amp;</span>context<span class="op">);</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Clear display</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  GLIB_clear<span class="op">(&amp;</span>context<span class="op">);</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Draw x and y axes</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  GLIB_drawLineH<span class="op">(&amp;</span>context<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> LCD_WIDTH<span class="op">-</span><span class="dv">1</span><span class="op">,</span> LCD_HEIGHT<span class="op">/</span><span class="dv">2</span><span class="op">);</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>  GLIB_drawLineV<span class="op">(&amp;</span>context<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> LCD_HEIGHT<span class="op">-</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Draw the sine wave</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> HISTORY_LENGTH<span class="op">-</span><span class="dv">1</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> x1 <span class="op">=</span> i<span class="op">;</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> y1 <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)(</span>LCD_HEIGHT<span class="op">/</span><span class="dv">2</span> <span class="op">-</span> <span class="op">(</span>sine_history<span class="op">[(</span>history_index <span class="op">+</span> i<span class="op">)</span> <span class="op">%</span> HISTORY_LENGTH<span class="op">]</span> <span class="op">*</span> LCD_HEIGHT<span class="op">/</span><span class="dv">4</span><span class="op">));</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> x2 <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> y2 <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)(</span>LCD_HEIGHT<span class="op">/</span><span class="dv">2</span> <span class="op">-</span> <span class="op">(</span>sine_history<span class="op">[(</span>history_index <span class="op">+</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">)</span> <span class="op">%</span> HISTORY_LENGTH<span class="op">]</span> <span class="op">*</span> LCD_HEIGHT<span class="op">/</span><span class="dv">4</span><span class="op">));</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    GLIB_drawLine<span class="op">(&amp;</span>context<span class="op">,</span> x1<span class="op">,</span> y1<span class="op">,</span> x2<span class="op">,</span> y2<span class="op">);</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Update display</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>  sl_glib_update_display<span class="op">();</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="implementing-power-optimization" class="level3" data-number="3.7.3">
+<h3 data-number="3.7.3" class="anchored" data-anchor-id="implementing-power-optimization"><span class="header-section-number">3.7.3</span> 3. Implementing Power Optimization</h3>
+<p>To make our TinyML application more power-efficient for battery-powered operation, we can add sleep modes between inferences:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Replace the fixed delay with sleep mode</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">// Instead of: sl_sleeptimer_delay_millisecond(INFERENCE_INTERVAL_MS);</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#if defined(SL_CATALOG_POWER_MANAGER_PRESENT)</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Schedule next wakeup</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  sl_sleeptimer_tick_t ticks <span class="op">=</span> sl_sleeptimer_ms_to_tick<span class="op">(</span>INFERENCE_INTERVAL_MS<span class="op">);</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  sl_power_manager_schedule_wakeup<span class="op">(</span>ticks<span class="op">,</span> NULL<span class="op">,</span> NULL<span class="op">);</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Enter sleep mode</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  sl_power_manager_sleep<span class="op">();</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="pp">#else</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Fall back to delay if power manager isn't available</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  sl_sleeptimer_delay_millisecond<span class="op">(</span>INFERENCE_INTERVAL_MS<span class="op">);</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="enhanced-user-interface-with-buttons" class="level3" data-number="3.7.4">
+<h3 data-number="3.7.4" class="anchored" data-anchor-id="enhanced-user-interface-with-buttons"><span class="header-section-number">3.7.4</span> 4. Enhanced User Interface with Buttons</h3>
+<p>We can use the buttons on the development board to control aspects of the application:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Include button support</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_button.h"</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_simple_button.h"</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"sl_simple_button_btn0_config.h"</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Add state variables</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">bool</span> paused <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="dt">static</span> <span class="dt">float</span> speed_factor <span class="op">=</span> <span class="fl">1.0</span><span class="bu">f</span><span class="op">;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">// In app_init, initialize buttons</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>sl_button_init<span class="op">(&amp;</span>sl_button_btn0<span class="op">);</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">// Check button state in app_process_action</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>sl_button_get_state<span class="op">(&amp;</span>sl_button_btn0<span class="op">)</span> <span class="op">==</span> SL_SIMPLE_BUTTON_PRESSED<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Toggle pause state</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  paused <span class="op">=</span> <span class="op">!</span>paused<span class="op">;</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">"Application </span><span class="sc">%s\n</span><span class="st">"</span><span class="op">,</span> paused <span class="op">?</span> <span class="st">"paused"</span> <span class="op">:</span> <span class="st">"resumed"</span><span class="op">);</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">// Only update inference_count if not paused</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span>paused<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  inference_count <span class="op">+=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>inference_count <span class="op">&gt;=</span> INFERENCES_PER_CYCLE<span class="op">)</span> inference_count <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="performance-profiling-and-optimization" class="level3" data-number="3.7.5">
+<h3 data-number="3.7.5" class="anchored" data-anchor-id="performance-profiling-and-optimization"><span class="header-section-number">3.7.5</span> 5. Performance Profiling and Optimization</h3>
+<p>To understand and optimize the performance of our TinyML application, we can add timing measurements:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Add profiling includes</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_cmu.h"</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"em_timer.h"</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Setup timer for profiling in app_init()</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>CMU_ClockEnable<span class="op">(</span>cmuClock_TIMER1<span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>TIMER_Init_TypeDef timerInit <span class="op">=</span> TIMER_INIT_DEFAULT<span class="op">;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>TIMER_Init<span class="op">(</span>TIMER1<span class="op">,</span> <span class="op">&amp;</span>timerInit<span class="op">);</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">// In app_process_action(), measure inference time</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">// Reset timer</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>TIMER_CounterSet<span class="op">(</span>TIMER1<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">// Start timer</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>TIMER_Enable<span class="op">(</span>TIMER1<span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">// Run inference</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> sl_tflite_micro_invoke<span class="op">();</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">// Stop timer and read value</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>TIMER_Enable<span class="op">(</span>TIMER1<span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="dt">uint32_t</span> ticks <span class="op">=</span> TIMER_CounterGet<span class="op">(</span>TIMER1<span class="op">);</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">// Convert ticks to microseconds (depends on timer clock)</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="dt">uint32_t</span> us <span class="op">=</span> ticks <span class="op">/</span> <span class="op">(</span>CMU_ClockFreqGet<span class="op">(</span>cmuClock_TIMER1<span class="op">)</span> <span class="op">/</span> <span class="dv">1000000</span><span class="op">);</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">// Log every Nth inference</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>inference_count <span class="op">%</span> <span class="dv">10</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  printf<span class="op">(</span><span class="st">"Inference time: </span><span class="sc">%lu</span><span class="st"> microseconds</span><span class="sc">\n</span><span class="st">"</span><span class="op">,</span> us<span class="op">);</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="building-tinyml-applications-with-the-gecko-sdk" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="building-tinyml-applications-with-the-gecko-sdk"><span class="header-section-number">3.8</span> Building TinyML Applications with the Gecko SDK</h2>
+<p>Compared to the traditional TinyML approach with direct TensorFlow Lite for Microcontrollers integration, the Gecko SDK approach offers several advantages for EFR32 developers:</p>
+<section id="simplified-project-setup" class="level3" data-number="3.8.1">
+<h3 data-number="3.8.1" class="anchored" data-anchor-id="simplified-project-setup"><span class="header-section-number">3.8.1</span> Simplified Project Setup</h3>
+<p>The Gecko SDK provides a structured approach to project creation with built-in TinyML support:</p>
+<ol type="1">
+<li><p><strong>Project Templates</strong>: Simplicity Studio’s project wizard includes TinyML templates that set up the necessary directory structure, build configuration, and initial code.</p></li>
+<li><p><strong>Integrated Build System</strong>: The SDK handles compiler flags, library dependencies, and linking, eliminating the need for custom Makefiles.</p></li>
+<li><p><strong>Hardware Abstraction Layer (HAL)</strong>: The SDK provides hardware-specific drivers and APIs for peripherals like PWM, GPIOs, and timers, making it easier to integrate TinyML with device hardware.</p></li>
+</ol>
+</section>
+<section id="streamlined-development-workflow" class="level3" data-number="3.8.2">
+<h3 data-number="3.8.2" class="anchored" data-anchor-id="streamlined-development-workflow"><span class="header-section-number">3.8.2</span> Streamlined Development Workflow</h3>
+<p>The development workflow with Simplicity Studio and Gecko SDK is straightforward:</p>
+<ol type="1">
+<li><p><strong>Model Training</strong>: Use Google Colab or TensorFlow on your computer to train and convert models.</p></li>
+<li><p><strong>Project Creation</strong>: Launch Simplicity Studio, select the TensorFlow Lite Micro example template, and create a new project.</p></li>
+<li><p><strong>Model Integration</strong>: Import your model header file into the project.</p></li>
+<li><p><strong>Application Logic</strong>: Write code in C to initialize the model, prepare inputs, run inference, and process outputs.</p></li>
+<li><p><strong>Build and Flash</strong>: Use Simplicity Studio’s integrated tools to compile the code and flash it to your device.</p></li>
+<li><p><strong>Debug and Monitor</strong>: The Serial Console and Energy Profiler tools help monitor application behavior and optimize performance.</p></li>
+</ol>
+</section>
+<section id="hardware-specific-optimizations" class="level3" data-number="3.8.3">
+<h3 data-number="3.8.3" class="anchored" data-anchor-id="hardware-specific-optimizations"><span class="header-section-number">3.8.3</span> Hardware-Specific Optimizations</h3>
+<p>The Gecko SDK includes optimizations specifically for the EFR32 platform:</p>
+<ol type="1">
+<li><p><strong>Memory Optimization</strong>: Memory management is tuned for the EFR32’s memory architecture.</p></li>
+<li><p><strong>Power Management</strong>: Integration with the Energy Management Unit (EMU) allows for fine-grained control over active, sleep, and deep sleep states.</p></li>
+<li><p><strong>Peripheral Control</strong>: Direct access to hardware accelerators and peripherals that can enhance TinyML performance.</p></li>
+</ol>
+</section>
+</section>
+<section id="conclusion" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">3.9</span> Conclusion</h2>
+<p>The sine wave predictor represents an elegant “Hello World” example of TinyML deployment on the EFR32MG24 platform. While seemingly simple, this implementation encompasses all the key elements of machine learning on microcontrollers:</p>
+<ol type="1">
+<li>Model design with consideration for resource constraints</li>
+<li>Training and evaluation on standard datasets</li>
+<li>Quantization and optimization for embedded deployment</li>
+<li>Integration with Simplicity Studio and Gecko SDK</li>
+<li>Hardware output integration via GPIO and PWM capabilities</li>
+</ol>
+<p>Through this foundation, developers can extend to more complex TinyML applications on the EFR32MG24, such as sensor fusion, predictive maintenance, anomaly detection, and keyword spotting—all within a power envelope suitable for long-term battery-powered operation.</p>
+<p>The techniques demonstrated here—model quantization, C code generation, and deployment with Simplicity Studio—provide a template that can be adapted for more sophisticated machine learning tasks, enabling a new class of intelligent edge devices based on the EFR32MG24 platform.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../contents/core/10_ml_foundations.html" class="pagination-link" aria-label="The Art and Science of Machine Learning">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../contents/core/12_ml_helloworld2.html" class="pagination-link" aria-label="Building a TinyML Application">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Building a TinyML Application</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Written by Masudul Imtiaz, PhD (Clarkson University)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/11_ml_helloworld.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/11_ml_helloworld.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>1&nbsp; Introduction – Embedded Systems Design</title>
+<title>1&nbsp; Introduction to Embedded Machine Learning – Embedded Systems Design</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,19 +30,19 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../contents/core/2_programmingwithc.html" rel="next">
+<link href="../../contents/core/10_ml_foundations.html" rel="next">
 <link href="../../index.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-86daaaaad7353f9cc0c554efc1dd6d94.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-f8dc6eab18fde03278982b0b35885446.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de84f8d6bb715db06a919283c2d1e787.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-9a023c9ade86a60361e96e3e3f11bc54.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-b4fc4dddb6ec1a779f0a285a431e56d0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-eae2d66f002e799350c2a60e45471621.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-4ad2cf0c28f2a60df2ec31094e236ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-92d51d81327e8e79bdb8c3bc0cdd12ec.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -117,7 +117,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Systems Design</a></li><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Embedded Machine Learning</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -146,7 +146,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Embedded Systems Design</span></a>
+ <span class="menu-text">Embedded Machine Learning</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -155,72 +155,43 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/1_introduction.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Embedded Machine Learning</span></span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../contents/core/2_programmingwithc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><strong>Programming Embedded Systems with C</strong></span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../contents/core/3_devkitoverview.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title"><strong>EFR32xG24 Development Kit Overview</strong></span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../contents/core/4_efr32programming.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title"><strong>EFR32 I/O Programming</strong></span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../contents/core/5_efr32applications.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title"><strong>Applications of EFR32 I/O</strong></span></span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Embedded Machine Learning</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/10_ml_foundations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../contents/core/6_gesturerecog_realtime.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
+  <a href="../../contents/core/11_ml_helloworld.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The “Hello World” of TinyML</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../contents/core/7_gesturerecog_magicwand.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
+  <a href="../../contents/core/12_ml_helloworld2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Building a TinyML Application</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../contents/core/8_anomalydetection_htm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
+  <a href="../../contents/core/13_handwritten_recognition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Handwriting Digit Recognition</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../contents/core/9_audioml.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
+  <a href="../../contents/core/14_imu_gesture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">IMU-Based Gesture Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/15_posture_detection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Posture Detection Using Neural Networks</span></span></a>
   </div>
 </li>
       </ul>
@@ -236,17 +207,17 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1.1</span> Overview</a></li>
-  <li><a href="#real-world-applications-of-embedded-systems" id="toc-real-world-applications-of-embedded-systems" class="nav-link" data-scroll-target="#real-world-applications-of-embedded-systems"><span class="header-section-number">1.2</span> Real-World Applications of Embedded Systems</a></li>
-  <li><a href="#overview-of-efr32mg24-microcontroller" id="toc-overview-of-efr32mg24-microcontroller" class="nav-link" data-scroll-target="#overview-of-efr32mg24-microcontroller"><span class="header-section-number">1.3</span> Overview of EFR32MG24 Microcontroller</a></li>
+  <li><a href="#real-world-applications-of-embedded-machine-learning" id="toc-real-world-applications-of-embedded-machine-learning" class="nav-link" data-scroll-target="#real-world-applications-of-embedded-machine-learning"><span class="header-section-number">1.2</span> Real-World Applications of Embedded Machine Learning</a></li>
+  <li><a href="#the-efr32mg24-for-machine-learning-applications" id="toc-the-efr32mg24-for-machine-learning-applications" class="nav-link" data-scroll-target="#the-efr32mg24-for-machine-learning-applications"><span class="header-section-number">1.3</span> The EFR32MG24 for Machine Learning Applications</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/1_introduction.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/1_introduction.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Systems Design</a></li><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Embedded Machine Learning</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></h1>
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Embedded Machine Learning</span></h1>
 </div>
 
 
@@ -264,36 +235,43 @@ ul.task-list li input[type="checkbox"] {
 
 
 <div class="chapterintro">
-<p>This chapter introduces the essential concepts of embedded systems and highlights the growing significance of BLE technology in modern designs. It emphasizes the role of microcontrollers, particularly the Silicon Labs EFR32XG24, in enabling efficient, low-power wireless communication for IoT applications. Whether you are a student starting your embedded systems journey or an engineer aiming to enhance your design skills, this booklet will serve as a valuable resource to build innovative and efficient BLE-enabled embedded solutions.</p>
+<p>This chapter introduces the essential concepts of embedded machine learning and highlights the growing significance of TinyML in modern embedded system designs. It emphasizes the role of microcontrollers, particularly the Silicon Labs EFR32MG24, in enabling efficient, low-power machine learning inferencing for IoT applications. Whether you are a student starting your embedded ML journey or an engineer aiming to enhance your system design skills, this textbook will serve as a valuable resource to build innovative and efficient TinyML-enabled embedded solutions.</p>
 </div>
 <section id="overview" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1.1</span> Overview</h2>
-<p>Embedded systems are specialized computing systems that are designed to perform dedicated functions or tasks within a larger mechanical or electrical system. Unlike general-purpose computers, embedded systems are optimized for specific applications, balancing constraints such as power consumption, real-time performance, and cost efficiency. They are integral to a wide range of applications, including consumer electronics, automotive systems, medical devices, industrial automation, and smart home technologies.</p>
-<p>At the core of most embedded systems lies a microcontroller, a compact integrated circuit that combines a processor, memory, and input/output peripherals on a single chip. Microcontrollers are the brain of embedded systems, executing pre-programmed instructions to manage sensors, actuators, and communication modules. Their efficiency, reliability, and low power consumption make them ideal for embedded applications.</p>
-<p>In recent years, the demand for wireless communication in embedded systems has surged, driven by the growth of the Internet of Things (IoT). Among the various wireless protocols, Bluetooth Low Energy (BLE) has emerged as a key technology for low-power, short-range communication. BLE enables devices to transmit small amounts of data with minimal energy consumption, making it ideal for battery-operated applications such as fitness trackers, smart home devices, and health monitoring systems.</p>
-<p>The Silicon Labs EFR32XG24 series is one of the most advanced BLE microcontrollers available in Q4 of 2024. Built on the ARM Cortex-M33 core, it offers a powerful blend of performance, energy efficiency, and wireless connectivity. It is equipped with a robust BLE stack, extensive peripherals, and advanced security features, making it a preferred choice for designing sophisticated embedded systems.</p>
-<p>This textbook, <em>System Design with Silicon Lab EFR32XG24 BLE Microcontroller</em>, is intended to provide a guide for students and engineers to understand and design embedded systems using the EFR32xG24 Dev Kit. The book covers both theoretical concepts and hands-on practical implementations, ensuring readers gain a deep understanding of embedded system design and BLE communication protocols.</p>
+<p>Embedded machine learning, often referred to as TinyML, represents a paradigm shift in computational intelligence by bringing sophisticated inferencing capabilities directly to resource-constrained embedded systems. Unlike traditional machine learning systems that rely on cloud computing or powerful edge devices, TinyML optimizes models to operate within the strict memory, processing, and power constraints of microcontrollers. This evolution enables a new class of intelligent devices that can make real-time decisions locally without requiring constant connectivity to external servers.</p>
+<p>At the core of TinyML systems lies the microcontroller, a compact integrated circuit that combines a processor, memory, and input/output peripherals on a single chip. Modern microcontrollers like the Silicon Labs EFR32MG24 are increasingly designed with ML workloads in mind, featuring specialized hardware accelerators and optimized instruction sets that enhance neural network performance while maintaining energy efficiency.</p>
+<p>In recent years, the demand for local intelligence in IoT devices has surged, driven by concerns about latency, privacy, bandwidth limitations, and power consumption. TinyML addresses these challenges by enabling machine learning models to run directly on microcontrollers, processing sensor data locally and making intelligent decisions without transmitting raw data to the cloud. This approach is particularly valuable for applications such as keyword spotting, gesture recognition, anomaly detection, and predictive maintenance in industrial settings.</p>
+<p>The Silicon Labs EFR32MG24 series is one of the most advanced microcontrollers available for TinyML applications in 2024. Built on the ARM Cortex-M33 core operating at 78 MHz, it offers a powerful blend of performance and energy efficiency, with a memory footprint of 1536KB flash and 256KB RAM. The platform includes an AI/ML hardware accelerator that enhances neural network execution, making it ideal for deploying sophisticated TinyML models while maintaining battery life in portable devices.</p>
+<p>This textbook, <em>Embedded Machine Learning Design with Silicon Labs EFR32MG24</em>, provides a comprehensive guide for students and engineers to understand and implement TinyML solutions. The book covers both theoretical foundations and practical implementations, ensuring readers gain a deep understanding of machine learning optimization for resource-constrained systems.</p>
 <p>Throughout this book, readers will learn:</p>
 <ul>
-<li><p>The fundamentals of embedded systems and microcontroller architecture.</p></li>
-<li><p>Key features and capabilities of the EFR32XG24 BLE microcontroller.</p></li>
-<li><p>Practical techniques for programming and debugging embedded systems.</p></li>
-<li><p>BLE communication protocols and integration with IoT applications.</p></li>
-<li><p>Real-world case studies and projects demonstrating system design principles.</p></li>
+<li>The fundamentals of TinyML and the computational constraints paradigm</li>
+<li>Model compression and quantization techniques for microcontroller deployment</li>
+<li>Practical implementation using Google Colab for model training and Simplicity Studio for deployment</li>
+<li>Hands-on experience building the canonical “Hello World” of TinyML: a sine wave predictor</li>
+<li>Advanced techniques for power optimization, performance profiling, and model efficiency</li>
+<li>Real-world case studies demonstrating TinyML applications across various domains</li>
 </ul>
 </section>
-<section id="real-world-applications-of-embedded-systems" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="real-world-applications-of-embedded-systems"><span class="header-section-number">1.2</span> Real-World Applications of Embedded Systems</h2>
-<p>Embedded systems are deeply integrated into modern life, serving as the backbone for countless devices and technologies. They are designed to execute dedicated functions efficiently while operating under constraints such as power consumption, memory limitations, and cost. Examples of embedded systems can be observed in both everyday objects and complex industrial applications, showcasing their versatility and importance in modern engineering.</p>
-<p>One prominent example is the automotive industry, where embedded systems play a critical role in ensuring safety, efficiency, and advanced functionalities. Anti-lock Braking Systems (ABS) use embedded controllers to regulate brake pressure, preventing skidding on slippery roads and enhancing vehicle stability. Similarly, adaptive cruise control systems utilize embedded microcontrollers to monitor vehicle speed and distance through RADAR or LIDAR sensors, enabling intelligent speed adjustments. Another safety-critical application is the airbag control system, which relies on real-time sensor data to trigger airbag deployment within milliseconds during a collision.</p>
-<p>In industrial automation, embedded systems are central to the operation of robotic arms, conveyor belts, and assembly lines. These systems handle precise sequencing, closed-loop control, and real-time signal processing to maintain efficiency and safety. For example, industrial robots are programmed to carry out repetitive tasks such as welding, painting, and packaging, each controlled by embedded microcontrollers to ensure accuracy and reliability.</p>
-<p>Consumer electronics also heavily rely on embedded systems. Devices such as programmable engineering calculators, automated teller machines (ATMs), and smart home appliances incorporate microcontrollers to perform specific tasks seamlessly. Modern washing machines, for instance, utilize embedded controllers to monitor water levels, manage wash cycles, and adjust spin speeds dynamically. Similarly, ATMs use embedded microcontrollers to process transactions securely while managing input and output operations.</p>
-<p>BLE microcontrollers have further extended the capabilities of embedded systems by enabling low-power wireless communication. BLE technology is particularly advantageous in battery-operated devices like fitness trackers, smart home sensors, and medical monitoring equipment. These microcontrollers facilitate energy-efficient data transmission, allowing devices to remain functional for extended periods without frequent battery replacements.</p>
+<section id="real-world-applications-of-embedded-machine-learning" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="real-world-applications-of-embedded-machine-learning"><span class="header-section-number">1.2</span> Real-World Applications of Embedded Machine Learning</h2>
+<p>Embedded machine learning is transforming countless devices and technologies by enabling local intelligence in resource-constrained environments. TinyML systems execute sophisticated inferencing tasks efficiently while operating under strict constraints of power consumption, memory limitations, and processing capabilities. Examples of TinyML applications can be observed across diverse industries, showcasing the versatility and transformative potential of this technology.</p>
+<p>In healthcare and wearables, TinyML enables continuous health monitoring without draining battery life. Smart watches and fitness trackers use embedded ML algorithms to detect irregular heartbeats, analyze sleep patterns, and recognize specific activities based on motion sensor data. These devices perform complex pattern recognition locally, only transmitting alerts or summarized insights rather than constant streams of raw data, preserving both battery life and user privacy.</p>
+<p>Industrial IoT applications leverage TinyML for predictive maintenance and anomaly detection at the sensor level. Embedded microcontrollers equipped with ML capabilities can analyze vibration patterns from motors or machinery, detecting subtle changes that might indicate impending failure before catastrophic breakdowns occur. By processing this data directly on the device, these systems can operate in environments with limited connectivity while providing real-time insights.</p>
+<p>Consumer electronics increasingly incorporate TinyML to enhance user experience through always-on, low-power intelligence. Voice assistants use keyword spotting models running on microcontrollers to detect wake words without sending all audio to the cloud. Smart home sensors employ ML algorithms to differentiate between routine movements and security concerns, reducing false alarms while improving response times to genuine threats.</p>
+<p>Agricultural and environmental monitoring systems utilize TinyML to enable intelligent, autonomous operation in remote locations. Soil moisture sensors can incorporate local ML models to optimize irrigation schedules based on weather patterns, soil conditions, and crop-specific needs. Wildlife tracking devices use embedded ML to classify animal behaviors directly on the device, extending battery life from days to months by eliminating continuous data transmission.</p>
+<p>The EFR32MG24 microcontroller is particularly well-suited for these applications due to its balance of processing power, memory resources, and energy efficiency. Its ARM Cortex-M33 core provides sufficient computational capabilities for running inference on neural networks, while its power management features enable long-term operation on battery power. The integrated ML accelerator further enhances performance for specific machine learning workloads, enabling more complex models to run efficiently.</p>
 </section>
-<section id="overview-of-efr32mg24-microcontroller" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="overview-of-efr32mg24-microcontroller"><span class="header-section-number">1.3</span> Overview of EFR32MG24 Microcontroller</h2>
-<p>The EFR32MG24 microcontroller, part of Silicon Labs’ Wireless Gecko series, is specifically designed to address the growing demand for energy-efficient and high-performance wireless communication in embedded systems. Built on the ARM Cortex-<strong>M33</strong> core, it operates at a maximum frequency of <strong>78</strong> MHz, delivering sufficient computational power for real-time applications while maintaining energy efficiency. The microcontroller integrates advanced hardware security features, including a hardware cryptographic accelerator and Secure Boot, ensuring robust protection against cyber threats. It supports multiple wireless protocols, with a primary focus on BLE 5.3, enabling reliable, low-power, short-range communication. The integrated radio transceiver offers industry-leading sensitivity and output power, ensuring stable connectivity even in challenging environments.</p>
-<p>The EFR32MG24 is equipped with a range of analog and digital peripherals, including ADCs, DACs, timers, UART, SPI, and I2C interfaces, providing flexible options for sensor integration and peripheral control. Its low-power modes, combined with energy-saving peripherals and Sleep Timer capabilities, make it highly suitable for battery-operated devices such as IoT sensor nodes, wearable electronics, and smart home devices. This also features an on-chip AI/ML hardware accelerator, enabling edge-computing capabilities for tasks like sensor data analysis and anomaly detection. Hence, this microcontroller, available in the xG24-DK2601B Development Kit, is chosen for this book.</p>
+<section id="the-efr32mg24-for-machine-learning-applications" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="the-efr32mg24-for-machine-learning-applications"><span class="header-section-number">1.3</span> The EFR32MG24 for Machine Learning Applications</h2>
+<p>The EFR32MG24 microcontroller, part of Silicon Labs’ Wireless Gecko series, is specifically designed to address the growing demand for local machine learning capabilities in resource-constrained embedded systems. Built on the ARM Cortex-M33 core, it operates at a maximum frequency of 78 MHz, delivering sufficient computational power for real-time ML inferencing while maintaining energy efficiency. With 1536KB of flash memory and 256KB of RAM, it provides adequate storage for both program code and machine learning models after quantization and optimization.</p>
+<p>A key feature that distinguishes the EFR32MG24 for ML applications is its dedicated AI/ML hardware accelerator, which enhances the execution of specific neural network operations. This accelerator enables more efficient matrix multiplications and other common ML computations, allowing for faster inference times and lower power consumption compared to software-only implementations. Combined with the DSP extensions in the Cortex-M33 architecture, this hardware support makes the EFR32MG24 an excellent platform for deploying sophisticated TinyML models.</p>
+<p>The EFR32MG24 excels in power management, offering multiple low-power modes that are essential for battery-operated ML devices. Its Energy Management Unit (EMU) allows fine-grained control over active, sleep, and deep sleep states, enabling systems to run inferencing only when needed and remain in ultra-low-power states otherwise. This capability is critical for applications like smart sensors that may need to periodically analyze data but remain dormant most of the time.</p>
+<p>For data acquisition and sensor integration, the EFR32MG24 provides comprehensive peripheral support, including high-precision ADCs, DACs, and various communication interfaces (UART, SPI, I2C). These peripherals enable the connection of diverse sensors for gathering the input data required by ML models. The microcontroller’s wireless capabilities, particularly Bluetooth Low Energy (BLE), allow for convenient model updates, configuration changes, and the transmission of inference results when necessary.</p>
+<p>Security features are increasingly important in ML-enabled devices, and the EFR32MG24 addresses this through hardware-based security elements including a cryptographic accelerator and secure boot mechanisms. These features help protect both the intellectual property embedded in the ML models and any sensitive data processed by the device.</p>
+<p>The development environment for the EFR32MG24, centered around Simplicity Studio and the Gecko SDK, provides integrated support for TinyML workflows. The SDK includes optimized libraries for TensorFlow Lite Micro, enabling straightforward deployment of models trained using popular frameworks like TensorFlow. This integration streamlines the development process from model training to on-device deployment, making the platform accessible even to developers new to machine learning.</p>
+<p>Available in the xG24-DK2601B Development Kit, the EFR32MG24 provides an ideal platform for learning and experimenting with embedded machine learning concepts, from simple inferencing tasks like our sine wave predictor to more complex applications such as sensor fusion, anomaly detection, and pattern recognition. Throughout this book, we will use this powerful yet resource-constrained platform to demonstrate the principles and practices of efficient TinyML implementation.</p>
 
 
 </section>
@@ -819,8 +797,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../contents/core/2_programmingwithc.html" class="pagination-link" aria-label="**Programming Embedded Systems with C**">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><strong>Programming Embedded Systems with C</strong></span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../contents/core/10_ml_foundations.html" class="pagination-link" aria-label="The Art and Science of Machine Learning">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

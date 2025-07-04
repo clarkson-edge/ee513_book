@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>6&nbsp; The Art and Science of Machine Learning – Embedded Systems Design</title>
+<title>2&nbsp; The Art and Science of Machine Learning – Embedded Systems Design</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,19 +64,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../contents/core/6_gesturerecog_realtime.html" rel="next">
-<link href="../../contents/core/5_efr32applications.html" rel="prev">
+<link href="../../contents/core/11_ml_helloworld.html" rel="next">
+<link href="../../contents/core/1_introduction.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-86daaaaad7353f9cc0c554efc1dd6d94.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-f8dc6eab18fde03278982b0b35885446.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de84f8d6bb715db06a919283c2d1e787.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-9a023c9ade86a60361e96e3e3f11bc54.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-b4fc4dddb6ec1a779f0a285a431e56d0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-eae2d66f002e799350c2a60e45471621.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-4ad2cf0c28f2a60df2ec31094e236ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-92d51d81327e8e79bdb8c3bc0cdd12ec.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -183,7 +183,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -212,7 +212,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Embedded Systems Design</span></a>
+ <span class="menu-text">Embedded Machine Learning</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -221,72 +221,43 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/1_introduction.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Embedded Machine Learning</span></span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../contents/core/2_programmingwithc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title"><strong>Programming Embedded Systems with C</strong></span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../contents/core/3_devkitoverview.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title"><strong>EFR32xG24 Development Kit Overview</strong></span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../contents/core/4_efr32programming.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title"><strong>EFR32 I/O Programming</strong></span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../contents/core/5_efr32applications.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title"><strong>Applications of EFR32 I/O</strong></span></span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Embedded Machine Learning</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../contents/core/10_ml_foundations.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../contents/core/6_gesturerecog_realtime.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span></a>
+  <a href="../../contents/core/11_ml_helloworld.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The “Hello World” of TinyML</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../contents/core/7_gesturerecog_magicwand.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title"><strong>Magic Wand via Gesture Recognition</strong></span></span></a>
+  <a href="../../contents/core/12_ml_helloworld2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Building a TinyML Application</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../contents/core/8_anomalydetection_htm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title"><strong>IMU Anomaly Detection Using Hierarchical Temporal Memory</strong></span></span></a>
+  <a href="../../contents/core/13_handwritten_recognition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Handwriting Digit Recognition</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../contents/core/9_audioml.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title"><strong>Audio ML for EFR32</strong></span></span></a>
+  <a href="../../contents/core/14_imu_gesture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">IMU-Based Gesture Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/15_posture_detection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Posture Detection Using Neural Networks</span></span></a>
   </div>
 </li>
       </ul>
@@ -301,47 +272,47 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#origins-and-evolution" id="toc-origins-and-evolution" class="nav-link active" data-scroll-target="#origins-and-evolution"><span class="header-section-number">6.1</span> Origins and Evolution</a>
+  <li><a href="#origins-and-evolution" id="toc-origins-and-evolution" class="nav-link active" data-scroll-target="#origins-and-evolution"><span class="header-section-number">2.1</span> Origins and Evolution</a>
   <ul>
-  <li><a href="#historical-context" id="toc-historical-context" class="nav-link" data-scroll-target="#historical-context"><span class="header-section-number">6.1.1</span> Historical Context</a></li>
-  <li><a href="#from-rule-based-to-learning-systems" id="toc-from-rule-based-to-learning-systems" class="nav-link" data-scroll-target="#from-rule-based-to-learning-systems"><span class="header-section-number">6.1.2</span> From Rule-Based to Learning Systems</a></li>
-  <li><a href="#the-statistical-revolution" id="toc-the-statistical-revolution" class="nav-link" data-scroll-target="#the-statistical-revolution"><span class="header-section-number">6.1.3</span> The Statistical Revolution</a></li>
+  <li><a href="#historical-context" id="toc-historical-context" class="nav-link" data-scroll-target="#historical-context"><span class="header-section-number">2.1.1</span> Historical Context</a></li>
+  <li><a href="#from-rule-based-to-learning-systems" id="toc-from-rule-based-to-learning-systems" class="nav-link" data-scroll-target="#from-rule-based-to-learning-systems"><span class="header-section-number">2.1.2</span> From Rule-Based to Learning Systems</a></li>
+  <li><a href="#the-statistical-revolution" id="toc-the-statistical-revolution" class="nav-link" data-scroll-target="#the-statistical-revolution"><span class="header-section-number">2.1.3</span> The Statistical Revolution</a></li>
   </ul></li>
-  <li><a href="#understanding-learning-systems" id="toc-understanding-learning-systems" class="nav-link" data-scroll-target="#understanding-learning-systems"><span class="header-section-number">6.2</span> Understanding Learning Systems</a>
+  <li><a href="#understanding-learning-systems" id="toc-understanding-learning-systems" class="nav-link" data-scroll-target="#understanding-learning-systems"><span class="header-section-number">2.2</span> Understanding Learning Systems</a>
   <ul>
-  <li><a href="#the-learning-paradigm" id="toc-the-learning-paradigm" class="nav-link" data-scroll-target="#the-learning-paradigm"><span class="header-section-number">6.2.1</span> The Learning Paradigm</a></li>
-  <li><a href="#learning-from-data" id="toc-learning-from-data" class="nav-link" data-scroll-target="#learning-from-data"><span class="header-section-number">6.2.2</span> Learning from Data</a></li>
-  <li><a href="#the-nature-of-patterns" id="toc-the-nature-of-patterns" class="nav-link" data-scroll-target="#the-nature-of-patterns"><span class="header-section-number">6.2.3</span> The Nature of Patterns</a></li>
+  <li><a href="#the-learning-paradigm" id="toc-the-learning-paradigm" class="nav-link" data-scroll-target="#the-learning-paradigm"><span class="header-section-number">2.2.1</span> The Learning Paradigm</a></li>
+  <li><a href="#learning-from-data" id="toc-learning-from-data" class="nav-link" data-scroll-target="#learning-from-data"><span class="header-section-number">2.2.2</span> Learning from Data</a></li>
+  <li><a href="#the-nature-of-patterns" id="toc-the-nature-of-patterns" class="nav-link" data-scroll-target="#the-nature-of-patterns"><span class="header-section-number">2.2.3</span> The Nature of Patterns</a></li>
   </ul></li>
-  <li><a href="#the-nature-of-machine-learning" id="toc-the-nature-of-machine-learning" class="nav-link" data-scroll-target="#the-nature-of-machine-learning"><span class="header-section-number">6.3</span> The Nature of Machine Learning</a>
+  <li><a href="#the-nature-of-machine-learning" id="toc-the-nature-of-machine-learning" class="nav-link" data-scroll-target="#the-nature-of-machine-learning"><span class="header-section-number">2.3</span> The Nature of Machine Learning</a>
   <ul>
-  <li><a href="#learning-as-induction" id="toc-learning-as-induction" class="nav-link" data-scroll-target="#learning-as-induction"><span class="header-section-number">6.3.1</span> Learning as Induction</a></li>
-  <li><a href="#the-role-of-uncertainty" id="toc-the-role-of-uncertainty" class="nav-link" data-scroll-target="#the-role-of-uncertainty"><span class="header-section-number">6.3.2</span> The Role of Uncertainty</a></li>
-  <li><a href="#model-complexity-and-regularization" id="toc-model-complexity-and-regularization" class="nav-link" data-scroll-target="#model-complexity-and-regularization"><span class="header-section-number">6.3.3</span> Model Complexity and Regularization</a></li>
+  <li><a href="#learning-as-induction" id="toc-learning-as-induction" class="nav-link" data-scroll-target="#learning-as-induction"><span class="header-section-number">2.3.1</span> Learning as Induction</a></li>
+  <li><a href="#the-role-of-uncertainty" id="toc-the-role-of-uncertainty" class="nav-link" data-scroll-target="#the-role-of-uncertainty"><span class="header-section-number">2.3.2</span> The Role of Uncertainty</a></li>
+  <li><a href="#model-complexity-and-regularization" id="toc-model-complexity-and-regularization" class="nav-link" data-scroll-target="#model-complexity-and-regularization"><span class="header-section-number">2.3.3</span> Model Complexity and Regularization</a></li>
   </ul></li>
-  <li><a href="#building-learning-systems" id="toc-building-learning-systems" class="nav-link" data-scroll-target="#building-learning-systems"><span class="header-section-number">6.4</span> Building Learning Systems</a>
+  <li><a href="#building-learning-systems" id="toc-building-learning-systems" class="nav-link" data-scroll-target="#building-learning-systems"><span class="header-section-number">2.4</span> Building Learning Systems</a>
   <ul>
-  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">6.4.1</span> Data Preparation</a></li>
-  <li><a href="#model-selection-and-training" id="toc-model-selection-and-training" class="nav-link" data-scroll-target="#model-selection-and-training"><span class="header-section-number">6.4.2</span> Model Selection and Training</a></li>
-  <li><a href="#model-evaluation-and-deployment" id="toc-model-evaluation-and-deployment" class="nav-link" data-scroll-target="#model-evaluation-and-deployment"><span class="header-section-number">6.4.3</span> Model Evaluation and Deployment</a></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">2.4.1</span> Data Preparation</a></li>
+  <li><a href="#model-selection-and-training" id="toc-model-selection-and-training" class="nav-link" data-scroll-target="#model-selection-and-training"><span class="header-section-number">2.4.2</span> Model Selection and Training</a></li>
+  <li><a href="#model-evaluation-and-deployment" id="toc-model-evaluation-and-deployment" class="nav-link" data-scroll-target="#model-evaluation-and-deployment"><span class="header-section-number">2.4.3</span> Model Evaluation and Deployment</a></li>
   </ul></li>
-  <li><a href="#the-ethics-and-governance-of-machine-learning" id="toc-the-ethics-and-governance-of-machine-learning" class="nav-link" data-scroll-target="#the-ethics-and-governance-of-machine-learning"><span class="header-section-number">6.5</span> The Ethics and Governance of Machine Learning</a>
+  <li><a href="#the-ethics-and-governance-of-machine-learning" id="toc-the-ethics-and-governance-of-machine-learning" class="nav-link" data-scroll-target="#the-ethics-and-governance-of-machine-learning"><span class="header-section-number">2.5</span> The Ethics and Governance of Machine Learning</a>
   <ul>
-  <li><a href="#fairness-and-bias" id="toc-fairness-and-bias" class="nav-link" data-scroll-target="#fairness-and-bias"><span class="header-section-number">6.5.1</span> Fairness and Bias</a></li>
-  <li><a href="#transparency-and-accountability" id="toc-transparency-and-accountability" class="nav-link" data-scroll-target="#transparency-and-accountability"><span class="header-section-number">6.5.2</span> Transparency and Accountability</a></li>
-  <li><a href="#safety-and-robustness" id="toc-safety-and-robustness" class="nav-link" data-scroll-target="#safety-and-robustness"><span class="header-section-number">6.5.3</span> Safety and Robustness</a></li>
-  <li><a href="#ethical-principles-and-governance-frameworks" id="toc-ethical-principles-and-governance-frameworks" class="nav-link" data-scroll-target="#ethical-principles-and-governance-frameworks"><span class="header-section-number">6.5.4</span> Ethical Principles and Governance Frameworks</a></li>
+  <li><a href="#fairness-and-bias" id="toc-fairness-and-bias" class="nav-link" data-scroll-target="#fairness-and-bias"><span class="header-section-number">2.5.1</span> Fairness and Bias</a></li>
+  <li><a href="#transparency-and-accountability" id="toc-transparency-and-accountability" class="nav-link" data-scroll-target="#transparency-and-accountability"><span class="header-section-number">2.5.2</span> Transparency and Accountability</a></li>
+  <li><a href="#safety-and-robustness" id="toc-safety-and-robustness" class="nav-link" data-scroll-target="#safety-and-robustness"><span class="header-section-number">2.5.3</span> Safety and Robustness</a></li>
+  <li><a href="#ethical-principles-and-governance-frameworks" id="toc-ethical-principles-and-governance-frameworks" class="nav-link" data-scroll-target="#ethical-principles-and-governance-frameworks"><span class="header-section-number">2.5.4</span> Ethical Principles and Governance Frameworks</a></li>
   </ul></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">6.6</span> Conclusion</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">2.6</span> Conclusion</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/10_ml_foundations.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/10_ml_foundations.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/10_ml_foundations.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></h1>
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></h1>
 </div>
 
 
@@ -361,11 +332,11 @@ window.Quarto = {
 <p>Learning lies at the heart of intelligence, whether natural or artificial. In this chapter, we will embark on a fascinating exploration of the fundamental principles that enable machines to learn from experience. Together, we will examine both the theoretical foundations that provide a rigorous mathematical basis for machine learning, as well as the practical considerations that shape the design and implementation of modern learning systems. Our journey will take us from the historical roots of the field through to the cutting-edge research defining the current state of the art and the open challenges guiding future directions. By the end of this chapter, you will have built a comprehensive understanding of how machines can acquire, represent, and apply knowledge to solve complex problems and enhance decision-making across a wide range of domains.</p>
 <p>To make our exploration as engaging and accessible as possible, I will aim to break down complex ideas into more easily digestible parts, building up gradually to the more advanced concepts. Along the way, I will make use of intuitive analogies, illustrative examples, and step-by-step explanations to help illuminate key points. Please feel free to ask questions or share your own insights at any point - learning is an interactive process and your contributions will only enrich our discussion!</p>
 <p>With that in mind, let’s begin our journey into the art and science of machine learning.</p>
-<section id="origins-and-evolution" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="origins-and-evolution"><span class="header-section-number">6.1</span> Origins and Evolution</h2>
+<section id="origins-and-evolution" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="origins-and-evolution"><span class="header-section-number">2.1</span> Origins and Evolution</h2>
 <p>To fully appreciate the current state and future potential of machine learning, it is helpful to understand its historical context and developmental trajectory. In this section, we will trace the origins of the field and highlight the pivotal advances that have shaped its evolution.</p>
-<section id="historical-context" class="level3" data-number="6.1.1">
-<h3 data-number="6.1.1" class="anchored" data-anchor-id="historical-context"><span class="header-section-number">6.1.1</span> Historical Context</h3>
+<section id="historical-context" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="historical-context"><span class="header-section-number">2.1.1</span> Historical Context</h3>
 <p>The dream of creating intelligent machines that can learn and adapt has captivated the human imagination for centuries. In mythology and folklore around the world, we find stories of animated beings imbued with ‘artificial’ intelligence, from the golems of Jewish legends to the mechanical servants of ancient China. These ageless visions speak to a deep fascination with the idea of breathing life and cognizance into inanimate matter.</p>
 <p>However, the emergence of machine learning as a scientific discipline is a more recent development, tracing its origins to the mid-20th century. In a profound sense, the birth of machine learning as we know it today arose from the convergence of several key intellectual traditions:</p>
 <p><em>Artificial intelligence</em> - The quest to create machines capable of intelligent behavior</p>
@@ -383,8 +354,8 @@ window.Quarto = {
 </ul>
 <p>These pioneering efforts laid the conceptual and technical groundwork for the subsequent decades of research that grew the field into the thriving discipline it is today.</p>
 </section>
-<section id="from-rule-based-to-learning-systems" class="level3" data-number="6.1.2">
-<h3 data-number="6.1.2" class="anchored" data-anchor-id="from-rule-based-to-learning-systems"><span class="header-section-number">6.1.2</span> From Rule-Based to Learning Systems</h3>
+<section id="from-rule-based-to-learning-systems" class="level3" data-number="2.1.2">
+<h3 data-number="2.1.2" class="anchored" data-anchor-id="from-rule-based-to-learning-systems"><span class="header-section-number">2.1.2</span> From Rule-Based to Learning Systems</h3>
 <p>In its early stages, artificial intelligence research focused heavily on symbolic logic and deductive reasoning. The prevailing paradigm was that of “expert systems” - computer programs that encoded human knowledge and expertise in the form of explicit logical rules. A canonical example was MYCIN, a program developed at Stanford University in the early 1970s to assist doctors in diagnosing and treating blood infections. MYCIN’s knowledge base contained hundreds of IF-THEN rules obtained by interviewing expert physicians, such as:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode prolog code-with-copy"><code class="sourceCode prolog"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">IF</span> (organism<span class="dv">-1</span> <span class="dt">is</span> gram<span class="dt">-</span>positive) <span class="dt">AND</span> </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   (morphology of organism<span class="dv">-1</span> <span class="dt">is</span> coccus) <span class="dt">AND</span></span>
@@ -401,8 +372,8 @@ window.Quarto = {
 </ul>
 <p>These shortcomings highlighted the need for a fundamentally different approach - one that could overcome the rigidity and opacity of handcrafted symbolical rules and instead acquire knowledge directly from data.</p>
 </section>
-<section id="the-statistical-revolution" class="level3" data-number="6.1.3">
-<h3 data-number="6.1.3" class="anchored" data-anchor-id="the-statistical-revolution"><span class="header-section-number">6.1.3</span> The Statistical Revolution</h3>
+<section id="the-statistical-revolution" class="level3" data-number="2.1.3">
+<h3 data-number="2.1.3" class="anchored" data-anchor-id="the-statistical-revolution"><span class="header-section-number">2.1.3</span> The Statistical Revolution</h3>
 <p>The critical shift from rule-based to learning systems was catalyzed by two key insights: Many real-world domains are intrinsically uncertain and subject to noise, necessitating a probabilistic treatment. Expertise is often implicit and intuitive rather than explicit and axiomatic, making it more amenable to statistical extraction than symbolic codification.</p>
 <p>Consider again the task of medical diagnosis that systems like MYCIN sought to automate. While it is possible to elicit a set of logical rules from a human expert, there are several complicating factors:</p>
 <ul>
@@ -430,11 +401,11 @@ window.Quarto = {
 <p>Together, innovations like these provided the foundations for statistical learning systems that could effectively extract knowledge from raw data. They set the stage for the following decades of progress that would see machine learning mature into one of the most transformative technologies of our time.</p>
 </section>
 </section>
-<section id="understanding-learning-systems" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="understanding-learning-systems"><span class="header-section-number">6.2</span> Understanding Learning Systems</h2>
+<section id="understanding-learning-systems" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="understanding-learning-systems"><span class="header-section-number">2.2</span> Understanding Learning Systems</h2>
 <p>Having reviewed the historical context and key conceptual shifts behind the emergence of machine learning, we are now in a position to examine learning systems in greater depth. In this section, we will explore the fundamental principles that define the learning paradigm, the central role played by data, and the nature of the patterns that learning uncovers.</p>
-<section id="the-learning-paradigm" class="level3" data-number="6.2.1">
-<h3 data-number="6.2.1" class="anchored" data-anchor-id="the-learning-paradigm"><span class="header-section-number">6.2.1</span> The Learning Paradigm</h3>
+<section id="the-learning-paradigm" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="the-learning-paradigm"><span class="header-section-number">2.2.1</span> The Learning Paradigm</h3>
 <p>At its core, machine learning represents a radical departure from traditional programming approaches. To appreciate this, it is helpful to consider how we might go about solving a complex task such as object recognition using classical programming:</p>
 <p>First, we would need to sit down and think hard about all the steps involved in identifying objects in images. We might come up with rules like:</p>
 <ul>
@@ -503,8 +474,8 @@ window.Quarto = {
 </ul>
 <p>Of course, this is just a toy example intended to illustrate the basic flow. Real-world applications involve much larger datasets, more complex models, and more challenging prediction tasks. But the fundamental paradigm remains the same: by optimizing an objective function on a sample of training data, learning algorithms can automatically extract useful patterns and knowledge that generalize to novel situations.</p>
 </section>
-<section id="learning-from-data" class="level3" data-number="6.2.2">
-<h3 data-number="6.2.2" class="anchored" data-anchor-id="learning-from-data"><span class="header-section-number">6.2.2</span> Learning from Data</h3>
+<section id="learning-from-data" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="learning-from-data"><span class="header-section-number">2.2.2</span> Learning from Data</h3>
 <p>As the spam classification example makes clear, data plays a first-class role in machine learning. Indeed, one of the defining characteristics of the field is its focus on automatically extracting knowledge from empirical observations, rather than relying solely on human-encoded expertise. In this section, we take a closer look at how learning systems leverage data to acquire and refine their knowledge.</p>
 <p>To begin, it is useful to clarify what we mean by “data” in a machine learning context. At the most basic level, a dataset is a collection of examples, where each example (also known as a “sample” or “instance”) provides a concrete instantiation of the task or phenomenon we wish to learn about. In the spam classification scenario, for instance, each example corresponds to an actual email message, along with a label indicating whether it is spam or not.</p>
 <p>More formally, we can think of an example as a pair (x,y), where:</p>
@@ -551,8 +522,8 @@ window.Quarto = {
 <p>In general, high-quality data is essential for successful learning. While it’s tempting to focus mainly on the choice of model class and learning algorithm, in practice the quality of the results is often determined by the quality of the data preparation pipeline.</p>
 <p><em>As the saying goes, </em>”garbage in, garbage out”* - if the input data is full of noise, bias, and inconsistencies, no amount of algorithmic sophistication can extract meaningful patterns.*</p>
 </section>
-<section id="the-nature-of-patterns" class="level3" data-number="6.2.3">
-<h3 data-number="6.2.3" class="anchored" data-anchor-id="the-nature-of-patterns"><span class="header-section-number">6.2.3</span> The Nature of Patterns</h3>
+<section id="the-nature-of-patterns" class="level3" data-number="2.2.3">
+<h3 data-number="2.2.3" class="anchored" data-anchor-id="the-nature-of-patterns"><span class="header-section-number">2.2.3</span> The Nature of Patterns</h3>
 <p>Having looked at the role of data in learning, let’s now turn our attention to the other central ingredient - the patterns that learning algorithms aim to extract. What exactly do we mean by “patterns” in the context of machine learning, and how do learning systems represent and leverage them?</p>
 <p>In the most general sense, a pattern is any regularity or structure that exists in the data and captures some useful information for the task at hand. For instance, in spam classification, some relevant patterns might include:</p>
 <ul>
@@ -615,11 +586,11 @@ window.Quarto = {
 <p>Of course, this is just a toy example intended to illustrate the basic principles. In practice, modern learning systems often employ much higher-dimensional feature spaces, more elaborate model families, and more sophisticated optimization procedures. But the fundamental idea remains the same - by adjusting the parameters of a flexible model to minimize the empirical risk on a training dataset, learning algorithms can automatically discover patterns that generalize to improve performance on novel examples.</p>
 </section>
 </section>
-<section id="the-nature-of-machine-learning" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="the-nature-of-machine-learning"><span class="header-section-number">6.3</span> The Nature of Machine Learning</h2>
+<section id="the-nature-of-machine-learning" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="the-nature-of-machine-learning"><span class="header-section-number">2.3</span> The Nature of Machine Learning</h2>
 <p>Having examined the fundamental components of learning systems - the data they learn from and the patterns they aim to extract - we now turn to some higher-level questions about the nature of learning itself. What does it mean for a machine to “learn” in the first place? How does this process differ from other approaches to artificial intelligence? And what challenges and opportunities does the learning paradigm present?</p>
-<section id="learning-as-induction" class="level3" data-number="6.3.1">
-<h3 data-number="6.3.1" class="anchored" data-anchor-id="learning-as-induction"><span class="header-section-number">6.3.1</span> Learning as Induction</h3>
+<section id="learning-as-induction" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="learning-as-induction"><span class="header-section-number">2.3.1</span> Learning as Induction</h3>
 <p>At a fundamental level, machine learning can be understood as a form of inductive inference - the process of drawing general conclusions from specific examples. In philosophical terms, this contrasts with deductive inference, which derives specific conclusions from general premises.</p>
 <p>Consider a classic example of deductive reasoning:</p>
 <ul>
@@ -682,8 +653,8 @@ window.Quarto = {
 </ul>
 <p>Despite these challenges, the inductive learning paradigm has proven remarkably effective across a wide range of applications. In domains from medical diagnosis and scientific discovery to robotics and autonomous vehicles, machine learning systems are able to match or exceed human performance by discovering patterns that are too subtle or complex for manual specification. As the availability of data and computing power continues to grow, it’s likely that the scope and impact of machine learning will only continue to expand.</p>
 </section>
-<section id="the-role-of-uncertainty" class="level3" data-number="6.3.2">
-<h3 data-number="6.3.2" class="anchored" data-anchor-id="the-role-of-uncertainty"><span class="header-section-number">6.3.2</span> The Role of Uncertainty</h3>
+<section id="the-role-of-uncertainty" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="the-role-of-uncertainty"><span class="header-section-number">2.3.2</span> The Role of Uncertainty</h3>
 <p>One of the most crucial things to understand about machine learning is that it is, at its core, a fundamentally probabilistic endeavor. When a learning algorithm draws conclusions from data, those conclusions are never absolutely certain, but rather statements of probability based on the patterns in the training examples.</p>
 <p>Think back to our spam classification example. Even if our training dataset was very large and diverse, covering a wide range of both spam and legitimate emails, we can never be 100% sure that the patterns it captures will hold for every possible future email. There could always be some new type of spam that looks very different from what we’ve seen before, or some unusual legitimate email that happens to share many features with typical spam.</p>
 <p>What a good machine learning model gives us, then, is not a definite classification, but a probability estimate. When we use logistic regression to predict the “spamminess” of an email, the model’s output is a number between 0 and 1 that can be interpreted as the estimated probability that the email is spam, given its input features.</p>
@@ -712,8 +683,8 @@ window.Quarto = {
 </ul>
 <p>As we continue to push the boundaries of what machine learning systems can do, the ability to properly quantify and reason about uncertainty will only become more essential. From building robust and reliable models to enabling effective human-AI collaboration, embracing uncertainty is key to unlocking the full potential of machine learning.</p>
 </section>
-<section id="model-complexity-and-regularization" class="level3" data-number="6.3.3">
-<h3 data-number="6.3.3" class="anchored" data-anchor-id="model-complexity-and-regularization"><span class="header-section-number">6.3.3</span> Model Complexity and Regularization</h3>
+<section id="model-complexity-and-regularization" class="level3" data-number="2.3.3">
+<h3 data-number="2.3.3" class="anchored" data-anchor-id="model-complexity-and-regularization"><span class="header-section-number">2.3.3</span> Model Complexity and Regularization</h3>
 <p>Another fundamental challenge in machine learning is striking the right balance between model complexity and generalization performance. On one hand, we want our models to be expressive enough to capture meaningful patterns in the data. On the other hand, we don’t want them to overfit to noise or idiosyncrasies of the training set and fail to generalize to new examples.</p>
 <p>This tradeoff is commonly known as the bias-variance dilemma:</p>
 <ul>
@@ -734,11 +705,11 @@ window.Quarto = {
 <p>In fact, recent research has suggested that overparameterized models can exhibit “double descent” behavior, where increasing the model complexity beyond the point of interpolating the training data can actually improve generalization performance. This challenges the classical view of the bias-variance tradeoff and suggests that our understanding of model complexity and generalization is still evolving. Despite these nuances, the basic principles of managing model complexity and using regularization to promote generalization remain central to the practice of machine learning. As we train increasingly powerful models on ever-larger datasets, finding the right balance between expressiveness and constrainedness will be key to achieving robust and reliable performance.</p>
 </section>
 </section>
-<section id="building-learning-systems" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="building-learning-systems"><span class="header-section-number">6.4</span> Building Learning Systems</h2>
+<section id="building-learning-systems" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="building-learning-systems"><span class="header-section-number">2.4</span> Building Learning Systems</h2>
 <p>Now that we’ve explored some of the key theoretical principles behind machine learning, let’s turn our attention to the practical considerations involved in building effective learning systems. What are the key components of a successful machine learning pipeline, and how do they fit together?</p>
-<section id="data-preparation" class="level3" data-number="6.4.1">
-<h3 data-number="6.4.1" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">6.4.1</span> Data Preparation</h3>
+<section id="data-preparation" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">2.4.1</span> Data Preparation</h3>
 <p>The first and arguably most important step in any machine learning project is preparing the data. As we saw in Section 6.2.2, the quality and representativeness of the training data is essential for learning meaningful patterns that generalize well to new examples. No amount of algorithmic sophistication can make up for fundamentally flawed or insufficient data.</p>
 <p>Key aspects of data preparation include:</p>
 <ul>
@@ -774,8 +745,8 @@ window.Quarto = {
 ...</code></pre>
 <p>Of course, this is just a toy example, and in practice the data preparation process can be much more involved. The key point is that investing time and effort into carefully preparing the data is essential for building successful learning systems.</p>
 </section>
-<section id="model-selection-and-training" class="level3" data-number="6.4.2">
-<h3 data-number="6.4.2" class="anchored" data-anchor-id="model-selection-and-training"><span class="header-section-number">6.4.2</span> Model Selection and Training</h3>
+<section id="model-selection-and-training" class="level3" data-number="2.4.2">
+<h3 data-number="2.4.2" class="anchored" data-anchor-id="model-selection-and-training"><span class="header-section-number">2.4.2</span> Model Selection and Training</h3>
 <p>Once the data is prepared, the next step is to select an appropriate model family and training procedure. As we saw in Section 6.3.3, this involves striking a balance between model complexity and generalization ability, often through a combination of cross-validation and regularization techniques.</p>
 <p>Some key considerations in model selection include:</p>
 <ul>
@@ -835,8 +806,8 @@ window.Quarto = {
 <p>By tuning the learning rate <code>lr</code>, regularization strength <code>alpha</code>, and number of iterations <code>num_iters</code>, we can find the model that achieves the best balance between fitting the training data and generalizing to new examples.</p>
 <p>Of course, linear regression is just one possible model choice for this problem. We could also experiment with more complex models like decision trees, random forests, or neural networks, each of which would have its own set of hyperparameters to tune. The key is to use a combination of domain knowledge, empirical validation, and iterative refinement to find the model that best suits the problem at hand.</p>
 </section>
-<section id="model-evaluation-and-deployment" class="level3" data-number="6.4.3">
-<h3 data-number="6.4.3" class="anchored" data-anchor-id="model-evaluation-and-deployment"><span class="header-section-number">6.4.3</span> Model Evaluation and Deployment</h3>
+<section id="model-evaluation-and-deployment" class="level3" data-number="2.4.3">
+<h3 data-number="2.4.3" class="anchored" data-anchor-id="model-evaluation-and-deployment"><span class="header-section-number">2.4.3</span> Model Evaluation and Deployment</h3>
 <p>Once we’ve trained a model that performs well on the validation set, the final step is to evaluate its performance on the held-out test set. This gives us an unbiased estimate of how well the model is likely to generalize to real-world data.</p>
 <p>Common evaluation metrics for <em>classification problems</em> include:</p>
 <ul>
@@ -887,11 +858,11 @@ window.Quarto = {
 <p>Again, this is a simplified example, but it illustrates the end-to-end process of building a machine learning system, from data preparation to model development to deployment and maintenance.</p>
 </section>
 </section>
-<section id="the-ethics-and-governance-of-machine-learning" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="the-ethics-and-governance-of-machine-learning"><span class="header-section-number">6.5</span> The Ethics and Governance of Machine Learning</h2>
+<section id="the-ethics-and-governance-of-machine-learning" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="the-ethics-and-governance-of-machine-learning"><span class="header-section-number">2.5</span> The Ethics and Governance of Machine Learning</h2>
 <p>As machine learning systems become more prevalent and powerful, it’s crucial that we grapple with the ethical implications of their development and deployment. In this final section, we’ll explore some key ethical considerations and governance principles for responsible machine learning.</p>
-<section id="fairness-and-bias" class="level3" data-number="6.5.1">
-<h3 data-number="6.5.1" class="anchored" data-anchor-id="fairness-and-bias"><span class="header-section-number">6.5.1</span> Fairness and Bias</h3>
+<section id="fairness-and-bias" class="level3" data-number="2.5.1">
+<h3 data-number="2.5.1" class="anchored" data-anchor-id="fairness-and-bias"><span class="header-section-number">2.5.1</span> Fairness and Bias</h3>
 <p>One of the most pressing ethical challenges in machine learning is ensuring that models are fair and unbiased. If the training data reflects historical biases or discrimination, the resulting model may perpetuate or even amplify those biases in its predictions.</p>
 <p>For example, consider a hiring model that is trained on past hiring decisions to predict the likelihood of a candidate being successful in a job. If the training data comes from a company with a history of discriminatory hiring practices, the model may learn to penalize candidates from underrepresented groups, even if those factors are not actually predictive of job performance.</p>
 <p>Detecting and mitigating bias in machine learning systems is an active area of research, with techniques like:</p>
@@ -903,8 +874,8 @@ window.Quarto = {
 </ul>
 <p>However, these techniques are not perfect, and there is often a tradeoff between fairness and accuracy. Moreover, fairness is not a purely technical issue, but a sociotechnical one that requires ongoing collaboration between machine learning practitioners, domain experts, policymakers, and affected communities.</p>
 </section>
-<section id="transparency-and-accountability" class="level3" data-number="6.5.2">
-<h3 data-number="6.5.2" class="anchored" data-anchor-id="transparency-and-accountability"><span class="header-section-number">6.5.2</span> Transparency and Accountability</h3>
+<section id="transparency-and-accountability" class="level3" data-number="2.5.2">
+<h3 data-number="2.5.2" class="anchored" data-anchor-id="transparency-and-accountability"><span class="header-section-number">2.5.2</span> Transparency and Accountability</h3>
 <p>Another key ethical principle for machine learning is transparency and accountability. As models become more complex and consequential, it becomes harder for humans to understand how they arrive at their predictions and to trace the provenance of their training data and design choices.</p>
 <p>This opacity can make it difficult to audit models for bias, safety, or compliance with regulations. It can also make it harder to challenge or appeal decisions made by machine learning systems, leading to a loss of human agency and recourse.</p>
 <p>Some techniques for promoting transparency and accountability in machine learning include:</p>
@@ -922,8 +893,8 @@ window.Quarto = {
 <li><p>Developing legal and regulatory frameworks to enforce transparency and accountability standards</p></li>
 </ul>
 </section>
-<section id="safety-and-robustness" class="level3" data-number="6.5.3">
-<h3 data-number="6.5.3" class="anchored" data-anchor-id="safety-and-robustness"><span class="header-section-number">6.5.3</span> Safety and Robustness</h3>
+<section id="safety-and-robustness" class="level3" data-number="2.5.3">
+<h3 data-number="2.5.3" class="anchored" data-anchor-id="safety-and-robustness"><span class="header-section-number">2.5.3</span> Safety and Robustness</h3>
 <p>As machine learning systems are deployed in increasingly high-stakes domains, from healthcare to transportation to criminal justice, ensuring their safety and robustness becomes paramount. Models that are brittle, unreliable, or easily fooled can lead to serious harms if they are not carefully designed and tested.</p>
 <p>Some key challenges in machine learning safety and robustness include:</p>
 <ul>
@@ -947,8 +918,8 @@ window.Quarto = {
 <li><p>Ongoing monitoring and adjustment of deployed systems to catch and correct errors and unintended consequences</p></li>
 </ul>
 </section>
-<section id="ethical-principles-and-governance-frameworks" class="level3" data-number="6.5.4">
-<h3 data-number="6.5.4" class="anchored" data-anchor-id="ethical-principles-and-governance-frameworks"><span class="header-section-number">6.5.4</span> Ethical Principles and Governance Frameworks</h3>
+<section id="ethical-principles-and-governance-frameworks" class="level3" data-number="2.5.4">
+<h3 data-number="2.5.4" class="anchored" data-anchor-id="ethical-principles-and-governance-frameworks"><span class="header-section-number">2.5.4</span> Ethical Principles and Governance Frameworks</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="img/chapter10_responsibleai.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="img/chapter10_responsibleai.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></a></p>
@@ -975,8 +946,8 @@ window.Quarto = {
 <p>Ultimately, the goal of machine learning governance should be to ensure that the technology is developed and deployed in a way that aligns with human values and enhances, rather than undermines, human flourishing. This is a complex and ongoing process that will require sustained collaboration across disciplines, sectors, and geographies.</p>
 </section>
 </section>
-<section id="conclusion" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">6.6</span> Conclusion</h2>
+<section id="conclusion" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">2.6</span> Conclusion</h2>
 <p>In this chapter, we’ve embarked on a comprehensive exploration of the foundations of machine learning, from its historical roots to its modern techniques to its future challenges. We’ve seen how the field has evolved from rule-based expert systems to data-driven statistical learning, powered by the explosion of big data and computing power. We’ve examined the fundamental components of machine learning systems - the data they learn from, the patterns they aim to extract, and the algorithms that power the learning process. We’ve discussed key concepts like inductive bias, generalization, overfitting, and regularization, and how they relate to the art of building effective models. We’ve walked through the practical steps of constructing a machine learning pipeline, from data preparation to model selection to deployment and monitoring. And we’ve grappled with some of the ethical challenges and governance principles that arise when building systems that can have significant impact on people’s lives.</p>
 <p>The field of machine learning is still rapidly evolving, with new breakthroughs and challenges emerging every year. As we look to the future, some of the key frontiers and open questions include:</p>
 <ul>
@@ -1508,13 +1479,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../contents/core/5_efr32applications.html" class="pagination-link" aria-label="**Applications of EFR32 I/O**">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title"><strong>Applications of EFR32 I/O</strong></span></span>
+      <a href="../../contents/core/1_introduction.html" class="pagination-link" aria-label="Introduction to Embedded Machine Learning">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Embedded Machine Learning</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../contents/core/6_gesturerecog_realtime.html" class="pagination-link" aria-label="Real-Time Gesture Recognition">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Gesture Recognition</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../contents/core/11_ml_helloworld.html" class="pagination-link" aria-label="The &quot;Hello World&quot; of TinyML">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The “Hello World” of TinyML</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

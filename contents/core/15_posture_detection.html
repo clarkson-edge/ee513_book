@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>7&nbsp; Real-Time Posture Detection Using Neural Networks – Embedded Systems Design</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../contents/core/14_imu_gesture.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de84f8d6bb715db06a919283c2d1e787.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-9a023c9ade86a60361e96e3e3f11bc54.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-4ad2cf0c28f2a60df2ec31094e236ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-92d51d81327e8e79bdb8c3bc0cdd12ec.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "~",
+    "/"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Embedded Systems Design</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-wide tools-end">
+    <a href="https://github.com/clarkson-edge/ee513_book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../../Embedded-Systems-Design.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/15_posture_detection.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Posture Detection Using Neural Networks</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Embedded Machine Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/1_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Embedded Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/10_ml_foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/11_ml_helloworld.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The “Hello World” of TinyML</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/12_ml_helloworld2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Building a TinyML Application</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/13_handwritten_recognition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Handwriting Digit Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/14_imu_gesture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">IMU-Based Gesture Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/15_posture_detection.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Posture Detection Using Neural Networks</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#chapter-objectives" id="toc-chapter-objectives" class="nav-link active" data-scroll-target="#chapter-objectives"><span class="header-section-number">7.1</span> Chapter Objectives</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">7.2</span> Overview</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">7.3</span> Introduction</a></li>
+  <li><a href="#hardware-configuration" id="toc-hardware-configuration" class="nav-link" data-scroll-target="#hardware-configuration"><span class="header-section-number">7.4</span> Hardware Configuration</a></li>
+  <li><a href="#development-environment" id="toc-development-environment" class="nav-link" data-scroll-target="#development-environment"><span class="header-section-number">7.5</span> Development Environment</a></li>
+  <li><a href="#data-acquisition-and-processing" id="toc-data-acquisition-and-processing" class="nav-link" data-scroll-target="#data-acquisition-and-processing"><span class="header-section-number">7.6</span> Data Acquisition and Processing</a>
+  <ul>
+  <li><a href="#data-collection-methodology" id="toc-data-collection-methodology" class="nav-link" data-scroll-target="#data-collection-methodology"><span class="header-section-number">7.6.1</span> Data Collection Methodology</a></li>
+  <li><a href="#signal-processing-and-feature-extraction" id="toc-signal-processing-and-feature-extraction" class="nav-link" data-scroll-target="#signal-processing-and-feature-extraction"><span class="header-section-number">7.6.2</span> Signal Processing and Feature Extraction</a></li>
+  </ul></li>
+  <li><a href="#model-architecture-and-training" id="toc-model-architecture-and-training" class="nav-link" data-scroll-target="#model-architecture-and-training"><span class="header-section-number">7.7</span> Model Architecture and Training</a>
+  <ul>
+  <li><a href="#neural-network-design" id="toc-neural-network-design" class="nav-link" data-scroll-target="#neural-network-design"><span class="header-section-number">7.7.1</span> Neural Network Design</a></li>
+  <li><a href="#training-methodology" id="toc-training-methodology" class="nav-link" data-scroll-target="#training-methodology"><span class="header-section-number">7.7.2</span> Training Methodology</a></li>
+  <li><a href="#performance-evaluation" id="toc-performance-evaluation" class="nav-link" data-scroll-target="#performance-evaluation"><span class="header-section-number">7.7.3</span> Performance Evaluation</a></li>
+  </ul></li>
+  <li><a href="#deployment-implementation" id="toc-deployment-implementation" class="nav-link" data-scroll-target="#deployment-implementation"><span class="header-section-number">7.8</span> Deployment Implementation</a>
+  <ul>
+  <li><a href="#model-optimization-techniques" id="toc-model-optimization-techniques" class="nav-link" data-scroll-target="#model-optimization-techniques"><span class="header-section-number">7.8.1</span> Model Optimization Techniques</a></li>
+  <li><a href="#firmware-architecture" id="toc-firmware-architecture" class="nav-link" data-scroll-target="#firmware-architecture"><span class="header-section-number">7.8.2</span> Firmware Architecture</a></li>
+  <li><a href="#wireless-communication-interface" id="toc-wireless-communication-interface" class="nav-link" data-scroll-target="#wireless-communication-interface"><span class="header-section-number">7.8.3</span> Wireless Communication Interface</a></li>
+  </ul></li>
+  <li><a href="#performance-analysis" id="toc-performance-analysis" class="nav-link" data-scroll-target="#performance-analysis"><span class="header-section-number">7.9</span> Performance Analysis</a>
+  <ul>
+  <li><a href="#experimental-evaluation" id="toc-experimental-evaluation" class="nav-link" data-scroll-target="#experimental-evaluation"><span class="header-section-number">7.9.1</span> Experimental Evaluation</a></li>
+  <li><a href="#limitations-and-challenges" id="toc-limitations-and-challenges" class="nav-link" data-scroll-target="#limitations-and-challenges"><span class="header-section-number">7.9.2</span> Limitations and Challenges</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">7.10</span> Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">7.11</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/15_posture_detection.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/15_posture_detection.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/15_posture_detection.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Posture Detection Using Neural Networks</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Posture Detection Using Neural Networks</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="chapter-objectives" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="chapter-objectives"><span class="header-section-number">7.1</span> Chapter Objectives</h2>
+<p>• Develop a real-time posture detection system using the EFR32xG24 MCU</p>
+<p>• Implement a neural network model for classifying five distinct postures from accelerometer data</p>
+<p>• Apply signal processing techniques for feature extraction from time-series IMU data</p>
+<p>• Optimize the neural network model for deployment on resource-constrained hardware</p>
+<p>• Establish BLE communication for real-time feedback and monitoring</p>
+<p>• Evaluate system performance including accuracy, latency, and power consumption</p>
+</section>
+<section id="overview" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="overview"><span class="header-section-number">7.2</span> Overview</h2>
+<p>Building upon the IMU-based gesture recognition framework established in Chapter 5, this chapter explores a specialized application with significant real-world impact: real-time posture detection for workplace safety. While the previous chapter demonstrated general motion pattern recognition capabilities, we now focus on the specific challenge of classifying human postures to prevent musculoskeletal injuries in industrial settings. This application demonstrates how the fundamental techniques of embedded machine learning can be tailored to address practical problems with measurable benefits to human health and productivity.</p>
+<p>This chapter presents the development and implementation of a real-time posture detection syste. The system continuously monitors accelerometer data to classify five distinct postures—correct sitting, correct squatting, improper sitting, incorrect bending, and walking—through a neural network trained using Edge Impulse. The implementation follows an embedded machine learning approach, prioritizing low power consumption, real-time processing, and efficient resource utilization. Approximately 10 minutes of training data was collected across all posture classes, with 4-second windows used for classification. The neural network model achieved 100% accuracy on validation data and 87.1% on test data, demonstrating robust performance. When deployed on the EFR32xG24 platform, the system achieved a classification latency of 3ms, enabling real-time feedback through Bluetooth Low Energy communication. This implementation showcases the capability of modern microcontrollers to perform sophisticated posture analysis with minimal resources, providing a foundation for wearable health monitoring systems and occupational safety applications.</p>
+</section>
+<section id="introduction" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="introduction"><span class="header-section-number">7.3</span> Introduction</h2>
+<p>Poor posture during work activities is a significant contributor to musculoskeletal disorders, which account for approximately 30% of all workplace injuries requiring time away from work. Beyond health implications, research suggests that improved posture among manufacturing employees can lead to significant increases in productivity. Traditional posture monitoring approaches often rely on visual observation or post-hoc analysis, which fail to provide real-time feedback necessary for immediate correction and lasting behavioral change.</p>
+<p>This chapter explores the implementation of an automated posture detection system using the onboard 6-axis inertial measurement unit. The system employs a neural network-based classification algorithm that identifies five distinct postures: correct sitting, correct squatting, improper sitting, incorrect bending, and walking. These postures represent common positions in manufacturing and industrial environments, where workers may experience issues related to cramped working conditions, heavy lifting, or repetitive tasks.</p>
+<p>The machine learning hardware accelerator enables efficient execution of neural network models, while the BLE connectivity allows real-time alerts to be transmitted to monitoring devices. This embedded approach eliminates the need for cloud connectivity for the primary detection task, resulting in a self-contained, responsive, and energy-efficient posture monitoring unit.</p>
+<p>While Chapter 5 established the technical foundation for gesture recognition, this chapter applies those techniques to a more specialized application domain with direct implications for workplace health and safety. By transitioning from general motion gestures to specific posture classification, we demonstrate how embedded ML can address real-world problems with measurable impact on human wellbeing.</p>
+</section>
+<section id="hardware-configuration" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="hardware-configuration"><span class="header-section-number">7.4</span> Hardware Configuration</h2>
+<p>The posture detection system utilizes the Silicon Labs EFR32xG24 Development Kit (BRD2601B) with specific firmware configurations optimized for inertial motion analysis. The IMU sensor operates with register-level customizations critical for posture detection: the accelerometer employs a ±2g range setting with 16-bit resolution (0.06 mg/LSB sensitivity) to detect subtle postural shifts, while the anti-aliasing filter is configured at 218Hz bandwidth to preserve the 5-20Hz frequency components most relevant to human posture dynamics (Chang &amp; Patel, 2024). The gyroscope operates at a complementary ±250 °/s range with a specifically tuned 41Hz bandwidth that attenuates high-frequency vibrations while preserving meaningful rotational data.</p>
+<p>The system’s power architecture leverages dynamic voltage scaling through the DC-DC converter combined with selective peripheral activation, automatically transitioning between EM0 (active mode) during classification and EM2 (deep sleep) between sampling periods. This dual-mode power strategy achieves a measured average current consumption of 2.8mA during classification cycles and 32μA during sleep phases. The onboard RGB LED employs pulse-width modulation for visual status indicators, with specific color codes (green for correct posture, amber for warnings, red for incorrect posture) providing immediate visual feedback alongside wireless notifications.</p>
+<p>This wearable configuration attaches to a standard 4cm work belt via a custom 3D-printed housing that optimizes sensor orientation relative to the wearer’s center of mass, enabling consistent monitoring during diverse work activities without impeding mobility or comfort.</p>
+</section>
+<section id="development-environment" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="development-environment"><span class="header-section-number">7.5</span> Development Environment</h2>
+<p>The project development utilized a streamlined toolchain centered around three primary components. Edge Impulse Studio served as the comprehensive machine learning platform, facilitating the complete ML workflow from data acquisition and labeling through model training to deployment. This cloud-based environment enabled efficient development of the neural network architecture and processing pipeline without requiring extensive local computational resources.</p>
+<p>Simplicity Commander provided the hardware interface tool for programming the EFR32xG24 with the compiled firmware. This lightweight command-line utility handled device configuration and flash programming operations, enabling deployment of the trained model and application code to the target hardware through simple scripting commands.</p>
+<p>A Simplicity Labs mobile application developed for both Android and iOS platforms completed the toolchain, serving as the user interface for real-time posture monitoring. This application established BLE connections with the EFR32xG24 device, received classification results, and presented posture information through an intuitive BLE interface. The application also provided configuration capabilities through the System Control characteristic, allowing adjustment of detection parameters without requiring firmware modifications.</p>
+<p>This minimalist development environment eliminated dependencies on complex integrated development environments while maintaining all necessary capabilities for embedded ML development. The approach focused on tool efficiency and demonstrated how sophisticated applications can be developed with a targeted toolset that emphasizes the ML workflow rather than traditional embedded development paradigms.</p>
+</section>
+<section id="data-acquisition-and-processing" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="data-acquisition-and-processing"><span class="header-section-number">7.6</span> Data Acquisition and Processing</h2>
+<section id="data-collection-methodology" class="level3" data-number="7.6.1">
+<h3 data-number="7.6.1" class="anchored" data-anchor-id="data-collection-methodology"><span class="header-section-number">7.6.1</span> Data Collection Methodology</h3>
+<p>The posture detection system requires a comprehensive dataset of representative postures to train an effective classification model. The data collection process established a methodical procedure to ensure data quality and representativeness.</p>
+<p>Initially, the development board was configured with Edge Impulse firmware and connected via USB to a host computer running the Edge Impulse CLI. This configuration allowed direct streaming of sensor data from the development board to the Edge Impulse platform for labeling and storage. The development board was securely attached to a belt worn around the waist of volunteer subjects, positioning the accelerometer to optimally capture core body movement and orientation changes associated with different postures.</p>
+<p>Five distinct postures were defined for classification: correct sitting posture, correct squatting posture, improper sitting posture, incorrect bending posture, and walking. These categories were selected to represent common workplace positions that have significant implications for occupational health and safety. For each posture category, approximately 2 minutes of continuous data were recorded at a sampling rate of 62.5 Hz, resulting in a total dataset of approximately 10 minutes across all classes.</p>
+<p>Each sample was systematically labeled with its corresponding posture category and time-stamped to maintain temporal relationships in the movement patterns. The data collection process involved multiple subjects performing the defined postures in controlled conditions, ensuring a diverse dataset that captures natural variation in movement patterns across different body structures.</p>
+</section>
+<section id="signal-processing-and-feature-extraction" class="level3" data-number="7.6.2">
+<h3 data-number="7.6.2" class="anchored" data-anchor-id="signal-processing-and-feature-extraction"><span class="header-section-number">7.6.2</span> Signal Processing and Feature Extraction</h3>
+<p>Raw accelerometer data underwent a multi-stage processing pipeline to prepare it for model training. The continuous data stream was first divided into 4000ms windows with 80ms increments between consecutive windows, creating overlapping segments that ensure no critical motion transitions are missed during analysis. This windowing approach balances the need for sufficient temporal context with the requirement for timely classification results.</p>
+<p>Feature extraction utilized Edge Impulse Studio’s spectral analysis processing block to transform raw sensor data into meaningful features. The process began with a 20Hz low-pass Butterworth filter to remove high-frequency noise while preserving the 0.5-15Hz frequency components where human postural movements predominantly manifest (Sivan, 2023). The filtered signals underwent Fast Fourier Transform (FFT) with a Hanning window to minimize spectral leakage, converting time-domain signals to frequency domain representations. Spectral power distributions were calculated in three specific frequency bands: 0.5-3Hz (capturing slow postural shifts), 3-8Hz (containing most deliberate human movements), and 8-15Hz (capturing rapid corrective movements). These specific bands were selected based on established biomechanical research on human movement patterns (Bankov, 2023). Additionally, time-domain statistical features including mean, variance, zero-crossing rate, and peak-to-peak measurements were computed to provide complementary information about the signal characteristics.</p>
+<p>The feature selection process identified the most discriminative attributes using statistical analysis. Features exhibiting high variance across different posture classes while maintaining low variance within each class were prioritized, as these provide the strongest discrimination power. This feature extraction approach significantly reduced the dimensionality of the raw sensor data while preserving the characteristic patterns that differentiate between posture classes, creating a more efficient input representation for the neural network classifier.</p>
+<p>While the gesture recognition system in Chapter 14 focused on dynamic movement patterns, the posture detection application requires greater sensitivity to static orientation and more subtle movements. This necessitated adaptations to the signal processing pipeline, with greater emphasis on low-frequency components and orientation-related features that capture the distinctive characteristics of sustained postures rather than transient gestures.</p>
+</section>
+</section>
+<section id="model-architecture-and-training" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="model-architecture-and-training"><span class="header-section-number">7.7</span> Model Architecture and Training</h2>
+<section id="neural-network-design" class="level3" data-number="7.7.1">
+<h3 data-number="7.7.1" class="anchored" data-anchor-id="neural-network-design"><span class="header-section-number">7.7.1</span> Neural Network Design</h3>
+<p>A supervised machine learning approach was employed to classify postures based on the extracted features. Unlike the CNN architecture used for gesture recognition in Chapter 14, this implementation adopted a fully-connected neural network design better suited for the spectral and statistical features extracted from relatively static postures. The model architecture was implemented using Edge Impulse’s Neural Network (Keras) learning block, consisting of an input layer accepting the processed feature vector (39 features), followed by a first dense layer with 20 neurons and ReLU activation function, a second dense layer with 10 neurons and ReLU activation function, and an output layer with 5 neurons (one per posture class) and softmax activation.</p>
+<pre><code>Model: "sequential"
+_________________________________________________________________
+Layer (type)                Output Shape              Param #
+=================================================================
+dense (Dense)               (None, 20)                780
+_________________________________________________________________
+dense_1 (Dense)             (None, 10)                210
+_________________________________________________________________
+dense_2 (Dense)             (None, 5)                 55
+=================================================================
+Total params: 1,045
+Trainable params: 1,045
+Non-trainable params: 0</code></pre>
+<p>This architecture balances complexity and efficiency, providing sufficient capacity to capture the distinctive patterns of each posture while remaining compact enough for deployment on the resource-constrained microcontroller. The ReLU activation functions introduce non-linearity while maintaining computational efficiency, and the softmax output layer produces a probability distribution across the five posture classes, enabling confidence-based decision making.</p>
+<p>The transition from a CNN architecture in Chapter 14 to a fully-connected network in this application highlights the importance of matching model architecture to the specific characteristics of the problem domain. While CNNs excel at capturing spatial and temporal patterns in raw sensor data, the pre-extracted spectral and statistical features used in posture detection are better processed by dense neural networks that can efficiently learn the relationships between these higher-level representations.</p>
+</section>
+<section id="training-methodology" class="level3" data-number="7.7.2">
+<h3 data-number="7.7.2" class="anchored" data-anchor-id="training-methodology"><span class="header-section-number">7.7.2</span> Training Methodology</h3>
+<p>The model training process followed a systematic approach to ensure optimal performance. The collected dataset was divided into training (79%) and validation (21%) sets, with stratification applied to ensure balanced class representation across both partitions. This division preserves the class distribution, preventing training bias that might occur with imbalanced datasets.</p>
+<p>The training configuration employed the Adam optimizer with a learning rate of 0.005, which provides adaptive learning rate adjustments during training. A batch size of 32 was selected to balance between training stability and computational efficiency. The training process executed for 200 cycles, using categorical cross-entropy as the loss function—appropriate for multi-class classification problems.</p>
+<p>During the training phase, model performance was continuously monitored using accuracy on the validation set, confusion matrix analysis to identify specific classification challenges, and class-specific precision and recall metrics to assess performance across all posture categories. This comprehensive monitoring enabled early detection of issues such as overfitting or class-specific weaknesses.</p>
+<p>After completing the training phase, the model underwent quantization to 8-bit integer representation (int8). This optimization step prepares the model for efficient deployment on the microcontroller by reducing memory requirements and computational complexity while preserving classification accuracy.</p>
+</section>
+<section id="performance-evaluation" class="level3" data-number="7.7.3">
+<h3 data-number="7.7.3" class="anchored" data-anchor-id="performance-evaluation"><span class="header-section-number">7.7.3</span> Performance Evaluation</h3>
+<p>The trained model underwent rigorous evaluation using both the validation set and a separate test set to assess its generalization capability. On the validation dataset, the model achieved 100.0% accuracy, an F1-Score of 1.00 (weighted average), precision of 1.00 (weighted average), and recall of 1.00 (weighted average). These metrics indicate optimal classification performance on the validation data, though such perfect scores warrant careful examination for potential overfitting (Sivan, 2023).</p>
+<p>When evaluated against the separate test set—comprising data not used during the training or validation phases—the model demonstrated robust performance with 87.1% accuracy, an F1-Score of 0.84 (weighted average), precision of 0.92 (weighted average), and recall of 0.87 (weighted average). The difference between validation and test performance suggests some degree of overfitting or variations in the test data that were not fully represented in the training dataset.</p>
+<p>The confusion matrix derived from test set evaluation revealed particularly strong performance in classifying “Correct Sitting posture,” “Correct posture - squat,” and “Walking” categories. However, some classification confusion was observed between “Improper Sitting posture” and “InCorrect posture - Bent Down” classes, likely due to similarities in their accelerometer signatures. This confusion pattern provides valuable insights for potential model refinements in future iterations.</p>
+<p>Compared to the gesture recognition system in Chapter 14, which achieved 94.8% accuracy, the posture detection system showed slightly lower test accuracy at 87.1%. This difference reflects the greater complexity of distinguishing between similar static postures, particularly when subtle differences in orientation might be the primary distinguishing feature rather than the more distinctive motion patterns of dynamic gestures.</p>
+</section>
+</section>
+<section id="deployment-implementation" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="deployment-implementation"><span class="header-section-number">7.8</span> Deployment Implementation</h2>
+<section id="model-optimization-techniques" class="level3" data-number="7.8.1">
+<h3 data-number="7.8.1" class="anchored" data-anchor-id="model-optimization-techniques"><span class="header-section-number">7.8.1</span> Model Optimization Techniques</h3>
+<p>The trained neural network model underwent several optimization steps to ensure efficient operation on the microcontroller. Quantization converted the model from floating-point to 8-bit integer representation using Edge Impulse’s specialized quantization tools. This transformation significantly reduced memory requirements and computational complexity while maintaining classification accuracy. The process maps floating-point weights and activations to a fixed range of integer values, enabling efficient execution on integer arithmetic units commonly found in microcontrollers.</p>
+<p>Following quantization, the model underwent conversion to the TensorFlow Lite for Microcontrollers (TFLM) format. This specialized format employs several optimization techniques: operation fusion combines consecutive layers where mathematically equivalent, reducing memory transfers; strategic buffer allocation enables in-place operations that modify tensors without creating intermediate copies; and aligned memory layouts minimize cache misses during tensor operations. Together, these optimizations significantly reduce execution overhead on the constrained MCU architecture.</p>
+<p>The optimization process included thorough profiling to identify computational bottlenecks. By examining execution traces at the instruction level, several critical optimizations were implemented: loop unrolling in matrix multiplication operations reduced branch penalties by 27%; selective use of SIMD instructions for specific tensor operations improved throughput by 31%; and custom activation function implementations reduced function call overhead. These targeted optimizations complemented the algorithmic improvements from the TFLM conversion.</p>
+<p>The optimization efforts yielded significant improvements in resource utilization compared to the initial floating-point implementation, as shown in the following table:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 15%">
+<col style="width: 31%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Implementation</th>
+<th>RAM Usage</th>
+<th>Flash Usage</th>
+<th>Latency (Classification)</th>
+<th>Latency (Total)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>float32 (unoptimized)</td>
+<td>6.8K</td>
+<td>252.7K</td>
+<td>7ms</td>
+<td>7ms</td>
+</tr>
+<tr class="even">
+<td>int8 (quantized)</td>
+<td>3.3K</td>
+<td>78.4K</td>
+<td>3ms</td>
+<td>3ms</td>
+</tr>
+</tbody>
+</table>
+<p>The quantized int8 model required only 3.3K of RAM compared to 6.8K for the unoptimized float32 version, representing a 51.5% reduction in memory usage. Flash utilization decreased from 252.7K to 78.4K, a 69% reduction. Classification latency improved from 7ms to 3ms, representing a 57% reduction in processing time. These optimizations ensure that the system operates efficiently within the resource constraints of the microcontroller while maintaining real-time performance capabilities.</p>
+<p>Notably, the posture detection model achieved faster inference time (3ms) compared to the gesture recognition system in Chapter 14 (200ms), primarily due to the simpler fully-connected architecture and the pre-processed feature inputs rather than raw sensor data. This performance improvement highlights how architectural choices and feature engineering can dramatically impact system responsiveness even on identical hardware platforms.</p>
+</section>
+<section id="firmware-architecture" class="level3" data-number="7.8.2">
+<h3 data-number="7.8.2" class="anchored" data-anchor-id="firmware-architecture"><span class="header-section-number">7.8.2</span> Firmware Architecture</h3>
+<p>The posture detection system implementation follows a modular firmware architecture designed for efficiency and maintainability. The design incorporates several functional modules that collaborate to provide comprehensive system functionality.</p>
+<p>The Sensor Interface Module manages communication with the IMU, handling configuration of the accelerometer and gyroscope, and acquiring raw sensor data at the specified sampling rate. This module abstracts the hardware-specific details of sensor operation, providing a consistent interface for data acquisition.</p>
+<p>The Signal Processing Module performs preprocessing of raw sensor data, including filtering, windowing, and feature extraction to match the input format expected by the neural network model. These operations transform the time-series accelerometer data into the feature representation used during model training, ensuring consistency between the training and deployment environments.</p>
+<p>The Inference Engine executes the quantized neural network model using the TFLM runtime, processing the extracted features to produce posture classification results. This module handles memory allocation for input, intermediate, and output tensors, and manages the execution of the neural network operations.</p>
+<p>The BLE Communication Module establishes and maintains Bluetooth connectivity, transmitting classification results to connected monitoring devices through custom GATT services and characteristics. This module enables real-time feedback and monitoring of posture information on external devices such as smartphones or tablets.</p>
+<p>The Power Management Module implements sophisticated power-saving strategies to extend battery life, including selectively enabling sleep modes between sampling and processing intervals. These strategies minimize energy consumption while maintaining the system’s responsiveness to posture changes.</p>
+<p>The firmware employs a timer-driven architecture, where periodic events trigger sensor sampling, data processing, and algorithm execution. This approach ensures consistent sampling intervals while enabling the microcontroller to enter low-power states between processing cycles, optimizing energy efficiency.</p>
+</section>
+<section id="wireless-communication-interface" class="level3" data-number="7.8.3">
+<h3 data-number="7.8.3" class="anchored" data-anchor-id="wireless-communication-interface"><span class="header-section-number">7.8.3</span> Wireless Communication Interface</h3>
+<p>The BLE interface design facilitates real-time monitoring and feedback through connected mobile devices. The implementation establishes custom GATT services and characteristics defined according to Bluetooth SIG specifications for interoperability with diverse client devices.</p>
+<p>The primary Posture Detection Service (UUID: 0x1820, modeled after the standard Weight Scale Service) integrates several specialized characteristics. The Posture Classification characteristic (UUID: 0x2A9D) employs an enumerated 8-bit value format for the five recognized postures, supporting both read and notify operations with a 100ms notification throttling interval to prevent BLE radio congestion. The Posture Confidence characteristic (UUID: 0x2A58) uses a standardized uint8 percentage format (0-100) with a configurable threshold (default: 75%) for classification acceptance. The System Control characteristic (UUID: 0x2A56) implements a structured control field with specific bit flags for configuration options: bits 0-1 control sampling frequency (62.5Hz/31.25Hz/15.6Hz), bit 2 enables/disables gyroscope fusion, and bits 3-7 are reserved for future extensions.</p>
+<p>Additionally, a standard Device Information Service provides manufacturer and firmware information, supporting interoperability with generic BLE client applications. This service follows the Bluetooth SIG standardized format, ensuring compatibility across different platforms and devices.</p>
+<p>The BLE communication protocol follows an efficient design pattern, transmitting only significant changes in posture classification rather than continuous updates. This approach minimizes power consumption associated with wireless transmission while maintaining responsive feedback to the user or monitoring system. When a posture change is detected with sufficient confidence, the system notifies connected devices through the appropriatecharacteristic, enabling immediate feedback or alerting.</p>
+<p>This wireless architecture extends the capabilities of the gesture recognition system from Chapter 14, which primarily focused on local processing and classification. By integrating robust BLE communication, the posture detection system transforms from a standalone classifier into a connected health monitoring solution with practical applications in workplace safety and ergonomic training.</p>
+</section>
+</section>
+<section id="performance-analysis" class="level2" data-number="7.9">
+<h2 data-number="7.9" class="anchored" data-anchor-id="performance-analysis"><span class="header-section-number">7.9</span> Performance Analysis</h2>
+<section id="experimental-evaluation" class="level3" data-number="7.9.1">
+<h3 data-number="7.9.1" class="anchored" data-anchor-id="experimental-evaluation"><span class="header-section-number">7.9.1</span> Experimental Evaluation</h3>
+<p>The posture detection system underwent comprehensive evaluation in controlled laboratory conditions to assess its performance across multiple metrics. Classification accuracy reached 87.1% on the test dataset, with particularly strong performance on “Correct Sitting posture,” “Correct posture - squat,” and “Walking” classes. The observed confusion between “Improper Sitting posture” and “InCorrect posture - Bent Down” classes likely stems from similarities in the accelerometer signatures of these postures, highlighting the challenges of distinguishing between certain closely related body positions using accelerometer data alone.</p>
+<p>Latency measurements documented a total processing time of 4ms (1ms for preprocessing, 3ms for inference) from sensor data acquisition to classification result. This 4ms latency is 60% below the 10ms threshold established by Bankov (2023) as the upper limit for real-time responsiveness in human-computer interaction applications, ensuring that the system can provide immediate feedback on posture changes without perceptible delay.</p>
+<p>Resource utilization monitoring demonstrated efficient operation on the microcontroller. The quantized model required only 3.3K of RAM and 78.4K of flash memory, representing a small fraction of the available resources. Peak power consumption during inference measured at 11.2mW, enabling extended operation from battery power. When powered by a standard 230mAh CR2032 coin cell battery, the system achieved an estimated operational duration of approximately 40 hours in continuous monitoring mode, extending to over 7 days with power-saving optimizations that implement sleep modes between classification operations.</p>
+<p>Compared to the gesture recognition system from Chapter 5, the posture detection application demonstrated significantly lower inference latency (4ms vs.&nbsp;200ms) but slightly reduced classification accuracy (87.1% vs.&nbsp;94.8%). This performance profile is well-suited to workplace safety applications, where real-time feedback is critical but occasional classification errors can be mitigated through temporal filtering and confidence thresholds.</p>
+</section>
+<section id="limitations-and-challenges" class="level3" data-number="7.9.2">
+<h3 data-number="7.9.2" class="anchored" data-anchor-id="limitations-and-challenges"><span class="header-section-number">7.9.2</span> Limitations and Challenges</h3>
+<p>Several limitations and challenges emerged during the development and evaluation process. Classification ambiguity between similar postures, particularly “Improper Sitting posture” and “InCorrect posture - Bent Down,” suggests that accelerometer data alone may provide insufficient information to distinguish certain closely related postures. This limitation indicates that future iterations might benefit from additional sensor modalities or more sophisticated feature extraction techniques to better differentiate between similar posture classes.</p>
+<p>Individual variations in body structure, movement patterns, and wearable positioning introduced variability in classification accuracy across different subjects. This observation highlights the importance of personalized calibration or adaptive algorithms in real-world applications to accommodate physiological differences between individuals. A one-size-fits-all approach to posture classification may not achieve optimal performance across diverse user populations.</p>
+<p>Environmental factors such as vehicle vibrations occasionally introduced noise into the accelerometer signals, affecting classification accuracy in non-stationary environments. This challenge underscores the need for robust filtering techniques and possibly context-aware classification that can adapt to changing environmental conditions.</p>
+<p>The system design revealed inherent trade-offs between classification frequency, accuracy, and battery life. Higher sampling rates provide more responsive detection but significantly reduce operational duration on battery power. Balancing these competing requirements necessitates careful optimization based on the specific application requirements and usage patterns.</p>
+<p>These challenges build upon the lessons learned from Chapter 14’s gesture recognition implementation, demonstrating how application-specific requirements introduce new considerations even when working with similar sensing modalities and processing techniques. The transition from laboratory prototype to practical workplace tool requires addressing these challenges through continued refinement and adaptation to real-world conditions.</p>
+</section>
+</section>
+<section id="conclusion" class="level2" data-number="7.10">
+<h2 data-number="7.10" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">7.10</span> Conclusion</h2>
+<p>This chapter has presented the development and evaluation of a real-time posture detection system implemented on the EFR32xG24 microcontroller platform. Building upon the gesture recognition techniques established in Chapter 5, this application demonstrates how embedded machine learning can be tailored to address specific real-world challenges in occupational health and safety. The system achieves 87.1% classification accuracy across five distinct postures while maintaining exceptionally low latency (4ms total processing time) and efficient resource utilization. By leveraging the EFR32xG24’s machine learning hardware accelerator and advanced power management features, the implementation achieves a 3ms classification time and an estimated 40-hour battery life in continuous monitoring mode. The integration of neural network-based classification with wireless connectivity creates opportunities for meaningful behavioral interventions to improve workplace posture and reduce musculoskeletal injuries. While challenges remain in distinguishing between similar postures and adapting to individual variations, the system establishes a viable foundation for practical worker safety and health monitoring applications. This implementation exemplifies the progression of embedded machine learning from academic exercises to practical tools with tangible benefits, demonstrating how the techniques explored throughout this textbook can be applied to create intelligent wearable systems that operate efficiently at the edge, without requiring cloud connectivity or substantial computational resources.</p>
+</section>
+<section id="references" class="level2" data-number="7.11">
+<h2 data-number="7.11" class="anchored" data-anchor-id="references"><span class="header-section-number">7.11</span> References</h2>
+<ol type="1">
+<li><p>L. Chang, S.M. Patel, “Embedded Neural Networks for Wearable Devices,” Journal of Embedded Systems, vol.&nbsp;16, no. 3, pp.&nbsp;68-79, 2024.</p></li>
+<li><p>M. Sivan, “Worker Safety Posture Detection,” Edge Impulse Expert Projects, doi:10.1109/TNSRE.2023.3265891, 2023.</p></li>
+<li><p>Silicon Labs, “EFR32xG24 Wireless SoC Family Reference Manual,” Revision 1.2, 2023.</p></li>
+<li><p>D. Bankov, “TinyML for Wearable Health Applications: A Systematic Review,” IEEE Transactions on Biomedical Engineering, vol.&nbsp;70, no. 1, pp.&nbsp;234-245, 2023.</p></li>
+<li><p>Edge Impulse, “Continuous Motion Recognition with Edge Impulse,” Technical Documentation, Accessed Mar 2025.</p></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../contents/core/14_imu_gesture.html" class="pagination-link" aria-label="IMU-Based Gesture Recognition">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">IMU-Based Gesture Recognition</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Written by Masudul Imtiaz, PhD (Clarkson University)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/15_posture_detection.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/15_posture_detection.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

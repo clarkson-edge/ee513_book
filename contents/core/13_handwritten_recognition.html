@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Handwriting Digit Recognition – Embedded Systems Design</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../contents/core/14_imu_gesture.html" rel="next">
+<link href="../../contents/core/12_ml_helloworld2.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-de84f8d6bb715db06a919283c2d1e787.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-9a023c9ade86a60361e96e3e3f11bc54.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-4ad2cf0c28f2a60df2ec31094e236ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-92d51d81327e8e79bdb8c3bc0cdd12ec.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "~",
+    "/"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Embedded Systems Design</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-wide tools-end">
+    <a href="https://github.com/clarkson-edge/ee513_book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../../Embedded-Systems-Design.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
+              <i class="bi bi-facebook pe-1"></i>
+            Facebook
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/13_handwritten_recognition.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Handwriting Digit Recognition</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Embedded Machine Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/1_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to Embedded Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/10_ml_foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">The Art and Science of Machine Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/11_ml_helloworld.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The “Hello World” of TinyML</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/12_ml_helloworld2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Building a TinyML Application</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/13_handwritten_recognition.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Handwriting Digit Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/14_imu_gesture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">IMU-Based Gesture Recognition</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../contents/core/15_posture_detection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Real-Time Posture Detection Using Neural Networks</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#chapter-objectives" id="toc-chapter-objectives" class="nav-link active" data-scroll-target="#chapter-objectives"><span class="header-section-number">5.1</span> Chapter Objectives</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">5.2</span> Overview</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">5.3</span> Introduction</a>
+  <ul>
+  <li><a href="#challenges-of-microcontroller-deployment" id="toc-challenges-of-microcontroller-deployment" class="nav-link" data-scroll-target="#challenges-of-microcontroller-deployment"><span class="header-section-number">5.3.1</span> Challenges of Microcontroller Deployment</a></li>
+  <li><a href="#chapter-objectives-1" id="toc-chapter-objectives-1" class="nav-link" data-scroll-target="#chapter-objectives-1"><span class="header-section-number">5.3.2</span> Chapter Objectives</a></li>
+  </ul></li>
+  <li><a href="#background-related-work" id="toc-background-related-work" class="nav-link" data-scroll-target="#background-related-work"><span class="header-section-number">5.4</span> Background &amp; Related Work</a>
+  <ul>
+  <li><a href="#tinyml-machine-learning-for-embedded-systems" id="toc-tinyml-machine-learning-for-embedded-systems" class="nav-link" data-scroll-target="#tinyml-machine-learning-for-embedded-systems"><span class="header-section-number">5.4.1</span> TinyML: Machine Learning for Embedded Systems</a></li>
+  <li><a href="#convolutional-neural-networks-for-image-recognition" id="toc-convolutional-neural-networks-for-image-recognition" class="nav-link" data-scroll-target="#convolutional-neural-networks-for-image-recognition"><span class="header-section-number">5.4.2</span> Convolutional Neural Networks for Image Recognition</a></li>
+  <li><a href="#model-optimization-for-resource-constrained-devices" id="toc-model-optimization-for-resource-constrained-devices" class="nav-link" data-scroll-target="#model-optimization-for-resource-constrained-devices"><span class="header-section-number">5.4.3</span> Model Optimization for Resource-Constrained Devices</a></li>
+  </ul></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology"><span class="header-section-number">5.5</span> Methodology</a>
+  <ul>
+  <li><a href="#system-architecture" id="toc-system-architecture" class="nav-link" data-scroll-target="#system-architecture"><span class="header-section-number">5.5.1</span> System Architecture</a></li>
+  <li><a href="#model-design-and-training" id="toc-model-design-and-training" class="nav-link" data-scroll-target="#model-design-and-training"><span class="header-section-number">5.5.2</span> Model Design and Training</a>
+  <ul class="collapse">
+  <li><a href="#dataset-preparation" id="toc-dataset-preparation" class="nav-link" data-scroll-target="#dataset-preparation">Dataset Preparation</a></li>
+  <li><a href="#cnn-architecture" id="toc-cnn-architecture" class="nav-link" data-scroll-target="#cnn-architecture">CNN Architecture</a></li>
+  <li><a href="#training-configuration" id="toc-training-configuration" class="nav-link" data-scroll-target="#training-configuration">Training Configuration</a></li>
+  </ul></li>
+  <li><a href="#model-optimization" id="toc-model-optimization" class="nav-link" data-scroll-target="#model-optimization"><span class="header-section-number">5.5.3</span> Model Optimization</a>
+  <ul class="collapse">
+  <li><a href="#post-training-quantization" id="toc-post-training-quantization" class="nav-link" data-scroll-target="#post-training-quantization">Post-Training Quantization</a></li>
+  <li><a href="#model-verification" id="toc-model-verification" class="nav-link" data-scroll-target="#model-verification">Model Verification</a></li>
+  </ul></li>
+  <li><a href="#embedded-implementation" id="toc-embedded-implementation" class="nav-link" data-scroll-target="#embedded-implementation"><span class="header-section-number">5.5.4</span> Embedded Implementation</a></li>
+  </ul></li>
+  <li><a href="#implementation-details" id="toc-implementation-details" class="nav-link" data-scroll-target="#implementation-details"><span class="header-section-number">5.6</span> Implementation Details</a>
+  <ul>
+  <li><a href="#model-training-results" id="toc-model-training-results" class="nav-link" data-scroll-target="#model-training-results"><span class="header-section-number">5.6.1</span> Model Training Results</a></li>
+  <li><a href="#model-quantization-effects" id="toc-model-quantization-effects" class="nav-link" data-scroll-target="#model-quantization-effects"><span class="header-section-number">5.6.2</span> Model Quantization Effects</a></li>
+  <li><a href="#embedded-system-implementation" id="toc-embedded-system-implementation" class="nav-link" data-scroll-target="#embedded-system-implementation"><span class="header-section-number">5.6.3</span> Embedded System Implementation</a></li>
+  </ul></li>
+  <li><a href="#results-discussion" id="toc-results-discussion" class="nav-link" data-scroll-target="#results-discussion"><span class="header-section-number">5.7</span> Results &amp; Discussion</a>
+  <ul>
+  <li><a href="#classification-performance" id="toc-classification-performance" class="nav-link" data-scroll-target="#classification-performance"><span class="header-section-number">5.7.1</span> Classification Performance</a></li>
+  <li><a href="#resource-utilization" id="toc-resource-utilization" class="nav-link" data-scroll-target="#resource-utilization"><span class="header-section-number">5.7.2</span> Resource Utilization</a></li>
+  <li><a href="#comparison-with-cloud-based-approaches" id="toc-comparison-with-cloud-based-approaches" class="nav-link" data-scroll-target="#comparison-with-cloud-based-approaches"><span class="header-section-number">5.7.3</span> Comparison with Cloud-Based Approaches</a></li>
+  </ul></li>
+  <li><a href="#challenges-ethical-considerations" id="toc-challenges-ethical-considerations" class="nav-link" data-scroll-target="#challenges-ethical-considerations"><span class="header-section-number">5.8</span> Challenges &amp; Ethical Considerations</a>
+  <ul>
+  <li><a href="#technical-challenges" id="toc-technical-challenges" class="nav-link" data-scroll-target="#technical-challenges"><span class="header-section-number">5.8.1</span> Technical Challenges</a></li>
+  <li><a href="#ethical-considerations" id="toc-ethical-considerations" class="nav-link" data-scroll-target="#ethical-considerations"><span class="header-section-number">5.8.2</span> Ethical Considerations</a></li>
+  </ul></li>
+  <li><a href="#future-work-conclusion" id="toc-future-work-conclusion" class="nav-link" data-scroll-target="#future-work-conclusion"><span class="header-section-number">5.9</span> Future Work &amp; Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">5.10</span> References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/13_handwritten_recognition.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/13_handwritten_recognition.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../contents/core/1_introduction.html">Embedded Machine Learning</a></li><li class="breadcrumb-item"><a href="../../contents/core/13_handwritten_recognition.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Handwriting Digit Recognition</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Handwriting Digit Recognition</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="chapter-objectives" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="chapter-objectives"><span class="header-section-number">5.1</span> Chapter Objectives</h2>
+<p>• Develop a CNN model for handwriting recognition using the MNIST dataset</p>
+<p>• Optimize the model through quantization to fit within microcontroller constraints</p>
+<p>• Implement the model on the EFR32xG24 platform</p>
+<p>• Evaluate performance metrics including accuracy, model size, and inference time</p>
+<p>• Identify practical considerations and optimization strategies for TinyML deployment</p>
+</section>
+<section id="overview" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="overview"><span class="header-section-number">5.2</span> Overview</h2>
+<p>This chapter presents the implementation and evaluation of a handwriting recognition system on the Silicon Labs EFR32xG24 microcontroller, a resource-constrained device designed for edge computing applications. The research demonstrates how Convolutional Neural Networks (CNNs) can be effectively deployed for on-device inference despite significant memory and processing limitations. The methodology encompasses model development using TensorFlow, optimization through quantization techniques, and deployment on embedded hardware. The implemented system achieves 99.18% accuracy on the MNIST dataset while maintaining a model size of approximately 101.59 KB, representing a 91% reduction from the unoptimized model. This work illustrates the feasibility of deploying sophisticated machine learning applications directly on edge devices, enabling privacy-preserving, low-latency inference for applications ranging from smart interfaces to IoT sensing. The chapter details the technical challenges encountered during implementation and discusses optimization strategies relevant to TinyML deployment on microcontroller-class devices.</p>
+</section>
+<section id="introduction" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="introduction"><span class="header-section-number">5.3</span> Introduction</h2>
+<p>The intersection of artificial intelligence and edge computing has given rise to a new paradigm for deploying machine learning models directly on resource-constrained devices. This approach, commonly referred to as TinyML, enables on-device inference without requiring cloud connectivity, offering advantages in privacy, latency, and power efficiency. By processing data locally, edge AI solutions eliminate the need to transmit potentially sensitive information to remote servers, reduce response times by avoiding network round-trips, and minimize energy consumption associated with wireless communication.</p>
+<p>Handwriting recognition represents an ideal test case for edge AI deployment. As a classical pattern recognition problem, it demonstrates the capabilities of machine learning while remaining sufficiently bounded in scope to fit within the constraints of microcontroller-based systems. When successfully implemented on edge devices, handwriting recognition can enable various applications, from smart note-taking tools to authentication systems, operating independently from cloud infrastructure.</p>
+<section id="challenges-of-microcontroller-deployment" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="challenges-of-microcontroller-deployment"><span class="header-section-number">5.3.1</span> Challenges of Microcontroller Deployment</h3>
+<p>Deploying neural networks on microcontrollers presents significant technical challenges due to their limited computational resources. The EFR32xG24 microcontroller used in this chapter, while relatively advanced for its class, operates with strict constraints. The processing power is limited to a 78 MHz ARM Cortex-M33 processor, with memory capacity of only 256 KB RAM and 1536 KB flash storage, and a minimal power budget for battery-operated scenarios. These limitations necessitate careful optimization of model architecture, quantization strategies, and memory management techniques. Standard machine learning frameworks and models designed for server or mobile deployment are typically orders of magnitude too large for microcontroller environments, requiring substantial adaptation.</p>
+</section>
+<section id="chapter-objectives-1" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="chapter-objectives-1"><span class="header-section-number">5.3.2</span> Chapter Objectives</h3>
+<p>This chapter aims to develop a CNN model for handwriting recognition using the MNIST dataset and optimize it through quantization to fit within microcontroller constraints. It demonstrates the implementation of the model on the EFR32xG24 platform and evaluates the performance metrics including accuracy, model size, and inference time. Additionally, it identifies practical considerations and optimization strategies for TinyML deployment, providing valuable insights for researchers and practitioners in this emerging field.</p>
+</section>
+</section>
+<section id="background-related-work" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="background-related-work"><span class="header-section-number">5.4</span> Background &amp; Related Work</h2>
+<section id="tinyml-machine-learning-for-embedded-systems" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="tinyml-machine-learning-for-embedded-systems"><span class="header-section-number">5.4.1</span> TinyML: Machine Learning for Embedded Systems</h3>
+<p>TinyML represents the field of machine learning tailored specifically for extremely resource-constrained devices. Unlike traditional deep learning models that may require gigabytes of memory and powerful GPUs, TinyML models typically occupy kilobytes of storage and run on microcontrollers with limited computational capabilities. This significant reduction in resource requirements is achieved through specialized model architectures, parameter optimization, and quantization techniques.</p>
+<p>The development of TensorFlow Lite for Microcontrollers has been instrumental in advancing TinyML applications. This framework provides an optimized runtime for executing neural network models on devices with as little as 16 KB of RAM, enabling a wide range of on-device inference capabilities. Recent research has demonstrated successful TinyML implementations for applications including wake word detection, anomaly detection, and gesture recognition. The work of Warden and Situnayake (2020) has been particularly influential in establishing methodologies for deploying machine learning models on ultra-low-power microcontrollers.</p>
+</section>
+<section id="convolutional-neural-networks-for-image-recognition" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="convolutional-neural-networks-for-image-recognition"><span class="header-section-number">5.4.2</span> Convolutional Neural Networks for Image Recognition</h3>
+<p>CNNs have revolutionized computer vision tasks through their ability to automatically extract hierarchical features from image data. The architecture of CNNs, inspired by the visual cortex of mammals, employs convolutional layers that apply spatial filters to input data, capturing patterns at different scales and abstraction levels.</p>
+<p>For handwriting recognition, CNNs offer significant advantages over traditional machine learning approaches. Their translation invariance property—achieved through convolutional operations and pooling layers—allows them to recognize digits regardless of their precise position within the input image. This characteristic is particularly valuable for handwriting recognition, where variations in style, position, and scale are common.</p>
+<p>The MNIST dataset (LeCun et al., 1998) has become the standard benchmark for handwriting recognition algorithms. Comprising 60,000 training images and 10,000 test images of handwritten digits (0-9), each normalized to 28×28 pixels, this dataset provides a consistent evaluation framework for comparing different approaches. Its widespread adoption has facilitated meaningful comparisons across diverse algorithmic strategies and implementation approaches.</p>
+</section>
+<section id="model-optimization-for-resource-constrained-devices" class="level3" data-number="5.4.3">
+<h3 data-number="5.4.3" class="anchored" data-anchor-id="model-optimization-for-resource-constrained-devices"><span class="header-section-number">5.4.3</span> Model Optimization for Resource-Constrained Devices</h3>
+<p>Deploying neural networks on microcontrollers requires substantial optimization to fit within memory constraints while maintaining acceptable inference performance. Several key techniques have emerged in this domain. Quantization involves converting floating-point weights and activations to lower-precision formats (e.g., 8-bit integers), which reduces memory requirements and improves computational efficiency. Post-training quantization can reduce model size by up to 75% with minimal accuracy loss, making it a crucial technique for microcontroller deployment.</p>
+<p>Model architecture selection also plays a critical role in TinyML applications. Lightweight architectures like MobileNet or SqueezeNet prioritize parameter efficiency, achieving competitive accuracy with significantly fewer parameters than traditional models. These architectures incorporate depthwise separable convolutions and other parameter-efficient operations specifically designed for resource-constrained environments.</p>
+<p>Pruning represents another effective optimization strategy, involving the systematic removal of redundant or less important connections within a network to reduce model size while preserving most of the original accuracy. Knowledge distillation, where a compact “student” model is trained to replicate the behavior of a larger “teacher” model, can also produce efficient networks suitable for embedded deployment.</p>
+<p>Recent work by Banbury et al.&nbsp;(2021) has focused on benchmarking TinyML systems, highlighting the trade-offs between model size, accuracy, and inference latency across different optimization approaches and hardware platforms. These benchmarks provide valuable insights for selecting appropriate optimization strategies based on specific application requirements and hardware constraints.</p>
+</section>
+</section>
+<section id="methodology" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="methodology"><span class="header-section-number">5.5</span> Methodology</h2>
+<section id="system-architecture" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="system-architecture"><span class="header-section-number">5.5.1</span> System Architecture</h3>
+<p>The handwriting recognition system employs a modular architecture engineered for efficient operation within the constraints of the microcontroller platform. At its core, the system processes 28×28 pixel grayscale images through a series of specialized components working in concert.</p>
+<p>Central to the system’s operation is the TensorFlow Lite Runtime, which orchestrates the execution of the quantized CNN model. This component manages the complex tasks of memory allocation and operation scheduling, ensuring efficient use of the limited computational resources. Surrounding this runtime is a carefully sized tensor arena—a dedicated 70KB memory buffer that serves as working space for tensors during the inference process.</p>
+<p>The input processing module transforms raw image data, whether from predefined test arrays or external sources, into the appropriate format for neural network inference. Following model execution, the classification output component analyzes probability distributions to determine the recognized digit and its associated confidence score. Results flow through a communication interface utilizing USART or EUSART protocols, enabling external monitoring and system evaluation.</p>
+<p>Through strategic partitioning of responsibilities, this architecture maximizes the capabilities of the EFR32xG24 while maintaining the flexibility needed for potential future enhancements. Each component can be optimized independently, allowing for targeted improvements without necessitating wholesale system redesign.</p>
+</section>
+<section id="model-design-and-training" class="level3" data-number="5.5.2">
+<h3 data-number="5.5.2" class="anchored" data-anchor-id="model-design-and-training"><span class="header-section-number">5.5.2</span> Model Design and Training</h3>
+<section id="dataset-preparation" class="level4">
+<h4 class="anchored" data-anchor-id="dataset-preparation">Dataset Preparation</h4>
+<p>The MNIST dataset was used for model training and evaluation. The dataset consists of 70,000 handwritten digit images (60,000 for training, 10,000 for testing), each normalized to 28×28 pixels in grayscale format. Prior to training, preprocessing steps were applied, including reshaping the images to include a channel dimension (28×28×1), normalizing pixel values to the range [0, 1], and ensuring consistent data types for training stability. The following code illustrates the preprocessing procedure:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load dataset</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>(train_images, train_labels), (test_images, test_labels) <span class="op">=</span> mnist.load_data()</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape and normalize</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>train_images <span class="op">=</span> train_images.reshape((<span class="op">-</span><span class="dv">1</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>)).astype(<span class="st">'float32'</span>) <span class="op">/</span> <span class="fl">255.0</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>test_images <span class="op">=</span> test_images.reshape((<span class="op">-</span><span class="dv">1</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>)).astype(<span class="st">'float32'</span>) <span class="op">/</span> <span class="fl">255.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="cnn-architecture" class="level4">
+<h4 class="anchored" data-anchor-id="cnn-architecture">CNN Architecture</h4>
+<p>The model architecture was designed to balance accuracy with parameter efficiency, a critical consideration for microcontroller deployment. The network consists of three convolutional blocks followed by fully connected layers, as shown in Table 1.</p>
+<p><strong>Table 1: CNN Model Architecture</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Layer Type</th>
+<th>Parameters</th>
+<th>Output Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Input</td>
+<td>-</td>
+<td>(28, 28, 1)</td>
+</tr>
+<tr class="even">
+<td>Conv2D</td>
+<td>3×3, 32 filters, ReLU</td>
+<td>320</td>
+</tr>
+<tr class="odd">
+<td>MaxPooling2D</td>
+<td>2×2</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Conv2D</td>
+<td>3×3, 64 filters, ReLU</td>
+<td>18,496</td>
+</tr>
+<tr class="odd">
+<td>MaxPooling2D</td>
+<td>2×2</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Conv2D</td>
+<td>3×3, 64 filters, ReLU</td>
+<td>36,928</td>
+</tr>
+<tr class="odd">
+<td>Flatten</td>
+<td>-</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Dense</td>
+<td>64 neurons, ReLU</td>
+<td>36,928</td>
+</tr>
+<tr class="odd">
+<td>Dense</td>
+<td>10 neurons, Softmax</td>
+<td>650</td>
+</tr>
+</tbody>
+</table>
+<p>The model was implemented using TensorFlow’s Keras API:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> models.Sequential([</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    layers.Conv2D(<span class="dv">32</span>, (<span class="dv">3</span>, <span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>, input_shape<span class="op">=</span>(<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>)),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    layers.MaxPooling2D((<span class="dv">2</span>, <span class="dv">2</span>)),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    layers.Conv2D(<span class="dv">64</span>, (<span class="dv">3</span>, <span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    layers.MaxPooling2D((<span class="dv">2</span>, <span class="dv">2</span>)),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    layers.Conv2D(<span class="dv">64</span>, (<span class="dv">3</span>, <span class="dv">3</span>), activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    layers.Flatten(),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    layers.Dense(<span class="dv">64</span>, activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    layers.Dense(<span class="dv">10</span>, activation<span class="op">=</span><span class="st">'softmax'</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="training-configuration" class="level4">
+<h4 class="anchored" data-anchor-id="training-configuration">Training Configuration</h4>
+<p>The model was trained with the following configurations:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(optimizer<span class="op">=</span><span class="st">'adam'</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>              loss<span class="op">=</span><span class="st">'sparse_categorical_crossentropy'</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>              metrics<span class="op">=</span>[<span class="st">'accuracy'</span>])</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>model.fit(train_images, train_labels, epochs<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Training parameters included the Adam optimizer with default learning rate (0.001), sparse categorical cross-entropy loss function, accuracy metrics, 5 epochs, and default batch size (32). The relatively small number of epochs was sufficient due to the simplicity of the MNIST dataset and the model’s efficient learning capacity. Training was performed in Google Colab to leverage GPU acceleration.</p>
+</section>
+</section>
+<section id="model-optimization" class="level3" data-number="5.5.3">
+<h3 data-number="5.5.3" class="anchored" data-anchor-id="model-optimization"><span class="header-section-number">5.5.3</span> Model Optimization</h3>
+<section id="post-training-quantization" class="level4">
+<h4 class="anchored" data-anchor-id="post-training-quantization">Post-Training Quantization</h4>
+<p>To meet the memory constraints of the EFR32xG24 microcontroller, the trained model was subjected to post-training quantization using TensorFlow Lite’s quantization framework. This process converted the 32-bit floating-point weights and activations to 8-bit integers, significantly reducing the model size while preserving accuracy.</p>
+<p>The quantization process required defining a representative dataset to calibrate the dynamic range of activations:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> representative_data_gen():</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Generator function for a representative dataset for quantization."""</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> input_value <span class="kw">in</span> tf.data.Dataset.from_tensor_slices(train_images).batch(<span class="dv">1</span>).take(<span class="dv">100</span>):</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> [tf.cast(input_value, tf.float32)]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure the converter for full integer quantization</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>converter <span class="op">=</span> tf.lite.TFLiteConverter.from_keras_model(model)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>converter.optimizations <span class="op">=</span> [tf.lite.Optimize.DEFAULT]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>converter.representative_dataset <span class="op">=</span> representative_data_gen</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>converter.target_spec.supported_ops <span class="op">=</span> [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>converter.inference_input_type <span class="op">=</span> tf.int8</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>converter.inference_output_type <span class="op">=</span> tf.int8</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert and save the model</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>quantized_model <span class="op">=</span> converter.convert()</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"hw_model.tflite"</span>, <span class="st">"wb"</span>) <span class="im">as</span> f:</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    f.write(quantized_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The quantization process involved defining a representative dataset from the training data, setting optimization flags for integer quantization, specifying input and output types as int8, calibrating the quantization parameters using the representative dataset, and converting and serializing the final model.</p>
+</section>
+<section id="model-verification" class="level4">
+<h4 class="anchored" data-anchor-id="model-verification">Model Verification</h4>
+<p>After quantization, the model was verified to ensure that the accuracy remained acceptable. This verification process involved loading the quantized model with the TensorFlow Lite interpreter, running inference on the test set, comparing the accuracy against the original floating-point model, and analyzing the confusion matrix to identify any systematic errors introduced by quantization. The results confirmed that the quantization process preserved the high accuracy of the original model while dramatically reducing its size.</p>
+</section>
+</section>
+<section id="embedded-implementation" class="level3" data-number="5.5.4">
+<h3 data-number="5.5.4" class="anchored" data-anchor-id="embedded-implementation"><span class="header-section-number">5.5.4</span> Embedded Implementation</h3>
+<p>The embedded implementation utilized Silicon Labs’ Simplicity Studio development environment. The implementation process followed a systematic approach, beginning with the creation of a new C++ project and the addition of the TensorFlow Lite Micro component through the Component Library. The tensor arena size and I/O interfaces were carefully configured based on the model’s requirements, and the quantized model was integrated into the project. Finally, the inference pipeline was implemented to handle the end-to-end process from input acquisition to result communication.</p>
+<p>Memory management represented a critical aspect of the implementation due to the constraints of the microcontroller. The tensor arena was configured to 70KB based on extensive profiling of the model’s operational memory footprint. The profiling process involved instrumenting the model execution to track maximum memory usage across various input samples, with particular attention to intermediate tensor allocations during critical network layers such as the larger convolutional operations. This methodical approach ensured sufficient working space for inference while optimizing RAM utilization. All buffers were statically allocated to avoid heap fragmentation, which can be particularly problematic in long-running embedded applications. Input and output tensors were structured to minimize memory copying operations, reducing both the memory footprint and computational overhead.</p>
+<p>The inference pipeline was implemented in C++ and consisted of several key steps. The initialization phase involved loading the model and allocating tensors, establishing the foundation for subsequent inference operations. Input processing handled the reading of input images, either from predefined arrays or external sources, and prepared them for model execution. The model execution phase utilized the TensorFlow Lite Micro interpreter to run inference on the prepared input, while output processing determined the predicted digit based on the model’s output probabilities. Finally, the result communication phase transmitted the recognition results via the UART interface, enabling external monitoring and evaluation of the system’s performance.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Simplified code snippet showing the key inference components</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tflite<span class="op">::</span>MicroInterpreter interpreter<span class="op">(</span>model<span class="op">,</span> resolver<span class="op">,</span> tensor_arena<span class="op">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                                   kTensorArenaSize<span class="op">,</span> error_reporter<span class="op">);</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>interpreter<span class="op">.</span>AllocateTensors<span class="op">();</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Copy input image to input tensor</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>TfLiteTensor<span class="op">*</span> input <span class="op">=</span> interpreter<span class="op">.</span>input<span class="op">(</span><span class="dv">0</span><span class="op">);</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">28</span><span class="op">*</span><span class="dv">28</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    input<span class="op">-&gt;</span>data<span class="op">.</span>int8<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> input_image<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">// Run inference</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>interpreter<span class="op">.</span>Invoke<span class="op">();</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">// Process output</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>TfLiteTensor<span class="op">*</span> output <span class="op">=</span> interpreter<span class="op">.</span>output<span class="op">(</span><span class="dv">0</span><span class="op">);</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> predicted_digit <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> max_score <span class="op">=</span> output<span class="op">-&gt;</span>data<span class="op">.</span>int8<span class="op">[</span><span class="dv">0</span><span class="op">];</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">10</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>output<span class="op">-&gt;</span>data<span class="op">.</span>int8<span class="op">[</span>i<span class="op">]</span> <span class="op">&gt;</span> max_score<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        max_score <span class="op">=</span> output<span class="op">-&gt;</span>data<span class="op">.</span>int8<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        predicted_digit <span class="op">=</span> i<span class="op">;</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="implementation-details" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="implementation-details"><span class="header-section-number">5.6</span> Implementation Details</h2>
+<section id="model-training-results" class="level3" data-number="5.6.1">
+<h3 data-number="5.6.1" class="anchored" data-anchor-id="model-training-results"><span class="header-section-number">5.6.1</span> Model Training Results</h3>
+<p>The CNN model was trained for 5 epochs on the MNIST dataset, showing rapid convergence on both training and test sets. Table 2 summarizes the training progression across epochs.</p>
+<p><strong>Table 2: Training Progress by Epoch</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Epoch</th>
+<th>Training Accuracy</th>
+<th>Training Loss</th>
+<th>Inference Time/Batch</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0.8930</td>
+<td>0.3433</td>
+<td>10ms</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0.9837</td>
+<td>0.0483</td>
+<td>9ms</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>0.9894</td>
+<td>0.0343</td>
+<td>10ms</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>0.9924</td>
+<td>0.0252</td>
+<td>7ms</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>0.9936</td>
+<td>0.0202</td>
+<td>7ms</td>
+</tr>
+</tbody>
+</table>
+<p>The final evaluation on the test set yielded an accuracy of 99.19%, confirming the model’s strong performance on unseen data.</p>
+</section>
+<section id="model-quantization-effects" class="level3" data-number="5.6.2">
+<h3 data-number="5.6.2" class="anchored" data-anchor-id="model-quantization-effects"><span class="header-section-number">5.6.2</span> Model Quantization Effects</h3>
+<p>Quantization substantially reduced the model size while maintaining comparable accuracy metrics. Table 3 compares the original floating-point model with the quantized version.</p>
+<p><strong>Table 3: Model Comparison Before and After Quantization</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 36%">
+<col style="width: 23%">
+<col style="width: 25%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Original Model</th>
+<th>Quantized Model</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Model Size</td>
+<td>1135.36 KB</td>
+<td>101.59 KB</td>
+<td>-91.05%</td>
+</tr>
+<tr class="even">
+<td>Test Accuracy</td>
+<td>99.19%</td>
+<td>99.18%</td>
+<td>-0.01%</td>
+</tr>
+<tr class="odd">
+<td>Inference Time (Desktop)</td>
+<td>~2ms/sample</td>
+<td>~3ms/sample</td>
+<td>+50%</td>
+</tr>
+<tr class="even">
+<td>Precision (macro avg)</td>
+<td>0.99</td>
+<td>0.99</td>
+<td>0%</td>
+</tr>
+<tr class="odd">
+<td>Recall (macro avg)</td>
+<td>0.99</td>
+<td>0.99</td>
+<td>0%</td>
+</tr>
+</tbody>
+</table>
+<p>The confusion matrices for both the original and quantized models showed nearly identical performance patterns, with the most common misclassifications occurring between visually similar digits, such as 4 and 9, or 3 and 5. This consistency indicates that the quantization process preserved the fundamental classification capabilities of the model while significantly reducing its computational requirements.</p>
+</section>
+<section id="embedded-system-implementation" class="level3" data-number="5.6.3">
+<h3 data-number="5.6.3" class="anchored" data-anchor-id="embedded-system-implementation"><span class="header-section-number">5.6.3</span> Embedded System Implementation</h3>
+<p>The handwriting recognition system was implemented on the EFR32xG24 microcontroller following the architecture described previously. The TensorFlow Lite Micro component was integrated into the Simplicity Studio project with specific configuration parameters, including a tensor arena size of 70KB, EUSART for the I/O stream backend, and an errors-only debug level to minimize runtime overhead.</p>
+<p>The system was designed to accept handwritten digit images in two ways: predefined test images embedded directly in the firmware as C arrays, and external inputs generated using a provided Python script. The script converted MNIST images into C-compatible arrays that could be directly integrated into the firmware, facilitating testing and evaluation with diverse input samples:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate C array from MNIST image</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>idx <span class="op">=</span> random.randint(<span class="dv">1</span>, <span class="bu">len</span>(test_images))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>mnist_image <span class="op">=</span> test_images[idx]</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>mnist_label <span class="op">=</span> test_labels[idx]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"uint8_t mnist_image[28][28] = {"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, row <span class="kw">in</span> <span class="bu">enumerate</span>(mnist_image):</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    row_str <span class="op">=</span> <span class="st">", "</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, row))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i <span class="op">&lt;</span> <span class="dv">27</span>:</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f" </span><span class="ch">{{</span><span class="ss"> </span><span class="sc">{</span>row_str<span class="sc">}</span><span class="ss"> </span><span class="ch">}}</span><span class="ss">,"</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f" </span><span class="ch">{{</span><span class="ss"> </span><span class="sc">{</span>row_str<span class="sc">}</span><span class="ss"> </span><span class="ch">}}</span><span class="ss">"</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"};"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The firmware application followed a structured organization, with clear separation of concerns between system initialization, TensorFlow setup, and the main inference loop. The setup_tensorflow() function performed critical tasks of loading the model and allocating tensors:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> setup_tensorflow<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> tflite<span class="op">::</span>MicroErrorReporter micro_error_reporter<span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    error_reporter <span class="op">=</span> <span class="op">&amp;</span>micro_error_reporter<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> tflite<span class="op">::</span>GetModel<span class="op">(</span><span class="va">g_model</span><span class="op">);</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> tflite<span class="op">::</span>MicroMutableOpResolver<span class="op">&lt;</span><span class="dv">3</span><span class="op">&gt;</span> micro_op_resolver<span class="op">;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    micro_op_resolver<span class="op">.</span>AddBuiltin<span class="op">(</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        tflite<span class="op">::</span>BuiltinOperator_DEPTHWISE_CONV_2D<span class="op">,</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        tflite<span class="op">::</span>ops<span class="op">::</span>micro<span class="op">::</span>Register_DEPTHWISE_CONV_2D<span class="op">());</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    micro_op_resolver<span class="op">.</span>AddBuiltin<span class="op">(</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        tflite<span class="op">::</span>BuiltinOperator_CONV_2D<span class="op">,</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        tflite<span class="op">::</span>ops<span class="op">::</span>micro<span class="op">::</span>Register_CONV_2D<span class="op">());</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    micro_op_resolver<span class="op">.</span>AddBuiltin<span class="op">(</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        tflite<span class="op">::</span>BuiltinOperator_FULLY_CONNECTED<span class="op">,</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        tflite<span class="op">::</span>ops<span class="op">::</span>micro<span class="op">::</span>Register_FULLY_CONNECTED<span class="op">());</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> tflite<span class="op">::</span>MicroInterpreter static_interpreter<span class="op">(</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        model<span class="op">,</span> micro_op_resolver<span class="op">,</span> tensor_arena<span class="op">,</span> kTensorArenaSize<span class="op">,</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        error_reporter<span class="op">);</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    interpreter <span class="op">=</span> <span class="op">&amp;</span>static_interpreter<span class="op">;</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    TfLiteStatus allocate_status <span class="op">=</span> interpreter<span class="op">-&gt;</span>AllocateTensors<span class="op">();</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>allocate_status <span class="op">!=</span> kTfLiteOk<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        error_reporter<span class="op">-&gt;</span>Report<span class="op">(</span><span class="st">"AllocateTensors() failed"</span><span class="op">);</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    input <span class="op">=</span> interpreter<span class="op">-&gt;</span>input<span class="op">(</span><span class="dv">0</span><span class="op">);</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> interpreter<span class="op">-&gt;</span>output<span class="op">(</span><span class="dv">0</span><span class="op">);</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="results-discussion" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="results-discussion"><span class="header-section-number">5.7</span> Results &amp; Discussion</h2>
+<section id="classification-performance" class="level3" data-number="5.7.1">
+<h3 data-number="5.7.1" class="anchored" data-anchor-id="classification-performance"><span class="header-section-number">5.7.1</span> Classification Performance</h3>
+<p>The quantized model achieved an overall classification accuracy of 99.18% on the MNIST test set, demonstrating that the optimization process preserved the high performance of the original model. Analysis of the confusion matrix revealed that most digits were classified with high accuracy, with only a small number of misclassifications.</p>
+<p>The most common errors occurred with digits that share similar visual features. Specifically, the system mistook the digit 7 for 2 in 10 instances, confused 9 with 4 in 8 instances, and misclassified 5 as 3 in 6 instances. These particular error patterns reflect specific visual ambiguities in the handwritten samples rather than systematic failures in the recognition algorithm.</p>
+<p>These misclassification patterns align with known perceptual challenges in digit recognition. For instance, certain writing styles render 7 with a horizontal stroke that resembles the top curve of 2, while 9 and 4 share similar structural elements particularly when the loop of 9 is not completely closed. Such confusions mirror difficulties that even human observers might encounter when interpreting ambiguous handwriting samples.</p>
+</section>
+<section id="resource-utilization" class="level3" data-number="5.7.2">
+<h3 data-number="5.7.2" class="anchored" data-anchor-id="resource-utilization"><span class="header-section-number">5.7.2</span> Resource Utilization</h3>
+<p>The embedded implementation was carefully profiled to understand its resource utilization on the EFR32xG24 platform. Table 4 summarizes the key metrics.</p>
+<p><strong>Table 4: Resource Utilization on EFR32xG24</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Resource</th>
+<th>Utilization</th>
+<th>Available</th>
+<th>Percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Flash Memory</td>
+<td>153.2 KB</td>
+<td>1536 KB</td>
+<td>9.97%</td>
+</tr>
+<tr class="even">
+<td>RAM</td>
+<td>73.4 KB</td>
+<td>256 KB</td>
+<td>28.67%</td>
+</tr>
+<tr class="odd">
+<td>Inference Time</td>
+<td>~210 ms</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Power Consumption</td>
+<td>~12 mW</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p>The flash memory utilization includes both the model (101.59 KB) and the application code (approximately 51.6 KB). The RAM usage is dominated by the tensor arena (70 KB), with the remainder allocated to application variables and the system stack.</p>
+<p>Inference time averaged approximately 210 milliseconds per sample, which is acceptable for interactive applications but would be challenging for real-time processing of continuous input streams. Power consumption during inference measured approximately 12 mW, which is sufficiently low to enable battery-powered operation for extended periods. These metrics demonstrate that the implemented system achieves a reasonable balance between performance and resource utilization, making it viable for practical deployment in resource-constrained environments.</p>
+</section>
+<section id="comparison-with-cloud-based-approaches" class="level3" data-number="5.7.3">
+<h3 data-number="5.7.3" class="anchored" data-anchor-id="comparison-with-cloud-based-approaches"><span class="header-section-number">5.7.3</span> Comparison with Cloud-Based Approaches</h3>
+<p>When compared with alternative deployment approaches, the microcontroller implementation offers distinct advantages despite certain performance limitations. Table 5 compares key metrics across different deployment options.</p>
+<p><strong>Table 5: Comparison of Deployment Approaches</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Microcontroller</th>
+<th>Mobile Phone</th>
+<th>Cloud Server</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Inference Time</td>
+<td>~210 ms</td>
+<td>~30 ms</td>
+<td>~10 ms*</td>
+</tr>
+<tr class="even">
+<td>Latency</td>
+<td>&lt;1 ms</td>
+<td>&lt;1 ms</td>
+<td>~100-500 ms</td>
+</tr>
+<tr class="odd">
+<td>Privacy</td>
+<td>High</td>
+<td>Medium</td>
+<td>Low</td>
+</tr>
+<tr class="even">
+<td>Power Efficiency</td>
+<td>High</td>
+<td>Medium</td>
+<td>Low</td>
+</tr>
+<tr class="odd">
+<td>Offline Capability</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td>Scalability</td>
+<td>Low</td>
+<td>Medium</td>
+<td>High</td>
+</tr>
+</tbody>
+</table>
+<p>*Cloud server inference time excludes network transfer delays</p>
+<p>Cloud-based solutions provide superior inference speed (approximately 10 ms per sample, excluding network transfer delays) compared to the microcontroller implementation (210 ms), but introduce significant latency due to network communication (100-500 ms). Mobile phone deployment represents a middle ground, with inference times around 30 ms and minimal latency, but with higher power consumption and reduced privacy compared to the microcontroller solution.</p>
+<p>The microcontroller implementation excels in terms of privacy, power efficiency, and offline capability, making it particularly suitable for applications where these factors outweigh raw processing speed. These might include privacy-sensitive environments, battery-powered devices, or deployments in areas with limited or unreliable network connectivity. The inherent trade-offs between performance and resource requirements highlight the importance of selecting the appropriate deployment approach based on the specific requirements and constraints of the target application.</p>
+</section>
+</section>
+<section id="challenges-ethical-considerations" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="challenges-ethical-considerations"><span class="header-section-number">5.8</span> Challenges &amp; Ethical Considerations</h2>
+<section id="technical-challenges" class="level3" data-number="5.8.1">
+<h3 data-number="5.8.1" class="anchored" data-anchor-id="technical-challenges"><span class="header-section-number">5.8.1</span> Technical Challenges</h3>
+<p>Implementation of the handwriting recognition system revealed several interconnected technical challenges that necessitated innovative approaches. Memory utilization emerged as perhaps the most fundamental constraint, requiring strategies that extended beyond conventional programming practices.</p>
+<p>Initially, the research focused on developing efficient buffer management techniques to accommodate the model within the limited RAM. Through iterative profiling, the tensor arena allocation size was progressively refined. This process involved both static analysis of the model’s architecture and dynamic assessment of memory usage patterns during execution. Particularly memory-intensive operations, such as the initial convolution layers, required special attention to prevent stack overflows during inference.</p>
+<p>Alongside memory concerns, quantization precision presented another set of challenges. The conversion from floating-point to fixed-point arithmetic introduced potential sources of error that required careful calibration. Selection of the representative dataset proved especially critical; insufficient diversity in calibration samples led to poor performance on certain digit classes. Multiple calibration iterations were necessary, with progressive refinement based on confusion matrix analysis rather than just aggregate accuracy metrics.</p>
+<p>Development environment integration introduced an orthogonal set of challenges. Version compatibility between Silicon Labs components and TensorFlow Lite Micro required careful management of dependencies. The build system needed substantial customization to accommodate both the model data and the TensorFlow runtime. Debugging capabilities were constrained by the limited memory available for diagnostic information, necessitating alternative approaches such as state logging through the communication interface and offline analysis of execution traces.</p>
+</section>
+<section id="ethical-considerations" class="level3" data-number="5.8.2">
+<h3 data-number="5.8.2" class="anchored" data-anchor-id="ethical-considerations"><span class="header-section-number">5.8.2</span> Ethical Considerations</h3>
+<p>While handwriting recognition appears to be a relatively benign application of machine learning, several ethical considerations are relevant to its implementation on edge devices. On-device processing inherently enhances privacy by keeping sensitive information local, but developers should still consider data collection practices for system improvement, persistence of recognized text, and integration with other systems that might leverage the recognized information. Clear user consent for data collection and transparent communication regarding data utilization are essential for maintaining trust and respecting user privacy.</p>
+<p>Handwriting recognition systems may perform differently across diverse user populations due to variations in handwriting styles. Different cultural backgrounds, education levels, and physical capabilities lead to variations that may affect recognition accuracy. The MNIST dataset, while standard, has known limitations in diversity, potentially resulting in models that perform worse on handwriting styles underrepresented in the training data. Users with motor impairments may have handwriting that differs significantly from the training distribution, potentially leading to lower recognition rates and creating accessibility barriers. Addressing these considerations requires diverse training data and adaptive recognition strategies to ensure equitable performance across user populations.</p>
+<p>The deployment context of handwriting recognition systems raises additional ethical considerations related to the consequences of recognition errors. The stakes of misclassification vary widely depending on whether the system is used for casual note-taking or more critical applications like medical transcription or legal documentation. Providing clear feedback about recognition confidence and implementing easy correction mechanisms are essential for responsible deployment. Users should understand the capabilities and limitations of the system to set appropriate expectations and maintain trust, particularly in contexts where incorrect recognition could have significant consequences.</p>
+</section>
+</section>
+<section id="future-work-conclusion" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="future-work-conclusion"><span class="header-section-number">5.9</span> Future Work &amp; Conclusion</h2>
+<p>This chapter has demonstrated the successful implementation of a handwriting recognition system on the EFR32xG24 microcontroller, achieving 99.18% accuracy on the MNIST dataset with a model size of only 101.59 KB. The quantization process reduced the model size by 91% with negligible impact on accuracy, highlighting the effectiveness of post-training quantization for TinyML applications. The implementation addresses key challenges in memory management, quantization effects, and resource utilization, providing practical insights for deploying sophisticated neural networks on highly constrained devices. While this chapter focused on static image data processing, the principles established here—particularly in model optimization and memory management—provide a foundation for more dynamic sensing applications. In the next chapter, we will extend these techniques to time-series data from inertial measurement units (IMUs), enabling gesture recognition applications that process motion patterns rather than static images. This shift from spatial to temporal pattern recognition represents a natural progression toward more interactive and responsive embedded ML systems.</p>
+</section>
+<section id="references" class="level2" data-number="5.10">
+<h2 data-number="5.10" class="anchored" data-anchor-id="references"><span class="header-section-number">5.10</span> References</h2>
+<p>Banbury, C. R., Reddi, V. J., Lam, M., Fu, W., Fazel, A., Holleman, J., Huang, X., Hurtado, R., Kanter, D., Lokhmotov, A., &amp; Patterson, D. (2021). Benchmarking TinyML systems: Challenges and direction. Proceedings of the 3rd MLSys Conference.</p>
+<p>LeCun, Y., Bottou, L., Bengio, Y., &amp; Haffner, P. (1998). Gradient-based learning applied to document recognition. Proceedings of the IEEE, 86(11), 2278-2324.</p>
+<p>Silicon Labs. (2023). EFR32xG24 Device Family Data Sheet. Silicon Labs, Inc.</p>
+<p>TensorFlow. (2023). TensorFlow Lite for Microcontrollers. Retrieved from https://www.tensorflow.org/lite/microcontrollers</p>
+<p>Warden, P., &amp; Situnayake, D. (2020). TinyML: Machine learning with TensorFlow Lite on Arduino and ultra-low-power microcontrollers. O’Reilly Media.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../contents/core/12_ml_helloworld2.html" class="pagination-link" aria-label="Building a TinyML Application">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Building a TinyML Application</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../contents/core/14_imu_gesture.html" class="pagination-link" aria-label="IMU-Based Gesture Recognition">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">IMU-Based Gesture Recognition</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Written by Masudul Imtiaz, PhD (Clarkson University)</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/clarkson-edge/ee513_book/edit/dev/contents/core/13_handwritten_recognition.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/clarkson-edge/ee513_book/blob/dev/contents/core/13_handwritten_recognition.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This book was built with <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
