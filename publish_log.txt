@@ -1347,3 +1347,84 @@ Working directory: /home/aaron/github/clarkson/clarkson_edge/ee513_book
 [0;32m[INFO][0m Checking required commands...
 [1;33m[WARN][0m Uncommitted changes detected
 [0;32m[INFO][0m Performing git operations...
+[dev 8886dda] Update content 2025-07-04
+ 6 files changed, 879 insertions(+), 263 deletions(-)
+ create mode 100644 scripts/quarto_publish/README.md
+ mode change 100644 => 100755 scripts/quarto_publish/render_compress_publish.py
+[0;32m[INFO][0m Committed changes: Update content 2025-07-04
+To https://github.com/clarkson-edge/ee513_book.git
+   bc6ee9d..8886dda  dev -> dev
+[0;32m[INFO][0m Pushed to origin/dev
+[0;32m[INFO][0m Rendering Quarto book...
+[0;32m[INFO][0m Quarto render completed successfully
+[0;32m[INFO][0m Compressing PDF...
+[0;32m[INFO][0m Setting up Python virtual environment...
+[0;32m[INFO][0m Creating virtual environment...
+[0;32m[INFO][0m Installing Python dependencies...
+[0;32m[INFO][0m PDF compression completed
+[0;32m[INFO][0m Publishing to GitHub Pages...
+From https://github.com/clarkson-edge/ee513_book
+ * branch            gh-pages   -> FETCH_HEAD
+Preparing worktree (resetting branch 'gh-pages'; was at ba1fc29)
+branch 'gh-pages' set up to track 'origin/gh-pages'.
+HEAD is now at ba1fc29 Built site for gh-pages
+[gh-pages 2db2ea4] Built site for gh-pages
+ 40 files changed, 7552 insertions(+), 9906 deletions(-)
+ create mode 100644 contents/core/11_ml_helloworld.html
+ create mode 100644 contents/core/12_ml_helloworld2.html
+ create mode 100644 contents/core/13_handwritten_recognition.html
+ create mode 100644 contents/core/14_imu_gesture.html
+ create mode 100644 contents/core/15_posture_detection.html
+ delete mode 100644 contents/core/2_programmingwithc.html
+ delete mode 100644 contents/core/3_devkitoverview.html
+ delete mode 100644 contents/core/4_efr32programming.html
+ delete mode 100644 contents/core/5_efr32applications.html
+ delete mode 100644 contents/core/6_gesturerecog_realtime.html
+ delete mode 100644 contents/core/7_gesturerecog_magicwand.html
+ delete mode 100644 contents/core/8_anomalydetection_htm.html
+ delete mode 100644 contents/core/9_audioml.html
+ delete mode 100644 contents/core/img/chapter4-cmu-clken0.png
+ delete mode 100644 contents/core/img/chapter4-devkit-pinout.png
+ delete mode 100644 contents/core/img/chapter4-efr32-pinout.png
+ delete mode 100644 contents/core/img/chapter4-mode-n.png
+ delete mode 100644 contents/core/img/chapter4-model-modeh.png
+ delete mode 100644 contents/core/img/chapter5-keypad-flowchart.png
+ delete mode 100644 contents/core/img/chapter5-keypad-schematic.png
+ delete mode 100644 contents/core/img/chapter5-keypad-wiring.png
+ delete mode 100644 contents/core/img/chapter5-lcd-init.png
+ delete mode 100644 contents/core/img/chapter5-lcd-instructions.png
+ delete mode 100644 contents/core/img/chapter5-lcd-pins.png
+ delete mode 100644 contents/core/img/chapter5-lcd-schematic.png
+ delete mode 100644 contents/core/img/chapter5-lcd-wiring.png
+ delete mode 100644 contents/core/img/chapter5-segment-multi-schematic.png
+ delete mode 100644 contents/core/img/chapter5-segment-wiring.png
+ delete mode 100644 contents/core/img/chapter7-uart-output.png
+ delete mode 100644 contents/core/img/chapter8-anomaly-example.png
+ rename site_libs/bootstrap/{bootstrap-b4fc4dddb6ec1a779f0a285a431e56d0.min.css => bootstrap-4ad2cf0c28f2a60df2ec31094e236ed0.min.css} (86%)
+ rename site_libs/bootstrap/{bootstrap-dark-eae2d66f002e799350c2a60e45471621.min.css => bootstrap-dark-92d51d81327e8e79bdb8c3bc0cdd12ec.min.css} (86%)
+ rename site_libs/quarto-html/{quarto-syntax-highlighting-dark-f8dc6eab18fde03278982b0b35885446.css => quarto-syntax-highlighting-dark-9a023c9ade86a60361e96e3e3f11bc54.css} (97%)
+ rename site_libs/quarto-html/{quarto-syntax-highlighting-86daaaaad7353f9cc0c554efc1dd6d94.css => quarto-syntax-highlighting-de84f8d6bb715db06a919283c2d1e787.css} (97%)
+origin	https://github.com/clarkson-edge/ee513_book.git (fetch)
+origin	https://github.com/clarkson-edge/ee513_book.git (push)
+To https://github.com/clarkson-edge/ee513_book.git
+   ba1fc29..2db2ea4  HEAD -> gh-pages
+
+[33mNOTE: GitHub Pages sites use caching so you might need to click the refresh
+button within your web browser to see changes after deployment.
+[39m
+[✓] Published to https://
+
+[33mNOTE: GitHub Pages deployments normally take a few minutes (your site updates
+will be visible once the deploy completes)
+[39m
+[0;32m[INFO][0m Successfully published to GitHub Pages
+
+[0;32m[INFO][0m Publish workflow completed successfully!
+Timestamp: 2025-07-04_14-57-52
+Published site: https://clarkson-edge.github.io/ee513_book
+
+Starting publish workflow at 2025-07-04_14-59-46
+Working directory: /home/aaron/github/clarkson/clarkson_edge/ee513_book
+[0;32m[INFO][0m Checking required commands...
+[1;33m[WARN][0m Uncommitted changes detected
+[0;32m[INFO][0m Performing git operations...
